@@ -3,24 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Roadmap - AI Engineering from Scratch</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23fafaf5'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%233553ff' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%233553ff'>AI</text></svg>">
-  <meta name="description" content="Interactive learning roadmap for 503 AI engineering lessons across 20 connected phases. Trace prerequisites, see what each phase unlocks, and continue from your local progress.">
-  <link rel="canonical" href="https://aiengineeringfromscratch.com/prereqs.html">
-  <meta property="og:title" content="Roadmap · AI Engineering from Scratch">
-  <meta property="og:description" content="Trace every prerequisite, find your next phase, and move from first principles to production AI.">
-  <meta property="og:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
-  <meta property="og:url" content="https://aiengineeringfromscratch.com/prereqs.html">
+  <title>AI Engineering Learning Map · Codeology</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23000000'/><rect x='7' y='7' width='18' height='18' rx='4' fill='%23ff5a1f'/></svg>">
+  <meta name="description" content="Trace the free AI Engineering Foundations pathway in Codeology across 20 phases and 503 imported lessons.">
+  <link rel="canonical" href="prereqs.html">
+  <meta property="og:title" content="AI Engineering Learning Map · Codeology">
+  <meta property="og:description" content="Explore the free imported AI Engineering Foundations pathway and its prerequisite graph.">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Roadmap · AI Engineering from Scratch">
-  <meta name="twitter:description" content="An interactive learning map across 20 connected phases.">
-  <meta name="twitter:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
+  <meta name="twitter:title" content="AI Engineering Learning Map · Codeology">
+  <meta name="twitter:description" content="Explore 20 connected phases and 503 free imported lessons.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20260809a">
   <link rel="stylesheet" href="roadmap.css?v=20260808e">
+  <link rel="stylesheet" href="codeology.css?v=20260812f" data-codeology-style="20260812f">
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
@@ -57,21 +55,26 @@
   <main class="roadmap-page" id="main">
     <section class="roadmap-hero roadmap-container" aria-labelledby="roadmapTitle">
       <div class="roadmap-hero-copy">
-        <span class="roadmap-eyebrow">Curriculum navigation</span>
-        <h1 id="roadmapTitle">From first principles to production AI.</h1>
-        <p class="roadmap-lede">Twenty connected phases form one top-to-bottom dependency graph. Follow the route downward, illuminate the prerequisites behind any phase, and continue exactly where your local progress left off.</p>
+        <span class="roadmap-eyebrow">Imported pathway · AI Engineering Foundations</span>
+        <h1 id="roadmapTitle">Map your route through AI engineering.</h1>
+        <p class="roadmap-lede">Twenty connected phases and 503 free lessons form one dependency graph. Trace prerequisites, explore later branches, and continue from the lesson activity stored in this browser.</p>
       </div>
       <div class="roadmap-hero-stats" aria-label="Roadmap summary">
         <div class="roadmap-hero-stat"><strong class="roadmap-hero-stat-value" id="roadmapPhaseCount">20</strong><span class="roadmap-hero-stat-label">Phases</span></div>
         <div class="roadmap-hero-stat"><strong class="roadmap-hero-stat-value" id="roadmapLessonCount">503</strong><span class="roadmap-hero-stat-label">Lessons</span></div>
-        <div class="roadmap-hero-stat"><strong class="roadmap-hero-stat-value" id="roadmapProgressCount">0 / 503</strong><span class="roadmap-hero-stat-label">Your progress</span></div>
-        <div class="roadmap-hero-stat"><strong class="roadmap-hero-stat-value" id="roadmapNextPhase">Phase 00</strong><span class="roadmap-hero-stat-label">Recommended next</span></div>
+        <div class="roadmap-hero-stat"><strong class="roadmap-hero-stat-value" id="roadmapProgressCount">0 / 503</strong><span class="roadmap-hero-stat-label">Local completions</span></div>
+        <div class="roadmap-hero-stat"><strong class="roadmap-hero-stat-value" id="roadmapNextPhase">Phase 00</strong><span class="roadmap-hero-stat-label">Suggested phase</span></div>
       </div>
     </section>
 
+    <aside class="roadmap-assurance-note roadmap-container" aria-label="Learning progress assurance">
+      <strong>Learning progress only</strong>
+      <p>Completion is stored in this browser. It records lesson activity—not assessed, demonstrated, or verified skill evidence.</p>
+    </aside>
+
     <section class="roadmap-stage-index roadmap-container" aria-label="Roadmap stages">
       <div class="roadmap-stage-index-copy">
-        <strong>Four graph zones</strong>
+        <strong>Four pathway zones</strong>
         <span>Jump down the map</span>
       </div>
       <nav class="roadmap-stage-nav" id="roadmapStageNav" aria-label="Jump to a roadmap stage"></nav>
@@ -81,8 +84,8 @@
       <div class="roadmap-board">
         <div class="roadmap-toolbar">
           <div class="roadmap-toolbar-copy">
-            <span class="roadmap-toolbar-label" id="learningMapTitle">Interactive learning map</span>
-            <p>Select a node to illuminate its route. Click the selected node or blank space to return to the full graph.</p>
+            <span class="roadmap-toolbar-label" id="learningMapTitle">Interactive pathway map</span>
+            <p>Select a phase to illuminate its learning route. Local lesson completion adds glow without implying assessed skill.</p>
             <span class="roadmap-sr-only" id="roadmapKeyboardHelp">Use the arrow keys to move between phase nodes. Press Enter or Space to select a phase. Press Escape to clear the route.</span>
           </div>
           <div class="roadmap-toolbar-actions">
@@ -99,7 +102,7 @@
           </div>
         </div>
         <div class="roadmap-graph-shell">
-          <div class="roadmap-graph-wrap" id="roadmapGraphWrap" aria-label="Scrollable curriculum dependency graph">
+          <div class="roadmap-graph-wrap" id="roadmapGraphWrap" aria-label="Scrollable AI Engineering Foundations dependency graph">
             <div class="roadmap-graph-container" id="roadmapGraphContainer">
               <svg class="roadmap-graph-svg" id="roadmapGraph" role="group"></svg>
             </div>
@@ -107,7 +110,7 @@
           <div class="roadmap-graph-footer">
             <div class="roadmap-graph-legend" aria-label="Focused route legend">
               <span class="roadmap-legend-item"><span class="roadmap-legend-line"></span> Prerequisite route</span>
-              <span class="roadmap-legend-item"><span class="roadmap-legend-line is-unlock"></span> Downstream unlocks</span>
+              <span class="roadmap-legend-item"><span class="roadmap-legend-line is-unlock"></span> Later phases</span>
             </div>
             <span class="roadmap-graph-hint">Scroll down to follow the route · drag sideways across branches</span>
           </div>
@@ -121,13 +124,13 @@
 
   <footer class="site-footer">
     <div class="container footer-inner">
-      <p>AI Engineering from Scratch · open source · free forever.</p>
+      <p>Codeology · Learn freely. Build for real. Prove what you can do.</p>
       <div class="footer-links">
         <a href="index.html">Home</a>
-        <a href="https://github.com/rohitg00/ai-engineering-from-scratch" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/akshatporwal002/ai-engineering-from-scratch" target="_blank" rel="noopener">GitHub</a>
         <a href="catalog.html">Catalog</a>
         <a href="glossary.html">Glossary</a>
-        <a href="https://github.com/rohitg00/ai-engineering-from-scratch/issues/new/choose" target="_blank" rel="noopener">Report / Suggest</a>
+        <a href="https://github.com/akshatporwal002/ai-engineering-from-scratch/issues/new/choose" target="_blank" rel="noopener">Report / Suggest</a>
       </div>
     </div>
   </footer>
@@ -136,7 +139,6 @@
   <script src="progress.js?v=20260801a"></script>
   <script src="header.js?v=20260808h" defer></script>
   <script src="cmdpalette.js?v=20260808h" defer></script>
-  <script src="roadmap.js?v=20260808k" defer></script>
-  <script defer src="https://va.vercel-scripts.com/v1/script.js"></script>
+  <script src="roadmap.js?v=20260812a" defer></script>
 </body>
 </html>

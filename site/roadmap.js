@@ -314,7 +314,7 @@
     var state = phaseState(phase.id);
     var narration = phaseNarration(phase, state, progress);
     var group = svgEl('g', {
-      class: 'roadmap-node',
+      class: 'roadmap-node roadmap-node--' + state.key + (progress.done > 0 ? ' has-local-progress' : ''),
       'data-phase': phase.id,
       'data-tts-read': '',
       'data-tts-section': 'Phase ' + formatPhase(phase.id) + ': ' + phase.name,
@@ -323,14 +323,15 @@
       tabindex: '-1',
       role: 'button',
       'aria-pressed': 'false',
-      'aria-label': narration
+      'aria-label': narration,
+      style: '--roadmap-progress:' + (progress.percent / 100) + ';--roadmap-glow-blur:' + (4 + Math.round(progress.percent * 0.12)) + 'px'
     });
 
     var surface = svgEl('g', { class: 'roadmap-node-surface' });
     group.appendChild(surface);
-    surface.appendChild(svgEl('rect', { class: 'roadmap-node-shadow', x: 4, y: 4, width: NODE_W, height: NODE_H }));
-    surface.appendChild(svgEl('rect', { class: 'roadmap-node-card', x: 0, y: 0, width: NODE_W, height: NODE_H }));
-    surface.appendChild(svgEl('rect', { class: 'roadmap-node-focus', x: -4, y: -4, width: NODE_W + 8, height: NODE_H + 8 }));
+    surface.appendChild(svgEl('rect', { class: 'roadmap-node-shadow', x: 4, y: 4, width: NODE_W, height: NODE_H, rx: 12 }));
+    surface.appendChild(svgEl('rect', { class: 'roadmap-node-card', x: 0, y: 0, width: NODE_W, height: NODE_H, rx: 12 }));
+    surface.appendChild(svgEl('rect', { class: 'roadmap-node-focus', x: -4, y: -4, width: NODE_W + 8, height: NODE_H + 8, rx: 15 }));
 
     var code = svgEl('text', { class: 'roadmap-node-code', x: 14, y: 18 });
     code.textContent = 'PHASE ' + formatPhase(phase.id);
@@ -358,7 +359,7 @@
     }
 
     var meta = svgEl('text', { class: 'roadmap-node-meta', x: NODE_W - 14, y: 68, 'text-anchor': 'end' });
-    meta.textContent = progress.done + '/' + progress.total + ' COMPLETE';
+    meta.textContent = progress.done + '/' + progress.total + ' LESSONS';
     surface.appendChild(meta);
     surface.appendChild(svgEl('rect', { class: 'roadmap-node-progress-track', x: 14, y: 74, width: NODE_W - 28, height: 4 }));
     surface.appendChild(svgEl('rect', {
@@ -403,7 +404,7 @@
       return phaseMap[id] ? phaseMap[id].name : 'Phase ' + formatPhase(id);
     });
     var text = 'Phase ' + formatPhase(phase.id) + ': ' + phase.name + '. ' + state.label + '. ' +
-      progress.done + ' of ' + progress.total + ' lessons completed.';
+      progress.done + ' of ' + progress.total + ' lessons marked complete in this browser.';
     text += requirements.length ? ' Direct prerequisites: ' + requirements.join(', ') + '.' : ' This is the starting phase.';
     text += unlocks.length ? ' Immediately unlocks: ' + unlocks.join(', ') + '.' : ' This is a final destination.';
     return text;
@@ -868,9 +869,9 @@
       ? '<div class="roadmap-recommendation"><span>Recommended next</span><button type="button" data-route-phase="' + recommendation.id + '">Phase ' + formatPhase(recommendation.id) + ' · ' + escapeHtml(recommendation.name) + '</button></div>'
       : '';
     panel.innerHTML =
-      '<span class="roadmap-inspector-eyebrow">Route inspector</span>' +
+      '<span class="roadmap-inspector-eyebrow">Learning route</span>' +
       '<h2>Choose a phase</h2>' +
-      '<p class="roadmap-inspector-copy">Select a node to illuminate the exact route into it, every phase it unlocks, and the best lesson to continue from your local progress.</p>' +
+      '<p class="roadmap-inspector-copy">Select a node to trace its prerequisites, later branches, and the next lesson suggested by activity stored in this browser.</p>' +
       recommendationHtml;
   }
 
@@ -886,14 +887,14 @@
     var directUnlocks = children[id] || [];
     var lesson = nextLessonForPhase(phase);
     var lessonLink = lesson ? lessonPageUrl(lesson) : '';
-    var actionLabel = progress.done === progress.total && progress.total > 0 ? 'Review phase' : (progress.done > 0 ? 'Continue phase' : 'Start phase');
+    var actionLabel = progress.done === progress.total && progress.total > 0 ? 'Review lessons' : (progress.done > 0 ? 'Continue lessons' : 'Start lessons');
     panel.innerHTML =
-      '<span class="roadmap-inspector-eyebrow">Phase ' + formatPhase(id) + '</span>' +
+      '<span class="roadmap-inspector-eyebrow">Learning phase ' + formatPhase(id) + '</span>' +
       '<h2>' + escapeHtml(phase.name) + '</h2>' +
       '<span class="roadmap-inspector-state">' + state.label + '</span>' +
       '<p class="roadmap-inspector-copy">' + escapeHtml(phase.desc || '') + '</p>' +
       '<div class="roadmap-inspector-progress">' +
-        '<div class="roadmap-inspector-progress-head"><span>Your progress</span><strong>' + progress.done + ' / ' + progress.total + '</strong></div>' +
+        '<div class="roadmap-inspector-progress-head"><span>Local lesson progress</span><strong>' + progress.done + ' / ' + progress.total + '</strong></div>' +
         '<div class="roadmap-inspector-progress-bar" aria-hidden="true"><span style="--inspector-progress:' + (progress.percent / 100) + '"></span></div>' +
       '</div>' +
       '<div class="roadmap-inspector-context">' +
@@ -930,10 +931,10 @@
 
   function phaseState(id) {
     var progress = phaseProgress[id] || { done: 0, total: 0 };
-    if (progress.total > 0 && progress.done === progress.total) return { label: 'Complete' };
-    if (progress.done > 0) return { label: 'In progress' };
-    if (prerequisitesComplete(id)) return { label: 'Ready' };
-    return { label: 'Upcoming' };
+    if (progress.total > 0 && progress.done === progress.total) return { key: 'complete', label: 'Lessons complete' };
+    if (progress.done > 0) return { key: 'started', label: 'In progress' };
+    if (prerequisitesComplete(id)) return { key: 'available', label: 'Available' };
+    return { key: 'prerequisite', label: 'Prerequisites first' };
   }
 
   function prerequisitesComplete(id) {

@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "ai-engineering-from-scratch",
+  "canonicalPath": "site/prereqs.html",
+  "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f",
+  "adapted": true,
+  "adaptationSummary": "Reframes the imported 20-phase dependency roadmap as Codeology's free AI Engineering Foundations learning map, adds explicit local-progress assurance language and Codeology metadata, and preserves graph navigation, zoom, URL state, themes and source attribution."
+}

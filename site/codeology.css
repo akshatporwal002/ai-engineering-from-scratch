@@ -12,6 +12,7 @@
   --codeology-radius-lg: 24px;
   --codeology-radius-pill: 999px;
   --codeology-shadow-soft: 0 14px 40px rgba(17, 17, 17, 0.08);
+  --roadmap-glow: rgba(196, 59, 0, 0.24);
 
   --bg: var(--codeology-canvas);
   --bg-surface: var(--codeology-surface);
@@ -45,6 +46,7 @@
   --codeology-surface-strong: rgba(255, 255, 255, 0.12);
   --codeology-glass: rgba(0, 0, 0, 0.86);
   --codeology-shadow-soft: 0 16px 48px rgba(0, 0, 0, 0.42);
+  --roadmap-glow: rgba(255, 107, 44, 0.42);
 
   --ink-soft: #c8c8c4;
   --ink-mute: #92928e;
@@ -69,6 +71,102 @@ html[data-product="codeology"] .glossary-page {
 
 html[data-product="codeology"] .catalog-page {
   padding-block-start: calc(var(--header-offset) + 16px);
+}
+
+html[data-product="codeology"] .roadmap-page {
+  padding-block-start: calc(var(--header-offset) + 16px);
+}
+
+.roadmap-assurance-note {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  margin-top: 18px;
+  padding: 14px 18px;
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--codeology-radius-md);
+  background: var(--codeology-surface);
+  color: var(--ink-soft);
+}
+
+.roadmap-assurance-note strong {
+  color: var(--blueprint);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.roadmap-assurance-note p {
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+html[data-product="codeology"] .roadmap-hero,
+html[data-product="codeology"] .roadmap-stage-index,
+html[data-product="codeology"] .roadmap-toolbar,
+html[data-product="codeology"] .roadmap-graph-shell,
+html[data-product="codeology"] .roadmap-inspector {
+  border-radius: var(--codeology-radius-lg);
+  box-shadow: var(--codeology-shadow-soft);
+}
+
+html[data-product="codeology"] .roadmap-hero,
+html[data-product="codeology"] .roadmap-graph-shell {
+  overflow: hidden;
+}
+
+html[data-product="codeology"] .roadmap-stage-index,
+html[data-product="codeology"] .roadmap-toolbar,
+html[data-product="codeology"] .roadmap-inspector,
+html[data-product="codeology"] .roadmap-hero-stats,
+html[data-product="codeology"] .roadmap-inspector-progress,
+html[data-product="codeology"] .roadmap-inspector-context,
+html[data-product="codeology"] .roadmap-recommendation {
+  border-radius: var(--codeology-radius-md);
+}
+
+html[data-product="codeology"] .roadmap-stage-index,
+html[data-product="codeology"] .roadmap-hero-stats,
+html[data-product="codeology"] .roadmap-inspector-context {
+  overflow: hidden;
+}
+
+html[data-product="codeology"] .roadmap-stage-jump,
+html[data-product="codeology"] .roadmap-jump-select,
+html[data-product="codeology"] .roadmap-clear,
+html[data-product="codeology"] .roadmap-zoom-button,
+html[data-product="codeology"] .roadmap-route-button,
+html[data-product="codeology"] .roadmap-action,
+html[data-product="codeology"] .roadmap-inspector-state {
+  border-radius: var(--codeology-radius-sm);
+}
+
+html[data-product="codeology"] .roadmap-node.has-local-progress .roadmap-node-surface {
+  filter: drop-shadow(0 0 var(--roadmap-glow-blur, 4px) var(--roadmap-glow));
+}
+
+html[data-product="codeology"] .roadmap-node--started .roadmap-node-card {
+  stroke: var(--blueprint);
+  stroke-dasharray: 5 3;
+}
+
+html[data-product="codeology"] .roadmap-node--complete .roadmap-node-card {
+  fill: var(--blueprint-tint);
+  stroke: var(--blueprint);
+  stroke-width: 2;
+}
+
+html[data-product="codeology"] .roadmap-node--started .roadmap-node-state,
+html[data-product="codeology"] .roadmap-node--complete .roadmap-node-state {
+  fill: var(--blueprint);
+  font-weight: 700;
+}
+
+html[data-product="codeology"] .roadmap-node-progress-fill,
+html[data-product="codeology"] .roadmap-inspector-progress-bar span {
+  box-shadow: 0 0 12px var(--roadmap-glow);
 }
 
 .catalog-source-label {
@@ -322,6 +420,12 @@ html[data-product="codeology"] .glossary-details {
   html[data-product="codeology"] .catalog-filter {
     width: 100%;
   }
+
+  .roadmap-assurance-note {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 13px 15px;
+  }
 }
 
 @media (prefers-reduced-transparency: reduce) {
@@ -332,5 +436,11 @@ html[data-product="codeology"] .glossary-details {
 
   .codeology-loop-step {
     backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-product="codeology"] .roadmap-node.has-local-progress .roadmap-node-surface {
+    transition: none;
   }
 }

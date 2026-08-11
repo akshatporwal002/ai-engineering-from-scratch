@@ -10,7 +10,7 @@
   var CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
   var COMPACT_HEADER_QUERY = '(max-width: 1100px)';
   var NARRATION_VERSION = '20260809a';
-  var CODEOLOGY_SHELL_VERSION = '20260812e';
+  var CODEOLOGY_SHELL_VERSION = '20260812f';
   var navId = 0;
 
   function ensureCodeologyShell() {

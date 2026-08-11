@@ -46,3 +46,9 @@ Rounded geometry is limited to bounded statistics, inputs, filters, actions and 
 The imported AI Engineering Foundations catalog remains a generated, sortable ledger of every free lesson. Codeology owns its metadata and public framing while preserving search, phase/status filters, URL state, keyboard-sortable columns and lesson links derived from trusted curriculum data.
 
 Inputs and the scrollable table shell use shared rounded geometry and surface elevation. On mobile, every control spans the available width while the table remains intentionally horizontally scrollable inside its bounded container. The page and table must never expand the document viewport.
+
+## Learning-map contract
+
+The imported 20-phase prerequisite graph is the visual foundation for Codeology's future evidence-backed skill graph. During the academy stage it represents only free curriculum navigation and browser-local lesson activity. The interface must explicitly say that this state is not assessed, demonstrated or verified skill evidence.
+
+Local lesson progress may increase node glow, but status text, lesson counts and stroke patterns must communicate the same state without colour, animation or visual effects. The 20-phase DAG, route highlighting, inspector, URL state, keyboard navigation, panning, zoom and source links remain imported behavior. Rounded graph nodes and softly elevated containers adapt that behavior to Codeology without changing the curriculum graph.
