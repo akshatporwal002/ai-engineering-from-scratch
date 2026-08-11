@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codeology.dev/schemas/v1/job-task-analysis.schema.json",
+  "title": "Codeology target-role job-task analysis",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "analysisId", "analysisVersion", "status", "targetRole", "methodology", "evidenceSources", "tasks", "reviewers", "synthesis", "source"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "analysisId": {"$ref": "common.schema.json#/$defs/stableId"},
+    "analysisVersion": {"$ref": "common.schema.json#/$defs/version"},
+    "status": {"$ref": "common.schema.json#/$defs/status"},
+    "targetRole": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "careerStage", "scope"],
+      "properties": {
+        "title": {"type": "string", "minLength": 3},
+        "careerStage": {"type": "string", "enum": ["entry", "early-career"]},
+        "scope": {"type": "string", "minLength": 30}
+      }
+    },
+    "methodology": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["researchStartedOn", "researchCompletedOn", "samplingApproach", "participantPrivacy", "limitations"],
+      "properties": {
+        "researchStartedOn": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+        "researchCompletedOn": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+        "samplingApproach": {"type": "string", "minLength": 30},
+        "participantPrivacy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["publicRecordContainsPersonalData", "handling", "retention"],
+          "properties": {
+            "publicRecordContainsPersonalData": {"const": false},
+            "handling": {"type": "string", "minLength": 20},
+            "retention": {"type": "string", "minLength": 20}
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 15}
+        }
+      }
+    },
+    "evidenceSources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sourceId", "kind", "title", "reference", "accessedOn", "notes"],
+        "properties": {
+          "sourceId": {"$ref": "common.schema.json#/$defs/stableId"},
+          "kind": {
+            "type": "string",
+            "enum": ["official-occupation-data", "job-posting-sample", "practitioner-interview", "hiring-manager-interview", "work-observation", "professional-standard", "research-literature"]
+          },
+          "title": {"type": "string", "minLength": 5},
+          "reference": {"type": "string", "minLength": 3},
+          "accessedOn": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+          "notes": {"type": "string", "minLength": 15}
+        }
+      }
+    },
+    "tasks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["taskId", "statement", "context", "observableOutcomes", "evidenceSourceIds", "importance", "frequency", "entryRelevance", "reviewStatus"],
+        "properties": {
+          "taskId": {"$ref": "common.schema.json#/$defs/stableId"},
+          "statement": {"type": "string", "minLength": 20},
+          "context": {"type": "string", "minLength": 20},
+          "observableOutcomes": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 10}
+          },
+          "evidenceSourceIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"$ref": "common.schema.json#/$defs/stableId"}
+          },
+          "importance": {"type": "string", "enum": ["low", "medium", "high"]},
+          "frequency": {"type": "string", "enum": ["occasional", "regular", "frequent"]},
+          "entryRelevance": {"type": "string", "enum": ["peripheral", "supporting", "core"]},
+          "reviewStatus": {"type": "string", "enum": ["proposed", "approved", "excluded"]}
+        }
+      }
+    },
+    "reviewers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["reviewerId", "perspective", "decision", "reviewedTaskIds", "notes"],
+        "properties": {
+          "reviewerId": {"$ref": "common.schema.json#/$defs/stableId"},
+          "perspective": {"type": "string", "enum": ["software-engineer", "hiring-manager", "assessment-specialist"]},
+          "decision": {"type": "string", "enum": ["approve", "revise", "reject"]},
+          "reviewedTaskIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"$ref": "common.schema.json#/$defs/stableId"}
+          },
+          "notes": {"type": "string", "minLength": 15}
+        }
+      }
+    },
+    "synthesis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["inScopeTaskIds", "excludedTaskIds", "selectionRationale"],
+      "properties": {
+        "inScopeTaskIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "common.schema.json#/$defs/stableId"}
+        },
+        "excludedTaskIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "common.schema.json#/$defs/stableId"}
+        },
+        "selectionRationale": {"type": "string", "minLength": 30}
+      }
+    },
+    "source": {"$ref": "common.schema.json#/$defs/source"}
+  }
+}

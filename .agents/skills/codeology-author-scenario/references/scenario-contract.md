@@ -6,7 +6,7 @@ Use this checklist with the authoritative schemas in `content/codeology/schemas/
 
 Do not author publishable scenario content until all of these are available:
 
-- a named target role supported by completed, cited job-task analysis;
+- a named target role supported by a published `job-task-analysis.schema.json` record;
 - a versioned pathway containing the task's exact skill references;
 - an observable job task that permits several defensible implementations;
 - a bounded starter codebase with known licence and provenance;

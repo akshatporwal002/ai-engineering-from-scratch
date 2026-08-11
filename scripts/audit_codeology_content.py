@@ -7,8 +7,10 @@ import json
 import re
 import sys
 from collections import defaultdict
+from datetime import date
 from pathlib import Path
 from typing import Any, Iterable
+from urllib.parse import urlsplit
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -17,6 +19,7 @@ SCHEMA_ROOT = CONTENT_ROOT / "schemas" / "v1"
 SCHEMA_DRAFT = "https://json-schema.org/draft/2020-12/schema"
 SCHEMA_IDS = {
     "common.schema.json": "https://codeology.dev/schemas/v1/common.schema.json",
+    "job-task-analysis.schema.json": "https://codeology.dev/schemas/v1/job-task-analysis.schema.json",
     "pathway.schema.json": "https://codeology.dev/schemas/v1/pathway.schema.json",
     "skill.schema.json": "https://codeology.dev/schemas/v1/skill.schema.json",
     "scenario.schema.json": "https://codeology.dev/schemas/v1/scenario.schema.json",
@@ -24,6 +27,7 @@ SCHEMA_IDS = {
     "evidence.schema.json": "https://codeology.dev/schemas/v1/evidence.schema.json",
 }
 ENTITY_CONTRACTS = {
+    "job-task-analyses": ("job-task-analysis.schema.json", "analysisId", "analysisVersion"),
     "pathways": ("pathway.schema.json", "pathwayId", "pathwayVersion"),
     "skills": ("skill.schema.json", "skillId", "skillVersion"),
     "scenarios": ("scenario.schema.json", "scenarioId", "scenarioVersion"),
@@ -195,6 +199,22 @@ def is_safe_relative_path(value: Any) -> bool:
     return all(part not in {"", ".", ".."} for part in value.split("/"))
 
 
+def is_safe_research_reference(value: Any, content_root: Path) -> bool:
+    if not isinstance(value, str):
+        return False
+    if value.startswith("https://"):
+        parsed = urlsplit(value)
+        return bool(parsed.netloc) and parsed.username is None and parsed.password is None
+    if not is_safe_relative_path(value):
+        return False
+    candidate = (content_root / value).resolve()
+    try:
+        candidate.relative_to(content_root.resolve())
+    except ValueError:
+        return False
+    return candidate.is_file()
+
+
 def load_entities(content_root: Path, store: SchemaStore) -> tuple[dict[str, list[tuple[Path, dict[str, Any]]]], list[str]]:
     entities: dict[str, list[tuple[Path, dict[str, Any]]]] = defaultdict(list)
     errors: list[str] = []
@@ -287,9 +307,91 @@ def semantic_audit(
 ) -> list[str]:
     errors: list[str] = []
     skill_index = indexes["skills"]
+    analysis_index = indexes["job-task-analyses"]
     pathway_index = indexes["pathways"]
     scenario_index = indexes["scenarios"]
     rubric_index = indexes["rubrics"]
+
+    for path, analysis in entities.get("job-task-analyses", []):
+        where = display_path(path)
+        source_ids: set[str] = set()
+        source_kinds: set[str] = set()
+        for source in analysis.get("evidenceSources", []):
+            if not isinstance(source, dict):
+                continue
+            source_id = source.get("sourceId")
+            if source_id in source_ids:
+                errors.append(f"{where}: duplicate evidence source {source_id!r}")
+            if isinstance(source_id, str):
+                source_ids.add(source_id)
+            if isinstance(source.get("kind"), str):
+                source_kinds.add(source["kind"])
+            if not is_safe_research_reference(source.get("reference"), content_root):
+                errors.append(f"{where}: evidence source {source_id!r} must use HTTPS or an existing safe public reference")
+
+        task_ids: set[str] = set()
+        task_statuses: dict[str, str] = {}
+        for task in analysis.get("tasks", []):
+            if not isinstance(task, dict):
+                continue
+            task_id = task.get("taskId")
+            if task_id in task_ids:
+                errors.append(f"{where}: duplicate taskId {task_id!r}")
+            if isinstance(task_id, str):
+                task_ids.add(task_id)
+                task_statuses[task_id] = str(task.get("reviewStatus", ""))
+            missing_sources = set(task.get("evidenceSourceIds", [])) - source_ids
+            if missing_sources:
+                errors.append(f"{where}: task {task_id!r} references missing evidence sources {sorted(missing_sources)!r}")
+
+        reviewer_ids: set[str] = set()
+        approving_coverage: dict[str, set[str]] = defaultdict(set)
+        for reviewer in analysis.get("reviewers", []):
+            if not isinstance(reviewer, dict):
+                continue
+            reviewer_id = reviewer.get("reviewerId")
+            if reviewer_id in reviewer_ids:
+                errors.append(f"{where}: duplicate reviewerId {reviewer_id!r}")
+            if isinstance(reviewer_id, str):
+                reviewer_ids.add(reviewer_id)
+            reviewed = set(reviewer.get("reviewedTaskIds", []))
+            missing_tasks = reviewed - task_ids
+            if missing_tasks:
+                errors.append(f"{where}: reviewer {reviewer_id!r} references missing tasks {sorted(missing_tasks)!r}")
+            if reviewer.get("decision") == "approve" and isinstance(reviewer.get("perspective"), str):
+                approving_coverage[reviewer["perspective"]].update(reviewed)
+
+        synthesis = analysis.get("synthesis", {})
+        in_scope = set(synthesis.get("inScopeTaskIds", [])) if isinstance(synthesis, dict) else set()
+        excluded = set(synthesis.get("excludedTaskIds", [])) if isinstance(synthesis, dict) else set()
+        if in_scope & excluded:
+            errors.append(f"{where}: in-scope and excluded task sets must not overlap")
+        if in_scope | excluded != task_ids:
+            errors.append(f"{where}: synthesis must classify every task exactly once")
+        for task_id in in_scope:
+            if task_statuses.get(task_id) != "approved":
+                errors.append(f"{where}: in-scope task {task_id!r} must have approved reviewStatus")
+        for task_id in excluded:
+            if task_statuses.get(task_id) != "excluded":
+                errors.append(f"{where}: excluded task {task_id!r} must have excluded reviewStatus")
+
+        methodology = analysis.get("methodology", {})
+        if isinstance(methodology, dict):
+            try:
+                started = date.fromisoformat(str(methodology.get("researchStartedOn", "")))
+                completed = date.fromisoformat(str(methodology.get("researchCompletedOn", "")))
+                if started > completed:
+                    errors.append(f"{where}: researchStartedOn cannot be after researchCompletedOn")
+            except ValueError:
+                pass
+
+        if analysis.get("status") == "published":
+            if len(source_kinds) < 2:
+                errors.append(f"{where}: published analysis requires at least two evidence-source kinds")
+            required_perspectives = {"software-engineer", "hiring-manager", "assessment-specialist"}
+            for perspective in sorted(required_perspectives):
+                if not in_scope.issubset(approving_coverage.get(perspective, set())):
+                    errors.append(f"{where}: published analysis requires {perspective!r} approval of every in-scope task")
 
     for path, pathway in entities.get("pathways", []):
         where = display_path(path)
@@ -319,12 +421,20 @@ def semantic_audit(
                 if key not in scenario_index:
                     errors.append(f"{where}: references missing scenario {key[0]!r} version {key[1]!r}")
         target_role = pathway.get("targetRole", {})
-        if pathway.get("status") == "published" and (
-            not isinstance(target_role, dict)
-            or target_role.get("jobTaskAnalysisStatus") != "complete"
-            or not target_role.get("evidenceRefs")
-        ):
-            errors.append(f"{where}: published pathways require completed, cited job-task analysis")
+        analysis_ref = target_role.get("jobTaskAnalysisRef", {}) if isinstance(target_role, dict) else {}
+        analysis_key = (
+            analysis_ref.get("analysisId"),
+            analysis_ref.get("analysisVersion"),
+        ) if isinstance(analysis_ref, dict) else (None, None)
+        analysis_record = analysis_index.get(analysis_key)
+        if not analysis_record:
+            errors.append(f"{where}: references missing job-task analysis {analysis_key!r}")
+        else:
+            analysis_role = analysis_record[1].get("targetRole", {})
+            if isinstance(target_role, dict) and isinstance(analysis_role, dict) and target_role.get("title") != analysis_role.get("title"):
+                errors.append(f"{where}: target role title must match the referenced job-task analysis")
+            if pathway.get("status") == "published" and analysis_record[1].get("status") != "published":
+                errors.append(f"{where}: published pathways require a published job-task analysis")
 
     for path, rubric in entities.get("rubrics", []):
         where = display_path(path)

@@ -15,15 +15,10 @@
     "targetRole": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["title", "jobTaskAnalysisStatus", "evidenceRefs"],
+      "required": ["title", "jobTaskAnalysisRef"],
       "properties": {
         "title": {"type": "string", "minLength": 3},
-        "jobTaskAnalysisStatus": {"type": "string", "enum": ["pending", "complete"]},
-        "evidenceRefs": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": {"type": "string", "minLength": 3}
-        }
+        "jobTaskAnalysisRef": {"$ref": "common.schema.json#/$defs/jobTaskAnalysisRef"}
       }
     },
     "skillRefs": {

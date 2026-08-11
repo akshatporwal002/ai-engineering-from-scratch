@@ -66,6 +66,97 @@ class CodeologyContentAuditTest(unittest.TestCase):
                 "source": SOURCE,
             },
         )
+        research_note = self.content_root / "research" / "sources" / "practitioner-summary.md"
+        research_note.parent.mkdir(parents=True, exist_ok=True)
+        research_note.write_text("# Anonymized practitioner summary\n", encoding="utf-8")
+        job_task_analysis = self.write_json(
+            "job-task-analyses",
+            "service-engineering.v1.json",
+            {
+                "schemaVersion": 1,
+                "analysisId": "service-engineering",
+                "analysisVersion": 1,
+                "status": "published",
+                "targetRole": {
+                    "title": "Software engineer working on services",
+                    "careerStage": "early-career",
+                    "scope": "Maintains and extends production-style services within an established engineering team.",
+                },
+                "methodology": {
+                    "researchStartedOn": "2026-07-01",
+                    "researchCompletedOn": "2026-07-31",
+                    "samplingApproach": "Triangulated public occupation data with a structured practitioner interview summary.",
+                    "participantPrivacy": {
+                        "publicRecordContainsPersonalData": False,
+                        "handling": "Only anonymized, consented summaries are stored in the public research record.",
+                        "retention": "Raw interview material follows a separate documented retention and deletion process.",
+                    },
+                    "limitations": ["The fixture represents a narrow regional and organizational sample."],
+                },
+                "evidenceSources": [
+                    {
+                        "sourceId": "occupation-data",
+                        "kind": "official-occupation-data",
+                        "title": "Public occupation task data",
+                        "reference": "https://example.com/occupation-data",
+                        "accessedOn": "2026-07-03",
+                        "notes": "Used to identify recurring service maintenance and testing responsibilities.",
+                    },
+                    {
+                        "sourceId": "practitioner-summary",
+                        "kind": "practitioner-interview",
+                        "title": "Anonymized practitioner interview summary",
+                        "reference": "research/sources/practitioner-summary.md",
+                        "accessedOn": "2026-07-12",
+                        "notes": "Used to check entry-level context, observable outcomes, and realistic constraints.",
+                    },
+                ],
+                "tasks": [
+                    {
+                        "taskId": "diagnose-service-regression",
+                        "statement": "Diagnose and repair a regression in an inherited service without broad unrelated changes.",
+                        "context": "A monitored endpoint has begun failing after a recent change in an established codebase.",
+                        "observableOutcomes": [
+                            "A reproducible failure is connected to a constrained repair and focused regression test."
+                        ],
+                        "evidenceSourceIds": ["occupation-data", "practitioner-summary"],
+                        "importance": "high",
+                        "frequency": "regular",
+                        "entryRelevance": "core",
+                        "reviewStatus": "approved",
+                    }
+                ],
+                "reviewers": [
+                    {
+                        "reviewerId": "engineer-reviewer",
+                        "perspective": "software-engineer",
+                        "decision": "approve",
+                        "reviewedTaskIds": ["diagnose-service-regression"],
+                        "notes": "The task reflects bounded maintenance work in an inherited service.",
+                    },
+                    {
+                        "reviewerId": "hiring-reviewer",
+                        "perspective": "hiring-manager",
+                        "decision": "approve",
+                        "reviewedTaskIds": ["diagnose-service-regression"],
+                        "notes": "The resulting artifact can expose relevant early-career engineering evidence.",
+                    },
+                    {
+                        "reviewerId": "assessment-reviewer",
+                        "perspective": "assessment-specialist",
+                        "decision": "approve",
+                        "reviewedTaskIds": ["diagnose-service-regression"],
+                        "notes": "The task has observable outcomes without prescribing one implementation.",
+                    },
+                ],
+                "synthesis": {
+                    "inScopeTaskIds": ["diagnose-service-regression"],
+                    "excludedTaskIds": [],
+                    "selectionRationale": "The task is frequent, consequential, observable in a repository, and realistic for the target career stage.",
+                },
+                "source": SOURCE,
+            },
+        )
         pathway = self.write_json(
             "pathways",
             "service-engineering.v1.json",
@@ -78,8 +169,7 @@ class CodeologyContentAuditTest(unittest.TestCase):
                 "status": "published",
                 "targetRole": {
                     "title": "Software engineer working on services",
-                    "jobTaskAnalysisStatus": "complete",
-                    "evidenceRefs": ["docs/research/service-engineering-job-task-analysis.md"],
+                    "jobTaskAnalysisRef": {"analysisId": "service-engineering", "analysisVersion": 1},
                 },
                 "skillRefs": [
                     {"skillId": "service.debugging", "skillVersion": 1},
@@ -235,6 +325,7 @@ class CodeologyContentAuditTest(unittest.TestCase):
             },
         )
         return {
+            "job_task_analysis": job_task_analysis,
             "skill_one": skill_one,
             "skill_two": skill_two,
             "pathway": pathway,
@@ -267,15 +358,34 @@ class CodeologyContentAuditTest(unittest.TestCase):
         self.assertTrue(any("missing skill" in error for error in errors), errors)
 
     def test_published_pathway_requires_job_task_evidence(self) -> None:
-        pathway = self.load_json(self.paths["pathway"])
-        pathway["targetRole"] = {
-            "title": "Software engineer working on services",
-            "jobTaskAnalysisStatus": "pending",
-            "evidenceRefs": [],
-        }
-        self.rewrite_json(self.paths["pathway"], pathway)
+        analysis = self.load_json(self.paths["job_task_analysis"])
+        analysis["status"] = "draft"
+        self.rewrite_json(self.paths["job_task_analysis"], analysis)
         errors = self.audit()
-        self.assertTrue(any("completed, cited job-task analysis" in error for error in errors), errors)
+        self.assertTrue(any("require a published job-task analysis" in error for error in errors), errors)
+
+    def test_job_task_must_cite_existing_research_source(self) -> None:
+        analysis = self.load_json(self.paths["job_task_analysis"])
+        analysis["tasks"][0]["evidenceSourceIds"].append("missing-source")
+        self.rewrite_json(self.paths["job_task_analysis"], analysis)
+        errors = self.audit()
+        self.assertTrue(any("references missing evidence sources" in error for error in errors), errors)
+
+    def test_published_analysis_requires_all_reviewer_perspectives(self) -> None:
+        analysis = self.load_json(self.paths["job_task_analysis"])
+        analysis["reviewers"] = [
+            reviewer for reviewer in analysis["reviewers"] if reviewer["perspective"] != "assessment-specialist"
+        ]
+        self.rewrite_json(self.paths["job_task_analysis"], analysis)
+        errors = self.audit()
+        self.assertTrue(any("'assessment-specialist' approval" in error for error in errors), errors)
+
+    def test_public_research_record_cannot_declare_personal_data(self) -> None:
+        analysis = self.load_json(self.paths["job_task_analysis"])
+        analysis["methodology"]["participantPrivacy"]["publicRecordContainsPersonalData"] = True
+        self.rewrite_json(self.paths["job_task_analysis"], analysis)
+        errors = self.audit()
+        self.assertTrue(any("publicRecordContainsPersonalData" in error and "must equal False" in error for error in errors), errors)
 
     def test_scenario_and_rubric_mapping_drift_is_rejected(self) -> None:
         scenario = self.load_json(self.paths["scenario"])

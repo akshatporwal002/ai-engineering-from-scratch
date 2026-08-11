@@ -42,6 +42,15 @@
         "pathwayVersion": {"$ref": "#/$defs/version"}
       }
     },
+    "jobTaskAnalysisRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["analysisId", "analysisVersion"],
+      "properties": {
+        "analysisId": {"$ref": "#/$defs/stableId"},
+        "analysisVersion": {"$ref": "#/$defs/version"}
+      }
+    },
     "scenarioRef": {
       "type": "object",
       "additionalProperties": false,

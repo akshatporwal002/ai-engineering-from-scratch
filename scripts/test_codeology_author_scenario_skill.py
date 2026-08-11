@@ -24,6 +24,7 @@ class CodeologyScenarioAuthoringSkillTest(unittest.TestCase):
     def test_skill_uses_authoritative_public_contracts(self) -> None:
         for contract in (
             "docs/CODEOLOGY_CONTENT_SCHEMA.md",
+            "job-task-analysis.schema.json",
             "scenario.schema.json",
             "rubric.schema.json",
             "skill.schema.json",

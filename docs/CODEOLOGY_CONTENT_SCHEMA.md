@@ -6,10 +6,11 @@ Codeology's public learning, scenario and evidence records use strict JSON Schem
 
 The imported academy is trusted curriculum content. Codeology's pathway and assessment layer adds a different kind of claim: that a scenario measures particular engineering skills and that an artifact supports a precisely labelled evidence state. Those claims must be versioned, inspectable and reproducible independently of page copy.
 
-The v1 contracts provide five public entities:
+The v1 contracts provide six public entities:
 
 | Entity | Stable identity | Purpose |
 |---|---|---|
+| Job-task analysis | `analysisId` + `analysisVersion` | Ground a target role and its tasks in cited evidence, limitations and multidisciplinary review. |
 | Skill | `skillId` + `skillVersion` | Define one observable competency and the evidence it should elicit. |
 | Pathway | `pathwayId` + `pathwayVersion` | Define a target-role route, skill references and an acyclic prerequisite graph. |
 | Scenario | `scenarioId` + `scenarioVersion` | Define an open-tool, learner-owned repository task and its public checks. |
@@ -24,11 +25,13 @@ Every reference to a versioned entity includes both its stable ID and exact posi
 content/codeology/
   schemas/v1/
     common.schema.json
+    job-task-analysis.schema.json
     skill.schema.json
     pathway.schema.json
     scenario.schema.json
     rubric.schema.json
     evidence.schema.json
+  job-task-analyses/
   skills/
   pathways/
   scenarios/
@@ -45,7 +48,10 @@ Entity directories may remain absent or empty before the first pilot is approved
 - Every ID/version pair is unique, and versions are contiguous from 1.
 - Every skill, pathway, scenario and rubric reference resolves to an exact version.
 - A pathway prerequisite graph contains no missing nodes, self-edges or cycles.
-- A published pathway has completed job-task analysis with at least one cited evidence reference.
+- Every pathway references one exact job-task-analysis version and uses its target-role title.
+- Every job task traces to declared evidence sources, and the synthesis classifies every task exactly once.
+- A published job-task analysis uses at least two evidence-source types, states limitations and participant-privacy handling, declares that the public record contains no personal data, and records engineering, hiring and assessment approval for every in-scope task.
+- A published pathway references a published job-task analysis; a draft research record cannot support a published competency claim.
 - A pathway and each scenario reference one another.
 - A scenario and rubric reference one another.
 - Every rubric criterion has a scenario mapping, and its mapped skills exactly match the public rubric.
@@ -83,11 +89,13 @@ These dimensions must not be collapsed into one badge. A learner-controlled chec
 
 ## Role-selection gate
 
-The schemas deliberately do not publish a placeholder pilot pathway. Before a pathway can be `published`, Codeology must conduct and cite target-role job-task analysis, then review the resulting tasks and skill coverage with appropriate subject-matter and assessment expertise. Draft records can be used to test tooling, but they must not appear as validated competencies or employer evidence.
+The schemas deliberately do not publish a placeholder pilot pathway. Before a pathway can be `published`, Codeology must conduct a versioned target-role job-task analysis, trace tasks to public or safely anonymized research references, classify scope, state limitations, and record approval from software-engineering, hiring-manager and assessment-specialist perspectives. A JTA or pathway may remain `draft`, but draft research cannot appear as validated competencies or employer evidence.
+
+Research `reference` values are provenance metadata, not fetch instructions. The static audit never requests them. Any future link checker or ingestion service must allowlist protocols and hosts, apply network limits, and treat referenced documents as untrusted. Public reviewer IDs must be non-personal pseudonyms, and public summaries must exclude names, contact details, raw interview transcripts and other participant data.
 
 ## Authoring sequence
 
-1. Complete and cite the target-role job-task analysis.
+1. Create and validate a `job-task-analysis.schema.json` record for the chosen target role.
 2. Define 8–12 versioned skills with observable evidence expectations.
 3. Define one pathway and an acyclic prerequisite graph.
 4. Author a public scenario brief and learner-owned submission limits.
