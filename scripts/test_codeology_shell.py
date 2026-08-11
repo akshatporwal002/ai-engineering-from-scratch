@@ -65,6 +65,21 @@ class CodeologyShellTest(unittest.TestCase):
         )
         self.assertTrue(any("local public route" in error for error in errors), errors)
 
+    def test_missing_shared_footer_is_rejected(self) -> None:
+        config = json.loads(validator.CONFIG.read_text(encoding="utf-8"))
+        registry = json.loads(validator.SOURCES.read_text(encoding="utf-8"))
+        shell = validator.SHELL.read_text(encoding="utf-8").replace(
+            "replaceFooter(config)", "replaceFooterDisabled(config)"
+        )
+        errors = validator.audit(
+            config,
+            validator.CSS.read_text(encoding="utf-8"),
+            shell,
+            validator.HEADER.read_text(encoding="utf-8"),
+            registry,
+        )
+        self.assertTrue(any("footer ownership" in error for error in errors), errors)
+
 
 if __name__ == "__main__":
     unittest.main()

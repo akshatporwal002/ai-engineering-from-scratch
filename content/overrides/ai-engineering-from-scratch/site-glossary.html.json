@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "ai-engineering-from-scratch",
+  "canonicalPath": "site/glossary.html",
+  "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f",
+  "adapted": true,
+  "adaptationSummary": "Adds Codeology metadata, source framing and shared modern component styling while preserving the imported glossary data, search, filtering, deep links, command palette, theme and read-aloud behavior."
+}

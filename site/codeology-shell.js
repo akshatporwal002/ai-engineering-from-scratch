@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  var VERSION = '20260812c';
+  var VERSION = '20260812d';
   var CONFIG_URL = 'codeology-config.json?v=' + VERSION;
   var STYLE_URL = 'codeology.css?v=' + VERSION;
 
@@ -135,6 +135,26 @@
     }
   }
 
+  function replaceFooter(config) {
+    var footers = document.querySelectorAll('.site-footer');
+    for (var i = 0; i < footers.length; i++) {
+      var footer = footers[i];
+      var description = footer.querySelector('.footer-inner > p');
+      if (description) description.textContent = config.product.name + ' · ' + config.product.tagline;
+
+      var links = footer.querySelectorAll('a[href]');
+      for (var j = 0; j < links.length; j++) {
+        var link = links[j];
+        var href = link.getAttribute('href') || '';
+        if (href === config.academySource.url) {
+          link.href = config.product.repositoryUrl;
+        } else if (href.indexOf(config.academySource.url + '/issues/') === 0) {
+          link.href = config.product.repositoryUrl + href.slice(config.academySource.url.length);
+        }
+      }
+    }
+  }
+
   function apply(config) {
     if (!config || config.schemaVersion !== 1 || !config.product || !config.academySource) return;
     window.CODEOLOGY_CONFIG = Object.freeze(config);
@@ -142,6 +162,7 @@
     replaceWordmark(config);
     replaceNavigation(config);
     addSourceStrip(config);
+    replaceFooter(config);
     addLessonSourceBadge(config);
     document.dispatchEvent(new CustomEvent('codeology:ready', { detail: config }));
   }

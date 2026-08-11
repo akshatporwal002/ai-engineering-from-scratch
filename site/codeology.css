@@ -63,6 +63,36 @@ html[data-product="codeology"] .lesson-layout {
   padding-top: var(--header-offset);
 }
 
+html[data-product="codeology"] .glossary-page {
+  padding-block-start: calc(var(--header-offset) + 16px);
+}
+
+.glossary-stats {
+  overflow: hidden;
+  border-radius: var(--codeology-radius-md);
+  box-shadow: var(--codeology-shadow-soft);
+}
+
+html[data-product="codeology"] .glossary-search,
+html[data-product="codeology"] .glossary-clear,
+html[data-product="codeology"] .glossary-filter,
+html[data-product="codeology"] .glossary-letter,
+html[data-product="codeology"] .glossary-copy-link,
+html[data-product="codeology"] .glossary-read-aloud,
+html[data-product="codeology"] .glossary-details {
+  border-radius: var(--codeology-radius-sm);
+}
+
+html[data-product="codeology"] .glossary-filter[aria-pressed="true"] {
+  background: var(--blueprint-tint);
+  box-shadow: inset 0 0 0 1px var(--blueprint);
+}
+
+html[data-product="codeology"] .glossary-details {
+  padding-inline: 12px;
+  background: var(--codeology-surface);
+}
+
 [hidden] {
   display: none !important;
 }

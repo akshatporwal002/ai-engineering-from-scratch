@@ -34,3 +34,9 @@ Reference captures live under `docs/visual-baselines/`. They are review artifact
 Every imported lesson displays an in-context source badge before its rendered content. The badge identifies the upstream project, author and MIT licence and links to the lesson directory at the registry's immutable baseline commit. Query-string paths are restricted to `phases/` or `certifications/`, reject dot segments and are encoded segment by segment before entering the GitHub URL.
 
 Lesson titles, descriptions, canonical URLs and active structured data identify Codeology while `isBasedOn` and `license` preserve upstream provenance. The shared shell reattaches the badge after language-driven rerenders. Desktop-light and mobile-dark captures verify that this additional context does not obscure the lesson, quiz or responsive navigation.
+
+## Glossary contract
+
+The imported glossary remains a reference ledger rather than becoming a generic card grid. Codeology owns its public metadata and footer, identifies it as part of AI Engineering Foundations, and preserves the complete term dataset, category and alphabet filters, URL-backed search, stable deep links, command palette and read-aloud controls.
+
+Rounded geometry is limited to bounded statistics, inputs, filters, actions and expandable details. The fixed two-row Codeology header must clear the masthead at every viewport. Search result updates remain announced through the existing polite live region, and mobile navigation retains an explicit expanded state.

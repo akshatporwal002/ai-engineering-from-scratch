@@ -136,6 +136,8 @@ def audit(
         errors.append("site/codeology-shell.js: config and stylesheet must load centrally")
     if "replaceNavigation(config)" not in shell:
         errors.append("site/codeology-shell.js: shared Codeology navigation is missing")
+    if "replaceFooter(config)" not in shell:
+        errors.append("site/codeology-shell.js: shared Codeology footer ownership is missing")
     for contract in (
         "currentLessonPath()",
         "pinnedSourceUrl(source, path)",
