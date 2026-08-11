@@ -3,24 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lesson - AI Engineering from Scratch</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23fafaf5'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%233553ff' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%233553ff'>AI</text></svg>">
-  <meta name="description" content="A lesson from the AI Engineering from Scratch curriculum. 503 lessons across 20 phases, four languages, every algorithm built from raw math.">
-  <link rel="canonical" href="https://aiengineeringfromscratch.com/lesson.html">
-  <meta property="og:title" content="AI Engineering from Scratch · Lesson">
-  <meta property="og:description" content="503 lessons. 20 phases. Write the backprop, the tokenizer, the attention mechanism, and the agent loop by hand.">
-  <meta property="og:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
+  <title>Lesson · Codeology</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23000000'/><rect x='7' y='7' width='18' height='18' rx='4' fill='%23ff5a1f'/></svg>">
+  <meta name="description" content="A free imported lesson in the Codeology academy, credited to AI Engineering from Scratch and available without an account.">
+  <link rel="canonical" href="lesson.html">
+  <meta property="og:title" content="Lesson · Codeology">
+  <meta property="og:description" content="A free imported lesson in the Codeology academy, with source and licence attribution.">
   <!-- og:url omitted intentionally: lesson.html is a static template that loads the lesson body client-side via ?path=. Static hosting cannot template the URL, so we let crawlers fall back to the request URL (which is the lesson-specific share link). -->
   <meta property="og:type" content="article">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="AI Engineering from Scratch">
-  <meta name="twitter:description" content="503 lessons. 20 phases. Build it from raw math, by hand.">
-  <meta name="twitter:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
+  <meta name="twitter:title" content="Lesson · Codeology">
+  <meta name="twitter:description" content="A free imported lesson in the Codeology academy.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20260809a">
   <link rel="stylesheet" href="certifications.css?v=20260809a">
+  <link rel="stylesheet" href="codeology.css?v=20260812c" data-codeology-style="20260812c">
   <style>
     .scroll-progress {
       position: fixed;
@@ -2569,7 +2568,7 @@
       // Client-side per-lesson SEO. Robust indexing comes with build-time
       // prerender (next PR); this covers JS-executing crawlers + correct tabs.
       function updateLessonSeo(title, md) {
-        var ORIGIN = 'https://aiengineeringfromscratch.com';
+        var ORIGIN = window.location.origin;
         var path = new URLSearchParams(location.search).get('path') || '';
         var url = ORIGIN + '/lesson.html?path=' + encodeURIComponent(path);
         var contextTrack = certificationContextTrack();
@@ -2583,8 +2582,8 @@
         var desc = lessonDescription(md);
         var courseName = certificationLesson
           ? (contextTrack && (contextTrack.credential || contextTrack.title || contextTrack.shortName) || 'Certification preparation')
-          : 'AI Engineering from Scratch';
-        var fullTitle = title + ' · ' + courseName;
+          : 'AI Engineering Foundations';
+        var fullTitle = title + ' · Codeology';
         var set = function (sel, val) { var m = document.querySelector(sel); if (m) m.setAttribute('content', val); };
 
         var canon = document.querySelector('link[rel="canonical"]');
@@ -2622,6 +2621,8 @@
           '@graph': [
             { '@type': 'LearningResource', name: title, description: desc, url: url,
               inLanguage: document.documentElement.lang || 'en', isAccessibleForFree: true,
+              isBasedOn: 'https://github.com/rohitg00/ai-engineering-from-scratch',
+              license: 'https://opensource.org/license/mit',
               isPartOf: { '@type': 'Course', name: courseName, url: contextTrack ? ORIGIN + '/certification.html?id=' + encodeURIComponent(contextTrack.id) : ORIGIN } },
             { '@type': 'BreadcrumbList', itemListElement: breadcrumbs }
           ]
@@ -2654,11 +2655,12 @@
         html += '<div class="ai-panels" id="aiPanels"></div>';
         html = addBottomNav(html);
         el.innerHTML = certificationDisclaimerHtml() + '<article class="lesson-article">' + html + '</article>';
+        document.dispatchEvent(new CustomEvent('codeology:lesson-rendered'));
 
         var contextTrack = certificationContextTrack();
         document.title = extractTitle(md) + (certificationLesson
           ? ' - ' + certificationTrackLabel(contextTrack)
-          : ' - AI Engineering from Scratch');
+          : ' · Codeology');
         updateLessonSeo(extractTitle(md), md);
 
         initCodeCopy();

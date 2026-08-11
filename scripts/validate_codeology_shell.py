@@ -136,6 +136,13 @@ def audit(
         errors.append("site/codeology-shell.js: config and stylesheet must load centrally")
     if "replaceNavigation(config)" not in shell:
         errors.append("site/codeology-shell.js: shared Codeology navigation is missing")
+    for contract in (
+        "currentLessonPath()",
+        "pinnedSourceUrl(source, path)",
+        "addLessonSourceBadge(config)",
+    ):
+        if contract not in shell:
+            errors.append(f"site/codeology-shell.js: missing lesson-source integration {contract!r}")
     if "codeology-shell.js" not in header:
         errors.append("site/header.js: Codeology shell loader is missing")
     versions = set(re.findall(r"20260812[a-z]", shell + "\n" + header))

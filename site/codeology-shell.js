@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  var VERSION = '20260812b';
+  var VERSION = '20260812c';
   var CONFIG_URL = 'codeology-config.json?v=' + VERSION;
   var STYLE_URL = 'codeology.css?v=' + VERSION;
 
@@ -68,6 +68,47 @@
     return link;
   }
 
+  function currentLessonPath() {
+    var path = new URLSearchParams(window.location.search).get('path') || '';
+    if (!/^(phases|certifications)\/[A-Za-z0-9._/-]+$/.test(path)) return null;
+    var segments = path.split('/');
+    if (segments.some(function (segment) { return !segment || segment === '.' || segment === '..'; })) return null;
+    return path;
+  }
+
+  function pinnedSourceUrl(source, path) {
+    if (!/^[0-9a-f]{40}$/.test(source.baselineCommit)) return null;
+    var encodedPath = path.split('/').map(encodeURIComponent).join('/');
+    return source.url.replace(/\/+$/, '') + '/tree/' + source.baselineCommit + '/' + encodedPath;
+  }
+
+  function addLessonSourceBadge(config) {
+    if (!/lesson\.html$/.test(window.location.pathname)) return;
+    var container = document.getElementById('lessonContent');
+    var path = currentLessonPath();
+    if (!container || !path || container.querySelector('.codeology-content-source')) return;
+    var source = config.academySource;
+    var pinnedUrl = pinnedSourceUrl(source, path);
+    if (!pinnedUrl) return;
+
+    var badge = document.createElement('aside');
+    badge.className = 'codeology-content-source';
+    badge.setAttribute('aria-label', 'Imported lesson source');
+
+    var kind = document.createElement('strong');
+    kind.className = 'codeology-content-source__kind';
+    kind.textContent = 'Imported lesson';
+    badge.appendChild(kind);
+    appendText(badge, ' from ');
+    badge.appendChild(sourceLink(source.name, source.url));
+    appendText(badge, ' by ' + source.author + ' · ' + source.license);
+
+    var pinned = sourceLink('View pinned source', pinnedUrl);
+    pinned.className = 'codeology-content-source__pinned';
+    badge.appendChild(pinned);
+    container.insertBefore(badge, container.firstChild);
+  }
+
   function addSourceStrip(config) {
     var headers = document.querySelectorAll('.site-header');
     for (var i = 0; i < headers.length; i++) {
@@ -101,6 +142,7 @@
     replaceWordmark(config);
     replaceNavigation(config);
     addSourceStrip(config);
+    addLessonSourceBadge(config);
     document.dispatchEvent(new CustomEvent('codeology:ready', { detail: config }));
   }
 
@@ -117,5 +159,8 @@
   }
 
   ensureStyles();
+  document.addEventListener('codeology:lesson-rendered', function () {
+    if (window.CODEOLOGY_CONFIG) addLessonSourceBadge(window.CODEOLOGY_CONFIG);
+  });
   loadConfig();
 }());

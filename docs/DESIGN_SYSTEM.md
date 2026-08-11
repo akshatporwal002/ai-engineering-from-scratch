@@ -19,7 +19,7 @@ Codeology preserves the imported academy's editorial and pixel character while p
 - Keep the academy source, author, licence and baseline visible and machine-validated.
 - Respect reduced motion and reduced transparency preferences.
 
-This foundation intentionally changes only the shared shell. Lesson rendering and imported masthead content remain intact until their dedicated visual-regression slice.
+Imported lesson rendering, quizzes, figures, navigation and progress behavior remain intact. Codeology may adapt the reader shell and metadata through a tracked override, but it does not silently rewrite imported curriculum content.
 
 ## Homepage product contract
 
@@ -28,3 +28,9 @@ The homepage leads with Codeology's three-part promise: learn freely, build in t
 The shared navigation exposes only working routes. Scenario, submission and profile destinations enter navigation only when their corresponding product slices exist. Unsupported inherited social-proof and creator-marketing claims stay out of the visible Codeology surface.
 
 Reference captures live under `docs/visual-baselines/`. They are review artifacts rather than brittle pixel-perfect test fixtures; deterministic checks validate their expected viewport dimensions while browser review covers layout, responsive behavior, theme, navigation and focus visibility.
+
+## Lesson reader contract
+
+Every imported lesson displays an in-context source badge before its rendered content. The badge identifies the upstream project, author and MIT licence and links to the lesson directory at the registry's immutable baseline commit. Query-string paths are restricted to `phases/` or `certifications/`, reject dot segments and are encoded segment by segment before entering the GitHub URL.
+
+Lesson titles, descriptions, canonical URLs and active structured data identify Codeology while `isBasedOn` and `license` preserve upstream provenance. The shared shell reattaches the badge after language-driven rerenders. Desktop-light and mobile-dark captures verify that this additional context does not obscure the lesson, quiz or responsive navigation.

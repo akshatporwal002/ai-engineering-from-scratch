@@ -59,6 +59,10 @@ body {
   background-image: none;
 }
 
+html[data-product="codeology"] .lesson-layout {
+  padding-top: var(--header-offset);
+}
+
 [hidden] {
   display: none !important;
 }
@@ -175,6 +179,42 @@ body {
   line-height: 1.45;
 }
 
+.codeology-content-source {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 0 0 28px;
+  padding: 11px 14px;
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--codeology-radius-md);
+  background: var(--codeology-surface);
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.035em;
+  line-height: 1.45;
+}
+
+.codeology-content-source__kind {
+  padding: 3px 8px;
+  border-radius: var(--codeology-radius-pill);
+  background: var(--blueprint);
+  color: var(--codeology-canvas);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.codeology-content-source a {
+  color: var(--blueprint);
+}
+
+.codeology-content-source__pinned {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
 .header-menu-toggle,
 .search-toggle,
 .theme-toggle,
@@ -210,6 +250,17 @@ body {
 
   .codeology-loop-step > span {
     margin-bottom: 8px;
+  }
+
+  .codeology-content-source {
+    align-items: flex-start;
+    margin-bottom: 22px;
+    padding: 10px 12px;
+  }
+
+  .codeology-content-source__pinned {
+    width: 100%;
+    margin-left: 0;
   }
 }
 

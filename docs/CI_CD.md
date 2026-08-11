@@ -8,7 +8,7 @@ Run once after cloning:
 npm run setup:dev
 ```
 
-This configures Git to use `.githooks/pre-commit`. Every ordinary commit then runs the fast repository-skill, lesson and certification audits.
+This configures Git to use `.githooks/pre-commit`. Every ordinary commit then runs the fast repository-skill, provenance, Codeology shell/page, lesson-content and certification audits.
 
 Use these explicit commands:
 
