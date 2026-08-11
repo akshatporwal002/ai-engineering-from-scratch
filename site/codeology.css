@@ -272,6 +272,282 @@ html[data-product="codeology"] .roadmap-page {
   border-color: var(--blueprint);
 }
 
+.assurance-page {
+  width: min(1180px, calc(100% - 48px));
+  margin-inline: auto;
+  padding: calc(var(--header-offset) + 16px) 0 96px;
+}
+
+.assurance-page > * + * {
+  margin-top: 24px;
+}
+
+.assurance-hero,
+.assurance-section,
+.assurance-policy-note {
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--codeology-radius-lg);
+  background: var(--codeology-surface);
+  box-shadow: var(--codeology-shadow-soft);
+}
+
+.assurance-hero {
+  padding: clamp(36px, 7vw, 82px);
+}
+
+.assurance-eyebrow {
+  display: block;
+  color: var(--blueprint);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.assurance-hero h1 {
+  max-width: 900px;
+  margin: 16px 0 22px;
+  color: var(--codeology-display-accent);
+  font-size: clamp(3.25rem, 8vw, 7rem);
+  text-wrap: balance;
+}
+
+.assurance-hero > p,
+.assurance-section-heading > p,
+.assurance-open-tool > div > p,
+.assurance-policy-note > p {
+  max-width: 820px;
+  color: var(--ink-soft);
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  line-height: 1.65;
+}
+
+.assurance-availability {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  margin-top: 28px;
+  padding: 14px 16px;
+  border: 1px solid var(--blueprint);
+  border-radius: var(--codeology-radius-md);
+  background: var(--codeology-glass);
+}
+
+.assurance-availability strong {
+  color: var(--blueprint);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.assurance-availability span {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.assurance-section,
+.assurance-policy-note {
+  padding: clamp(26px, 5vw, 52px);
+}
+
+.assurance-section-heading h2,
+.assurance-open-tool h2 {
+  max-width: 860px;
+  margin: 12px 0 14px;
+  color: var(--ink);
+  font-size: clamp(2rem, 5vw, 4rem);
+  text-wrap: balance;
+}
+
+.assurance-state-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.assurance-state {
+  padding: 24px;
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--codeology-radius-md);
+  background: var(--codeology-glass);
+}
+
+.assurance-state[data-evidence-state="practised"] {
+  border-style: dashed;
+}
+
+.assurance-state[data-evidence-state="demonstrated"] {
+  box-shadow: inset 4px 0 0 var(--blueprint);
+}
+
+.assurance-state[data-evidence-state="verified"] {
+  border-color: var(--blueprint);
+  background: var(--blueprint-tint);
+}
+
+.assurance-state-index {
+  color: var(--blueprint);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+}
+
+.assurance-state h3 {
+  margin: 10px 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 2rem;
+}
+
+.assurance-state > p {
+  min-height: 3.2em;
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+
+.assurance-state dl {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.assurance-state dl > div {
+  padding-top: 10px;
+  border-top: 1px solid var(--rule-soft);
+}
+
+.assurance-state dt,
+.assurance-state dd {
+  margin: 0;
+}
+
+.assurance-state dt {
+  color: var(--blueprint);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.assurance-state dd {
+  margin-top: 5px;
+  color: var(--ink-soft);
+  font-size: 0.84rem;
+}
+
+.assurance-open-tool {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+  gap: 32px;
+  align-items: start;
+}
+
+.assurance-limit {
+  padding: 22px;
+  border: 1px solid var(--blueprint);
+  border-radius: var(--codeology-radius-md);
+  background: var(--codeology-glass);
+}
+
+.assurance-limit strong {
+  color: var(--blueprint);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.assurance-limit ul {
+  margin: 14px 0 0;
+  padding-left: 1.15rem;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+.assurance-axis-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.9fr 0.9fr;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.assurance-axis-grid article {
+  padding: 20px;
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--codeology-radius-md);
+  background: var(--codeology-glass);
+}
+
+.assurance-axis-grid h3 {
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.assurance-axis-grid ol,
+.assurance-axis-grid ul {
+  margin: 14px 0 0;
+  padding-left: 1.2rem;
+  color: var(--ink-soft);
+  line-height: 1.65;
+}
+
+.assurance-rubric {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  margin-top: 28px;
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--codeology-radius-md);
+  background: var(--rule-soft);
+}
+
+.assurance-rubric article {
+  padding: 20px;
+  background: var(--codeology-glass);
+}
+
+.assurance-rubric strong {
+  color: var(--blueprint);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.assurance-rubric p {
+  margin-top: 12px;
+  color: var(--ink-soft);
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.assurance-policy-note {
+  border-color: var(--blueprint);
+}
+
+.assurance-policy-note > p {
+  margin-top: 12px;
+}
+
+.assurance-policy-note > a,
+.roadmap-assurance-note > a {
+  display: inline-flex;
+  margin-top: 18px;
+  color: var(--blueprint);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 .roadmap-assurance-note {
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr);
@@ -656,6 +932,42 @@ html[data-product="codeology"] .glossary-details {
   .about-source-links,
   .about-source-links a {
     width: 100%;
+  }
+
+  .assurance-page {
+    width: min(100% - 24px, 1180px);
+    padding-block-start: calc(var(--header-offset) + 12px);
+    padding-block-end: 64px;
+  }
+
+  .assurance-hero,
+  .assurance-section,
+  .assurance-policy-note {
+    border-radius: var(--codeology-radius-md);
+  }
+
+  .assurance-hero {
+    padding: 30px 20px;
+  }
+
+  .assurance-hero h1 {
+    font-size: clamp(3rem, 15vw, 5rem);
+  }
+
+  .assurance-availability,
+  .assurance-state-grid,
+  .assurance-open-tool,
+  .assurance-axis-grid,
+  .assurance-rubric {
+    grid-template-columns: 1fr;
+  }
+
+  .assurance-availability {
+    gap: 6px;
+  }
+
+  .assurance-state > p {
+    min-height: 0;
   }
 }
 

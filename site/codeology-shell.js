@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  var VERSION = '20260812g';
+  var VERSION = '20260812h';
   var CONFIG_URL = 'codeology-config.json?v=' + VERSION;
   var STYLE_URL = 'codeology.css?v=' + VERSION;
 

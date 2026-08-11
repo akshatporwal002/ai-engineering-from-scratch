@@ -80,6 +80,7 @@
         "scripts/test_codeology_catalog.py",
         "scripts/test_codeology_skill_map.py",
         "scripts/test_codeology_about.py",
+        "scripts/test_codeology_assessment_charter.py",
         "scripts/test_validate_content_sources.py",
         "scripts/test_upstream_intake.py",
         "scripts/validate_content_sources.py",
@@ -90,10 +91,12 @@
         "scripts/validate_codeology_catalog.py",
         "scripts/validate_codeology_skill_map.py",
         "scripts/validate_codeology_about.py",
+        "scripts/validate_codeology_assessment_charter.py",
         "scripts/validate_repo_skills.py",
         "site/codeology-config.json",
         "site/codeology-shell.js",
-        "site/codeology.css"
+        "site/codeology.css",
+        "site/assurance.html"
       ]
     }
   ]

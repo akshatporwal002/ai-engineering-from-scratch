@@ -58,3 +58,9 @@ Local lesson progress may increase node glow, but status text, lesson counts and
 The About route explains Codeology's learn/build/prove proposition, open-tool policy and evidence boundary. It must not repeat inherited upstream creator, hosting, commercial or endorsement claims as though they describe Codeology.
 
 The imported academy receives a prominent source card naming AI Engineering from Scratch, its author and contributors, MIT licence, original repository, pinned source commit and non-endorsement relationship. Product principles use editorial hierarchy, rounded bounded panels and accessible pill actions on the shared pure white/black canvas.
+
+## Assurance-page contract
+
+The public assurance guide is a rendered companion to `content/codeology/policies/assessment-charter.v1.json`. Its learned, practised, demonstrated and verified definitions and rubric anchors must remain textually aligned with the machine-readable policy.
+
+Evidence states use labels, evidence descriptions, assurance ceilings, borders and patterns; colour and emphasis are supplementary. The page must display the currently available claim ceiling, open-tool policy, non-claims, independent artifact/identity/administration axes and deterministic policy-engine boundary. No private grader prompt, hidden fixture, calibration answer or escalation threshold belongs on this page or under `content/codeology/`.

@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "policyId": "codeology.assessment-charter",
+  "policyVersion": 1,
+  "status": "active",
+  "title": "Codeology assessment charter",
+  "summary": "Codeology separates learning activity from inspectable evidence and records exactly what each assessment did and did not establish.",
+  "openToolPolicy": {
+    "label": "Open-tool",
+    "allowed": [
+      "editors and IDEs",
+      "documentation and search",
+      "AI coding assistants and chat companions",
+      "local or learner-funded compute",
+      "public tests and linters"
+    ],
+    "assessedTarget": "The submitted engineering artifact, its reproducible facts, criterion-level evidence, and the learner's response to any declared follow-up.",
+    "doesNotClaim": [
+      "unaided authorship",
+      "sole authorship",
+      "identity beyond the recorded identity-assurance level",
+      "general job readiness"
+    ],
+    "companionPrivacy": "Private AI companion conversations are outside assessment unless the learner explicitly opts in to a separately disclosed process."
+  },
+  "evidenceStates": [
+    {
+      "id": "learned",
+      "order": 0,
+      "label": "Learned",
+      "definition": "The learner consumed or understood instructional material.",
+      "minimumEvidence": ["lesson activity", "formative quiz activity"],
+      "artifactAssuranceCeiling": "learner-reported",
+      "cannotClaim": ["demonstrated competency", "independent verification", "job readiness"]
+    },
+    {
+      "id": "practised",
+      "order": 1,
+      "label": "Practised",
+      "definition": "The learner attempted realistic work and supplied a learner-owned repository with public checks.",
+      "minimumEvidence": ["learner repository", "exact public commit", "learner-controlled check result"],
+      "artifactAssuranceCeiling": "repository-observed",
+      "cannotClaim": ["independently executed behavior", "demonstrated competency", "verified competency"]
+    },
+    {
+      "id": "demonstrated",
+      "order": 2,
+      "label": "Demonstrated",
+      "definition": "An immutable artifact passed Codeology's bounded, versioned review against public criteria.",
+      "minimumEvidence": ["repository and tree identity", "exact commit SHA", "scenario version", "rubric version", "deterministic observations", "criterion-level evidence"],
+      "artifactAssuranceCeiling": "commit-bound-reviewed",
+      "cannotClaim": ["independently executed behavior", "verified identity", "sole authorship", "job readiness"]
+    },
+    {
+      "id": "verified",
+      "order": 3,
+      "label": "Verified",
+      "definition": "Codeology independently checked the immutable artifact and a freshly administered follow-up under controlled conditions.",
+      "minimumEvidence": ["demonstrated-state evidence", "Codeology-controlled isolated checks", "fresh follow-up result", "signed versioned receipt"],
+      "artifactAssuranceCeiling": "controlled-follow-up",
+      "cannotClaim": ["sole authorship", "unaided capability", "general job readiness"]
+    }
+  ],
+  "artifactAssurance": [
+    {"level": 0, "id": "learner-reported", "label": "Learner reported", "meaning": "Self-declared or browser-local activity only."},
+    {"level": 1, "id": "repository-observed", "label": "Repository observed", "meaning": "A public immutable artifact was recorded without independent execution."},
+    {"level": 2, "id": "commit-bound-reviewed", "label": "Commit-bound reviewed", "meaning": "Deterministic repository facts and bounded criterion review are bound to an immutable commit."},
+    {"level": 3, "id": "independently-executed", "label": "Independently executed", "meaning": "Codeology ran isolated checks against the immutable artifact."},
+    {"level": 4, "id": "controlled-follow-up", "label": "Controlled follow-up", "meaning": "Independent execution was combined with a freshly administered change or defect."}
+  ],
+  "identityAssurance": [
+    {"id": "unverified", "label": "Unverified"},
+    {"id": "account-linked", "label": "Account linked"},
+    {"id": "identity-checked", "label": "Identity checked"}
+  ],
+  "administrationModes": [
+    {"id": "self-directed", "label": "Self directed"},
+    {"id": "controlled", "label": "Controlled"},
+    {"id": "supervised", "label": "Supervised"}
+  ],
+  "rubricLevels": [
+    {"id": "insufficient", "order": 0, "label": "Insufficient", "anchor": "Required evidence is absent, contradictory, or blocked by a published hard reject."},
+    {"id": "developing", "order": 1, "label": "Developing", "anchor": "Some relevant evidence exists, but material gaps prevent the criterion from being met consistently."},
+    {"id": "competent", "order": 2, "label": "Competent", "anchor": "The evidence meets the published criterion under the scenario's stated constraints."},
+    {"id": "strong", "order": 3, "label": "Strong", "anchor": "The evidence meets the criterion and handles meaningful complexity, failure modes, or trade-offs beyond the competent anchor."}
+  ],
+  "decisionPolicy": {
+    "deterministicFactsFirst": true,
+    "modelMayAwardSkillState": false,
+    "policyEngineDerivesSkillState": true,
+    "insufficientEvidenceOutcome": "abstain-or-escalate",
+    "requiredProvenance": ["artifact digest", "commit SHA", "scenario version", "rubric version", "assessment policy version", "criterion evidence"]
+  },
+  "currentAvailability": {
+    "highestIssuedState": "learned",
+    "message": "Codeology currently records academy learning activity only. Practised, demonstrated, and verified claims are not yet issued."
+  },
+  "source": {
+    "type": "codeology",
+    "license": "MIT"
+  }
+}
