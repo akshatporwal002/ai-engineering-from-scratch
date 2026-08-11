@@ -26,6 +26,7 @@ content/codeology/
     starter/
     public-checks/
   rubrics/<scenario-slug>.v1.json
+  assessment-blueprints/<pathway-slug>.v1.json
 ```
 
 The manifest must validate against `scenario.schema.json`; the rubric must validate against `rubric.schema.json`. Skill and pathway references must use exact IDs and versions from `skill.schema.json` and `pathway.schema.json` records.
@@ -52,6 +53,7 @@ Each criterion measures an observable property, engineering decision or invalida
 - Map every criterion to at least one scenario-declared skill.
 - Mark the skill most directly measured as `primary`; use `supporting` only when the evidence is genuinely indirect.
 - Keep scenario mappings and rubric skill references identical. The content audit rejects drift.
+- Update the pathway's `assessment-blueprint.schema.json` record so the job task, scenario, rubric criteria and versioned skills remain connected.
 - Reuse skills across several contexts; one criterion result is not durable competency evidence.
 
 Avoid formatting preferences, framework trivia, inaccessible wording and requirements with only one acceptable implementation.

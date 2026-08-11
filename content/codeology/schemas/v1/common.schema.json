@@ -51,6 +51,15 @@
         "analysisVersion": {"$ref": "#/$defs/version"}
       }
     },
+    "assessmentBlueprintRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["blueprintId", "blueprintVersion"],
+      "properties": {
+        "blueprintId": {"$ref": "#/$defs/stableId"},
+        "blueprintVersion": {"$ref": "#/$defs/version"}
+      }
+    },
     "scenarioRef": {
       "type": "object",
       "additionalProperties": false,

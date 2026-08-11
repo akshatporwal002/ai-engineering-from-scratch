@@ -19,6 +19,7 @@ SCHEMA_ROOT = CONTENT_ROOT / "schemas" / "v1"
 SCHEMA_DRAFT = "https://json-schema.org/draft/2020-12/schema"
 SCHEMA_IDS = {
     "common.schema.json": "https://codeology.dev/schemas/v1/common.schema.json",
+    "assessment-blueprint.schema.json": "https://codeology.dev/schemas/v1/assessment-blueprint.schema.json",
     "job-task-analysis.schema.json": "https://codeology.dev/schemas/v1/job-task-analysis.schema.json",
     "pathway.schema.json": "https://codeology.dev/schemas/v1/pathway.schema.json",
     "skill.schema.json": "https://codeology.dev/schemas/v1/skill.schema.json",
@@ -27,6 +28,7 @@ SCHEMA_IDS = {
     "evidence.schema.json": "https://codeology.dev/schemas/v1/evidence.schema.json",
 }
 ENTITY_CONTRACTS = {
+    "assessment-blueprints": ("assessment-blueprint.schema.json", "blueprintId", "blueprintVersion"),
     "job-task-analyses": ("job-task-analysis.schema.json", "analysisId", "analysisVersion"),
     "pathways": ("pathway.schema.json", "pathwayId", "pathwayVersion"),
     "skills": ("skill.schema.json", "skillId", "skillVersion"),
@@ -308,6 +310,7 @@ def semantic_audit(
     errors: list[str] = []
     skill_index = indexes["skills"]
     analysis_index = indexes["job-task-analyses"]
+    blueprint_index = indexes["assessment-blueprints"]
     pathway_index = indexes["pathways"]
     scenario_index = indexes["scenarios"]
     rubric_index = indexes["rubrics"]
@@ -435,6 +438,25 @@ def semantic_audit(
                 errors.append(f"{where}: target role title must match the referenced job-task analysis")
             if pathway.get("status") == "published" and analysis_record[1].get("status") != "published":
                 errors.append(f"{where}: published pathways require a published job-task analysis")
+        blueprint_ref = pathway.get("assessmentBlueprintRef")
+        if pathway.get("status") == "published" and not isinstance(blueprint_ref, dict):
+            errors.append(f"{where}: published pathways require an assessmentBlueprintRef")
+        if isinstance(blueprint_ref, dict):
+            blueprint_key = (blueprint_ref.get("blueprintId"), blueprint_ref.get("blueprintVersion"))
+            blueprint_record = blueprint_index.get(blueprint_key)
+            if not blueprint_record:
+                errors.append(f"{where}: references missing assessment blueprint {blueprint_key!r}")
+            else:
+                expected_pathway_ref = {
+                    "pathwayId": pathway.get("pathwayId"),
+                    "pathwayVersion": pathway.get("pathwayVersion"),
+                }
+                if blueprint_record[1].get("pathwayRef") != expected_pathway_ref:
+                    errors.append(f"{where}: pathway and assessment blueprint references are not reciprocal")
+                if blueprint_record[1].get("jobTaskAnalysisRef") != analysis_ref:
+                    errors.append(f"{where}: assessment blueprint must use the pathway's job-task analysis")
+                if pathway.get("status") == "published" and blueprint_record[1].get("status") != "published":
+                    errors.append(f"{where}: published pathways require a published assessment blueprint")
 
     for path, rubric in entities.get("rubrics", []):
         where = display_path(path)
@@ -616,6 +638,140 @@ def semantic_audit(
                         errors.append(f"{where}: evidence item path must be repository-relative and traversal-safe")
                     if item.get("startLine", 0) > item.get("endLine", 0):
                         errors.append(f"{where}: evidence line ranges must be ascending")
+
+    for path, blueprint in entities.get("assessment-blueprints", []):
+        where = display_path(path)
+        pathway_ref = blueprint.get("pathwayRef", {})
+        pathway_key = (
+            pathway_ref.get("pathwayId"),
+            pathway_ref.get("pathwayVersion"),
+        ) if isinstance(pathway_ref, dict) else (None, None)
+        pathway_record = pathway_index.get(pathway_key)
+        analysis_ref = blueprint.get("jobTaskAnalysisRef", {})
+        analysis_key = (
+            analysis_ref.get("analysisId"),
+            analysis_ref.get("analysisVersion"),
+        ) if isinstance(analysis_ref, dict) else (None, None)
+        analysis_record = analysis_index.get(analysis_key)
+        if not pathway_record:
+            errors.append(f"{where}: references missing pathway {pathway_key!r}")
+        if not analysis_record:
+            errors.append(f"{where}: references missing job-task analysis {analysis_key!r}")
+
+        pathway_skill_keys = {
+            (ref.get("skillId"), ref.get("skillVersion"))
+            for ref in (pathway_record[1].get("skillRefs", []) if pathway_record else [])
+            if isinstance(ref, dict)
+        }
+        in_scope_tasks = set(
+            analysis_record[1].get("synthesis", {}).get("inScopeTaskIds", [])
+            if analysis_record and isinstance(analysis_record[1].get("synthesis"), dict)
+            else []
+        )
+        mapping_ids: set[str] = set()
+        covered_tasks: set[str] = set()
+        covered_skills: set[tuple[Any, Any]] = set()
+        for mapping in blueprint.get("mappings", []):
+            if not isinstance(mapping, dict):
+                continue
+            mapping_id = mapping.get("mappingId")
+            if mapping_id in mapping_ids:
+                errors.append(f"{where}: duplicate mappingId {mapping_id!r}")
+            if isinstance(mapping_id, str):
+                mapping_ids.add(mapping_id)
+            task_id = mapping.get("taskId")
+            if task_id not in in_scope_tasks:
+                errors.append(f"{where}: mapping {mapping_id!r} references a task outside the JTA in-scope set")
+            elif isinstance(task_id, str):
+                covered_tasks.add(task_id)
+
+            scenario_ref = mapping.get("scenarioRef", {})
+            scenario_key = (
+                scenario_ref.get("scenarioId"),
+                scenario_ref.get("scenarioVersion"),
+            ) if isinstance(scenario_ref, dict) else (None, None)
+            scenario_record = scenario_index.get(scenario_key)
+            rubric_ref = mapping.get("rubricRef", {})
+            rubric_key = (
+                rubric_ref.get("rubricId"),
+                rubric_ref.get("rubricVersion"),
+            ) if isinstance(rubric_ref, dict) else (None, None)
+            rubric_record = rubric_index.get(rubric_key)
+            if not scenario_record:
+                errors.append(f"{where}: mapping {mapping_id!r} references missing scenario {scenario_key!r}")
+            elif scenario_record[1].get("pathwayRef") != pathway_ref:
+                errors.append(f"{where}: mapping {mapping_id!r} scenario belongs to a different pathway")
+            if not rubric_record:
+                errors.append(f"{where}: mapping {mapping_id!r} references missing rubric {rubric_key!r}")
+            elif scenario_record and scenario_record[1].get("rubricRef") != rubric_ref:
+                errors.append(f"{where}: mapping {mapping_id!r} rubric does not match the scenario")
+
+            mapped_skill_keys = {
+                (ref.get("skillId"), ref.get("skillVersion"))
+                for ref in mapping.get("skillRefs", [])
+                if isinstance(ref, dict)
+            }
+            covered_skills.update(mapped_skill_keys)
+            if not mapped_skill_keys.issubset(pathway_skill_keys):
+                errors.append(f"{where}: mapping {mapping_id!r} references skills outside the pathway")
+            if scenario_record:
+                scenario_skill_keys = {
+                    (ref.get("skillId"), ref.get("skillVersion"))
+                    for ref in scenario_record[1].get("skillRefs", [])
+                    if isinstance(ref, dict)
+                }
+                if not mapped_skill_keys.issubset(scenario_skill_keys):
+                    errors.append(f"{where}: mapping {mapping_id!r} references skills outside the scenario")
+            if rubric_record:
+                criterion_index = {
+                    criterion.get("criterionId"): {
+                        (ref.get("skillId"), ref.get("skillVersion"))
+                        for ref in criterion.get("skillRefs", [])
+                        if isinstance(ref, dict)
+                    }
+                    for criterion in rubric_record[1].get("criteria", [])
+                    if isinstance(criterion, dict)
+                }
+                criterion_ids = set(mapping.get("criterionIds", []))
+                missing_criteria = criterion_ids - set(criterion_index)
+                if missing_criteria:
+                    errors.append(f"{where}: mapping {mapping_id!r} references missing criteria {sorted(missing_criteria)!r}")
+                expected_skill_keys: set[tuple[Any, Any]] = set()
+                for criterion_id in criterion_ids:
+                    expected_skill_keys.update(criterion_index.get(criterion_id, set()))
+                if not missing_criteria and mapped_skill_keys != expected_skill_keys:
+                    errors.append(f"{where}: mapping {mapping_id!r} skill coverage drifts from its rubric criteria")
+
+        reviewer_ids: set[str] = set()
+        approving_coverage: dict[str, set[str]] = defaultdict(set)
+        for reviewer in blueprint.get("reviewers", []):
+            if not isinstance(reviewer, dict):
+                continue
+            reviewer_id = reviewer.get("reviewerId")
+            if reviewer_id in reviewer_ids:
+                errors.append(f"{where}: duplicate reviewerId {reviewer_id!r}")
+            if isinstance(reviewer_id, str):
+                reviewer_ids.add(reviewer_id)
+            reviewed = set(reviewer.get("reviewedMappingIds", []))
+            missing_mappings = reviewed - mapping_ids
+            if missing_mappings:
+                errors.append(f"{where}: reviewer {reviewer_id!r} references missing mappings {sorted(missing_mappings)!r}")
+            if reviewer.get("decision") == "approve" and isinstance(reviewer.get("perspective"), str):
+                approving_coverage[reviewer["perspective"]].update(reviewed)
+
+        if blueprint.get("status") == "published":
+            if analysis_record and analysis_record[1].get("status") != "published":
+                errors.append(f"{where}: published blueprint requires a published job-task analysis")
+            if pathway_record and pathway_record[1].get("status") != "published":
+                errors.append(f"{where}: published blueprint requires a published pathway")
+            if covered_tasks != in_scope_tasks:
+                errors.append(f"{where}: published blueprint must cover every in-scope job task")
+            if covered_skills != pathway_skill_keys:
+                errors.append(f"{where}: published blueprint must cover every pathway skill")
+            required_perspectives = {"software-engineer", "hiring-manager", "assessment-specialist"}
+            for perspective in sorted(required_perspectives):
+                if not mapping_ids.issubset(approving_coverage.get(perspective, set())):
+                    errors.append(f"{where}: published blueprint requires {perspective!r} approval of every mapping")
     return errors
 
 

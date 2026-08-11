@@ -25,6 +25,7 @@ class CodeologyScenarioAuthoringSkillTest(unittest.TestCase):
         for contract in (
             "docs/CODEOLOGY_CONTENT_SCHEMA.md",
             "job-task-analysis.schema.json",
+            "assessment-blueprint.schema.json",
             "scenario.schema.json",
             "rubric.schema.json",
             "skill.schema.json",

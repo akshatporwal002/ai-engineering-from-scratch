@@ -171,6 +171,7 @@ class CodeologyContentAuditTest(unittest.TestCase):
                     "title": "Software engineer working on services",
                     "jobTaskAnalysisRef": {"analysisId": "service-engineering", "analysisVersion": 1},
                 },
+                "assessmentBlueprintRef": {"blueprintId": "service-engineering", "blueprintVersion": 1},
                 "skillRefs": [
                     {"skillId": "service.debugging", "skillVersion": 1},
                     {"skillId": "service.automated-testing", "skillVersion": 1},
@@ -324,7 +325,62 @@ class CodeologyContentAuditTest(unittest.TestCase):
                 "source": SOURCE,
             },
         )
+        assessment_blueprint = self.write_json(
+            "assessment-blueprints",
+            "service-engineering.v1.json",
+            {
+                "schemaVersion": 1,
+                "blueprintId": "service-engineering",
+                "blueprintVersion": 1,
+                "status": "published",
+                "title": "Service engineering pilot assessment blueprint",
+                "pathwayRef": {"pathwayId": "service-engineering", "pathwayVersion": 1},
+                "jobTaskAnalysisRef": {"analysisId": "service-engineering", "analysisVersion": 1},
+                "mappings": [
+                    {
+                        "mappingId": "diagnose-regression-evidence",
+                        "taskId": "diagnose-service-regression",
+                        "scenarioRef": {"scenarioId": "service/fix-regression", "scenarioVersion": 1},
+                        "rubricRef": {"rubricId": "service/fix-regression", "rubricVersion": 1},
+                        "criterionIds": ["reproduces-failure", "protects-behavior"],
+                        "skillRefs": [
+                            {"skillId": "service.debugging", "skillVersion": 1},
+                            {"skillId": "service.automated-testing", "skillVersion": 1},
+                        ],
+                        "evidenceRole": "primary",
+                    }
+                ],
+                "reviewers": [
+                    {
+                        "reviewerId": "engineer-reviewer",
+                        "perspective": "software-engineer",
+                        "decision": "approve",
+                        "reviewedMappingIds": ["diagnose-regression-evidence"],
+                        "notes": "The mapping connects the job task to observable repository evidence.",
+                    },
+                    {
+                        "reviewerId": "hiring-reviewer",
+                        "perspective": "hiring-manager",
+                        "decision": "approve",
+                        "reviewedMappingIds": ["diagnose-regression-evidence"],
+                        "notes": "The mapped evidence is interpretable without an opaque aggregate score.",
+                    },
+                    {
+                        "reviewerId": "assessment-reviewer",
+                        "perspective": "assessment-specialist",
+                        "decision": "approve",
+                        "reviewedMappingIds": ["diagnose-regression-evidence"],
+                        "notes": "The criteria provide direct coverage without implying mastery percentages.",
+                    },
+                ],
+                "limitations": [
+                    "One scenario provides initial coverage but cannot establish durable competency by itself."
+                ],
+                "source": SOURCE,
+            },
+        )
         return {
+            "assessment_blueprint": assessment_blueprint,
             "job_task_analysis": job_task_analysis,
             "skill_one": skill_one,
             "skill_two": skill_two,
@@ -386,6 +442,43 @@ class CodeologyContentAuditTest(unittest.TestCase):
         self.rewrite_json(self.paths["job_task_analysis"], analysis)
         errors = self.audit()
         self.assertTrue(any("publicRecordContainsPersonalData" in error and "must equal False" in error for error in errors), errors)
+
+    def test_published_pathway_requires_assessment_blueprint(self) -> None:
+        pathway = self.load_json(self.paths["pathway"])
+        del pathway["assessmentBlueprintRef"]
+        self.rewrite_json(self.paths["pathway"], pathway)
+        errors = self.audit()
+        self.assertTrue(any("require an assessmentBlueprintRef" in error for error in errors), errors)
+
+    def test_blueprint_skill_coverage_must_match_rubric_criteria(self) -> None:
+        blueprint = self.load_json(self.paths["assessment_blueprint"])
+        blueprint["mappings"][0]["skillRefs"] = [{"skillId": "service.debugging", "skillVersion": 1}]
+        self.rewrite_json(self.paths["assessment_blueprint"], blueprint)
+        errors = self.audit()
+        self.assertTrue(any("skill coverage drifts from its rubric criteria" in error for error in errors), errors)
+
+    def test_blueprint_mapping_must_use_in_scope_job_task(self) -> None:
+        blueprint = self.load_json(self.paths["assessment_blueprint"])
+        blueprint["mappings"][0]["taskId"] = "invented-task"
+        self.rewrite_json(self.paths["assessment_blueprint"], blueprint)
+        errors = self.audit()
+        self.assertTrue(any("outside the JTA in-scope set" in error for error in errors), errors)
+
+    def test_published_blueprint_requires_all_reviewer_perspectives(self) -> None:
+        blueprint = self.load_json(self.paths["assessment_blueprint"])
+        blueprint["reviewers"] = [
+            reviewer for reviewer in blueprint["reviewers"] if reviewer["perspective"] != "hiring-manager"
+        ]
+        self.rewrite_json(self.paths["assessment_blueprint"], blueprint)
+        errors = self.audit()
+        self.assertTrue(any("'hiring-manager' approval" in error for error in errors), errors)
+
+    def test_blueprint_rejects_mastery_percentage_shortcut(self) -> None:
+        blueprint = self.load_json(self.paths["assessment_blueprint"])
+        blueprint["mappings"][0]["masteryPercentage"] = 80
+        self.rewrite_json(self.paths["assessment_blueprint"], blueprint)
+        errors = self.audit()
+        self.assertTrue(any("masteryPercentage" in error and "unknown property" in error for error in errors), errors)
 
     def test_scenario_and_rubric_mapping_drift_is_rejected(self) -> None:
         scenario = self.load_json(self.paths["scenario"])

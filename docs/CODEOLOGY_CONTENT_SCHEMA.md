@@ -6,11 +6,12 @@ Codeology's public learning, scenario and evidence records use strict JSON Schem
 
 The imported academy is trusted curriculum content. Codeology's pathway and assessment layer adds a different kind of claim: that a scenario measures particular engineering skills and that an artifact supports a precisely labelled evidence state. Those claims must be versioned, inspectable and reproducible independently of page copy.
 
-The v1 contracts provide six public entities:
+The v1 contracts provide seven public entities:
 
 | Entity | Stable identity | Purpose |
 |---|---|---|
 | Job-task analysis | `analysisId` + `analysisVersion` | Ground a target role and its tasks in cited evidence, limitations and multidisciplinary review. |
+| Assessment blueprint | `blueprintId` + `blueprintVersion` | Prove task-to-scenario-to-criterion-to-skill coverage and record mapping review. |
 | Skill | `skillId` + `skillVersion` | Define one observable competency and the evidence it should elicit. |
 | Pathway | `pathwayId` + `pathwayVersion` | Define a target-role route, skill references and an acyclic prerequisite graph. |
 | Scenario | `scenarioId` + `scenarioVersion` | Define an open-tool, learner-owned repository task and its public checks. |
@@ -25,6 +26,7 @@ Every reference to a versioned entity includes both its stable ID and exact posi
 content/codeology/
   schemas/v1/
     common.schema.json
+    assessment-blueprint.schema.json
     job-task-analysis.schema.json
     skill.schema.json
     pathway.schema.json
@@ -32,6 +34,7 @@ content/codeology/
     rubric.schema.json
     evidence.schema.json
   job-task-analyses/
+  assessment-blueprints/
   skills/
   pathways/
   scenarios/
@@ -52,6 +55,9 @@ Entity directories may remain absent or empty before the first pilot is approved
 - Every job task traces to declared evidence sources, and the synthesis classifies every task exactly once.
 - A published job-task analysis uses at least two evidence-source types, states limitations and participant-privacy handling, declares that the public record contains no personal data, and records engineering, hiring and assessment approval for every in-scope task.
 - A published pathway references a published job-task analysis; a draft research record cannot support a published competency claim.
+- Every blueprint mapping resolves an in-scope JTA task, exact scenario and rubric versions, existing public criteria, and the same versioned skills those criteria declare.
+- A published blueprint covers every in-scope job task and every pathway skill, and records engineering, hiring and assessment approval for every mapping.
+- A published pathway references a reciprocal published blueprint using the same JTA version. Schema strictness rejects mastery-percentage shortcuts and undeclared weighting fields.
 - A pathway and each scenario reference one another.
 - A scenario and rubric reference one another.
 - Every rubric criterion has a scenario mapping, and its mapped skills exactly match the public rubric.
@@ -89,7 +95,7 @@ These dimensions must not be collapsed into one badge. A learner-controlled chec
 
 ## Role-selection gate
 
-The schemas deliberately do not publish a placeholder pilot pathway. Before a pathway can be `published`, Codeology must conduct a versioned target-role job-task analysis, trace tasks to public or safely anonymized research references, classify scope, state limitations, and record approval from software-engineering, hiring-manager and assessment-specialist perspectives. A JTA or pathway may remain `draft`, but draft research cannot appear as validated competencies or employer evidence.
+The schemas deliberately do not publish a placeholder pilot pathway. Before a pathway can be `published`, Codeology must conduct a versioned target-role job-task analysis, trace tasks to public or safely anonymized research references, classify scope, state limitations, and record approval from software-engineering, hiring-manager and assessment-specialist perspectives. Its published assessment blueprint must then show how every in-scope task and pathway skill is elicited by exact public scenarios, rubrics and criteria. A JTA, blueprint or pathway may remain `draft`, but draft research cannot appear as validated competencies or employer evidence.
 
 Research `reference` values are provenance metadata, not fetch instructions. The static audit never requests them. Any future link checker or ingestion service must allowlist protocols and hosts, apply network limits, and treat referenced documents as untrusted. Public reviewer IDs must be non-personal pseudonyms, and public summaries must exclude names, contact details, raw interview transcripts and other participant data.
 
@@ -101,7 +107,8 @@ Research `reference` values are provenance metadata, not fetch instructions. The
 4. Author a public scenario brief and learner-owned submission limits.
 5. Author the public rubric, distinguishing hard rejects from quality criteria.
 6. Add reciprocal scenario/rubric and criterion/skill mappings.
-7. Run `npm run check:codeology-content` before generating any site data.
-8. Run the full `npm run ci` gate before committing or publishing.
+7. Build and review the assessment blueprint across all selected tasks, scenarios, criteria and skills.
+8. Run `npm run check:codeology-content` before generating any site data.
+9. Run the full `npm run ci` gate before committing or publishing.
 
 The first content compiler will consume only records that pass this audit and will emit a separate Codeology data artifact rather than modifying the imported `site/data.js` domain model.
