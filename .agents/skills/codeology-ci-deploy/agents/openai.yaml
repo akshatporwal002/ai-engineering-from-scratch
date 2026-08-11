@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codeology CI and Deploy"
+  short_description: "Run quality gates and deploy Codeology safely"
+  default_prompt: "Use $codeology-ci-deploy to validate and deploy the requested Codeology revision."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codeology UI Implementation"
+  short_description: "Build accessible pixel-editorial product UI"
+  default_prompt: "Use $codeology-implement-ui to implement this Codeology interface change."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codeology Scenario Authoring"
+  short_description: "Create evidence-backed engineering scenarios"
+  default_prompt: "Use $codeology-author-scenario to author and validate a realistic engineering scenario."

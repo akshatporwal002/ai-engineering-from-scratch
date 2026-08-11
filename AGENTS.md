@@ -2,6 +2,24 @@
 
 Operating manual for contributors and AI agents touching this repo. Read it before opening a PR.
 
+## Codeology development overlay
+
+Codeology product development happens on feature branches based on `codex/dev`; do not implement product features directly on `main`. The upstream curriculum remains a maintained source within the wider Codeology product, so preserve its contracts and attribution while adding platform capabilities through documented seams.
+
+Repository-local maintainer skills live under `.agents/skills/`. They are deliberately separate from learner-facing skills under `skills/` and `.claude/skills/`. Use the matching `codeology-*` skill whenever its description applies.
+
+Run the following from the repository root:
+
+```bash
+npm run setup:dev          # once per clone; enables the tracked pre-commit hook
+npm run check:precommit    # fast local gate
+npm run ci                 # full tests, audits and static build
+npm run deploy:preview     # explicit preview deployment
+npm run deploy:production  # explicit production deployment
+```
+
+Production deployment always requires explicit authorization. The long-running implementation objective and stage gates are defined in `docs/CODEOLOGY_AUTONOMOUS_IMPLEMENTATION_GOAL.md`.
+
 The repo is a curriculum, not a SaaS app. The lessons are the product. Every rule below keeps 435 lessons coherent over time.
 
 ---

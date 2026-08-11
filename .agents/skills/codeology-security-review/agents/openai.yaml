@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codeology Security Review"
+  short_description: "Review platform and assessment trust boundaries"
+  default_prompt: "Use $codeology-security-review to review this Codeology change for security and trust risks."

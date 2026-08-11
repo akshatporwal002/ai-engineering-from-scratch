@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codeology Upstream Sync"
+  short_description: "Review and label upstream curriculum changes"
+  default_prompt: "Use $codeology-sync-upstream to prepare a safe upstream curriculum intake report."

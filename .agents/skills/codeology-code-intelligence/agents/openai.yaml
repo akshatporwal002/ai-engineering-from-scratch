@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codeology Code Intelligence"
+  short_description: "Map dependencies and change impact safely"
+  default_prompt: "Use $codeology-code-intelligence to explore this code path and assess its change impact."

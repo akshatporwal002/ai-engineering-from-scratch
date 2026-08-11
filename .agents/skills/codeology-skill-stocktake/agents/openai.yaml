@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codeology Skill Stocktake"
+  short_description: "Audit repository skills for quality and overlap"
+  default_prompt: "Use $codeology-skill-stocktake to audit the installed Codeology skills and recommend changes."

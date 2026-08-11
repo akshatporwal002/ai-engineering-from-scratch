@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codeology Engineering Workflow"
+  short_description: "Plan and deliver safe Codeology changes"
+  default_prompt: "Use $codeology-engineering-workflow to plan and implement this Codeology change safely."

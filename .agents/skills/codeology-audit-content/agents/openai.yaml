@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codeology Content Audit"
+  short_description: "Validate content, provenance and publishing gates"
+  default_prompt: "Use $codeology-audit-content to validate this content change before publishing."
