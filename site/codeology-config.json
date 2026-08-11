@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "product": {
+    "name": "Codeology",
+    "shortName": "CODEOLOGY",
+    "tagline": "Learn freely. Build for real. Prove what you can do.",
+    "repositoryUrl": "https://github.com/akshatporwal002/ai-engineering-from-scratch"
+  },
+  "academySource": {
+    "sourceId": "ai-engineering-from-scratch",
+    "name": "AI Engineering from Scratch",
+    "author": "Rohit Ghumare and contributors",
+    "url": "https://github.com/rohitg00/ai-engineering-from-scratch",
+    "license": "MIT",
+    "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f"
+  }
+}

@@ -1,0 +1,140 @@
+:root {
+  --codeology-canvas: #ffffff;
+  --codeology-ink: #111111;
+  --codeology-accent: #ff5a1f;
+  --codeology-accent-hover: #d9470c;
+  --codeology-surface: rgba(17, 17, 17, 0.045);
+  --codeology-surface-strong: rgba(17, 17, 17, 0.08);
+  --codeology-glass: rgba(255, 255, 255, 0.86);
+  --codeology-radius-sm: 10px;
+  --codeology-radius-md: 16px;
+  --codeology-radius-lg: 24px;
+  --codeology-radius-pill: 999px;
+  --codeology-shadow-soft: 0 14px 40px rgba(17, 17, 17, 0.08);
+
+  --bg: var(--codeology-canvas);
+  --bg-surface: var(--codeology-surface);
+  --bg-surface-hover: var(--codeology-surface-strong);
+  --ink: var(--codeology-ink);
+  --ink-soft: #3f3f3f;
+  --ink-mute: #707070;
+  --rule: var(--codeology-ink);
+  --rule-soft: rgba(17, 17, 17, 0.16);
+  --paper-rule: transparent;
+  --blueprint: var(--codeology-accent);
+  --blueprint-tint: rgba(255, 90, 31, 0.08);
+  --blueprint-tint-strong: rgba(255, 90, 31, 0.18);
+  --status-complete: var(--codeology-accent);
+  --code-bg: rgba(17, 17, 17, 0.055);
+  --modal-bg: var(--codeology-canvas);
+  --header-bg: var(--codeology-glass);
+  --accent-hover: var(--codeology-accent-hover);
+  --shadow-hard: var(--codeology-shadow-soft);
+  --shadow-hard-lg: var(--codeology-shadow-soft);
+  --header-offset: 122px;
+}
+
+[data-theme="dark"] {
+  --codeology-canvas: #000000;
+  --codeology-ink: #f7f7f5;
+  --codeology-accent: #ff6b2c;
+  --codeology-accent-hover: #ff8a59;
+  --codeology-surface: rgba(255, 255, 255, 0.075);
+  --codeology-surface-strong: rgba(255, 255, 255, 0.12);
+  --codeology-glass: rgba(0, 0, 0, 0.86);
+  --codeology-shadow-soft: 0 16px 48px rgba(0, 0, 0, 0.42);
+
+  --ink-soft: #c8c8c4;
+  --ink-mute: #92928e;
+  --rule-soft: rgba(247, 247, 245, 0.2);
+  --blueprint-tint: rgba(255, 107, 44, 0.12);
+  --blueprint-tint-strong: rgba(255, 107, 44, 0.22);
+  --code-bg: rgba(255, 255, 255, 0.08);
+}
+
+body {
+  background-color: var(--codeology-canvas);
+  background-image: none;
+}
+
+.site-header {
+  background: var(--codeology-glass);
+}
+
+.codeology-wordmark {
+  font-family: var(--font-display);
+  color: var(--ink);
+  letter-spacing: 0.08em;
+}
+
+.codeology-source-strip {
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 5px 24px;
+  border-top: 1px solid var(--rule-soft);
+  background: var(--codeology-surface);
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.055em;
+  line-height: 1.35;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.codeology-source-strip strong {
+  color: var(--ink);
+}
+
+.codeology-source-strip a {
+  color: var(--blueprint);
+  border-bottom-color: transparent;
+}
+
+.codeology-source-strip a:hover,
+.codeology-source-strip a:focus-visible {
+  border-bottom-color: currentColor;
+}
+
+.codeology-source-strip__badge {
+  padding: 2px 7px;
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--codeology-radius-pill);
+  background: var(--codeology-glass);
+  color: var(--ink);
+}
+
+.header-menu-toggle,
+.search-toggle,
+.theme-toggle,
+.lang-picker-btn,
+.masthead-btn,
+.copy-chip {
+  border-radius: var(--codeology-radius-pill);
+}
+
+@media (max-width: 700px) {
+  :root {
+    --header-offset: 128px;
+  }
+
+  .codeology-source-strip {
+    min-height: 36px;
+    padding-inline: 14px;
+    font-size: 0.61rem;
+  }
+
+  .codeology-source-strip__baseline {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root,
+  [data-theme="dark"] {
+    --codeology-glass: var(--codeology-canvas);
+  }
+}

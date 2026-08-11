@@ -10,7 +10,17 @@
   var CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
   var COMPACT_HEADER_QUERY = '(max-width: 1100px)';
   var NARRATION_VERSION = '20260809a';
+  var CODEOLOGY_SHELL_VERSION = '20260812a';
   var navId = 0;
+
+  function ensureCodeologyShell() {
+    if (window.CODEOLOGY_CONFIG || document.querySelector('script[data-codeology-shell]')) return;
+    var script = document.createElement('script');
+    script.src = 'codeology-shell.js?v=' + CODEOLOGY_SHELL_VERSION;
+    script.async = true;
+    script.setAttribute('data-codeology-shell', CODEOLOGY_SHELL_VERSION);
+    document.head.appendChild(script);
+  }
 
   function format(n) {
     if (n >= 10000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
@@ -248,6 +258,7 @@
   }
 
   function load() {
+    ensureCodeologyShell();
     var headers = document.querySelectorAll('.site-header');
     for (var i = 0; i < headers.length; i++) setupNavigation(headers[i]);
     loadStars();

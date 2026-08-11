@@ -8,6 +8,7 @@
 
 - **Stage 0 — complete:** repository-local maintainer skills, cross-platform commands, pre-commit checks, GitHub quality CI and manual Vercel deployment are committed on `codex/dev`.
 - **Stage 1 — implemented locally, remote exercise pending:** the imported baseline, source registry, third-party notice, Codeology/override content contracts, deterministic provenance gate and review-only upstream intake workflow are implemented and locally validated. The workflow's first branch/PR run awaits an explicitly authorized push of `codex/dev` and GitHub Actions execution.
+- **Stage 2 — in progress:** the first end-to-end shell slice centralizes Codeology product/source configuration and design tokens, rebrands the shared header, adds persistent upstream attribution, and enforces pure white/black canvases with rounded/translucent controls. Deterministic validators and tests cover source drift and loader integration; desktop, mobile and dark-mode browser checks pass without horizontal overflow. Page-level product copy, components and formal visual baselines remain next.
 
 ## Objective
 

@@ -87,13 +87,15 @@ class ParseChangesTest(unittest.TestCase):
 
 
 class AdvanceBaselineTest(unittest.TestCase):
-    def test_advances_registry_notice_and_sidecars_together(self) -> None:
+    def test_advances_registry_notice_sidecars_and_shell_together(self) -> None:
         old = "a" * 40
         new = "b" * 40
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             registry = root / "content-sources.yml"
             notice = root / "THIRD_PARTY_NOTICES.md"
+            shell_config = root / "site" / "codeology-config.json"
+            shell_config.parent.mkdir()
             overrides = root / "content" / "overrides"
             source_dir = overrides / "example"
             source_dir.mkdir(parents=True)
@@ -118,10 +120,23 @@ class AdvanceBaselineTest(unittest.TestCase):
                 json.dumps({"sourceId": "example", "baselineCommit": old}),
                 encoding="utf-8",
             )
+            shell_config.write_text(
+                json.dumps(
+                    {
+                        "schemaVersion": 1,
+                        "academySource": {
+                            "sourceId": "example",
+                            "baselineCommit": old,
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
             with (
                 mock.patch.object(advance, "REGISTRY", registry),
                 mock.patch.object(advance, "NOTICE", notice),
                 mock.patch.object(advance, "OVERRIDES", overrides),
+                mock.patch.object(advance, "SHELL_CONFIG", shell_config),
                 mock.patch.object(advance, "commit_sha", return_value=new),
                 mock.patch.object(advance, "is_ancestor", return_value=True),
             ):
@@ -133,6 +148,12 @@ class AdvanceBaselineTest(unittest.TestCase):
             self.assertIn(new, notice.read_text(encoding="utf-8"))
             self.assertEqual(
                 json.loads(sidecar.read_text(encoding="utf-8"))["baselineCommit"],
+                new,
+            )
+            self.assertEqual(
+                json.loads(shell_config.read_text(encoding="utf-8"))["academySource"][
+                    "baselineCommit"
+                ],
                 new,
             )
 

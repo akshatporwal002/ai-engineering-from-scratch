@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parent.parent
 REGISTRY = ROOT / "content-sources.yml"
 NOTICE = ROOT / "THIRD_PARTY_NOTICES.md"
 OVERRIDES = ROOT / "content" / "overrides"
+SHELL_CONFIG = ROOT / "site" / "codeology-config.json"
 COMMIT_RE = re.compile(r"^[0-9a-f]{40}$")
 
 
@@ -83,6 +84,17 @@ def advance(source_id: str, new_ref: str) -> tuple[str, str]:
         sidecar["baselineCommit"] = new
         sidecar_updates.append((sidecar_path, sidecar))
 
+    shell_config: dict[str, object] | None = None
+    if SHELL_CONFIG.exists():
+        shell_config = json.loads(SHELL_CONFIG.read_text(encoding="utf-8"))
+        academy_source = shell_config.get("academySource")
+        if isinstance(academy_source, dict) and academy_source.get("sourceId") == source_id:
+            if academy_source.get("baselineCommit") != old:
+                raise ValueError("public shell source baseline drift")
+            academy_source["baselineCommit"] = new
+        else:
+            shell_config = None
+
     # Validate every participant before replacing any file. Each replacement is
     # atomic, and the surrounding Git merge remains the rollback boundary.
     source["baselineCommit"] = new
@@ -90,6 +102,8 @@ def advance(source_id: str, new_ref: str) -> tuple[str, str]:
     write_atomic(NOTICE, notice.replace(old, new))
     for sidecar_path, sidecar in sidecar_updates:
         write_atomic(sidecar_path, json.dumps(sidecar, indent=2) + "\n")
+    if shell_config is not None:
+        write_atomic(SHELL_CONFIG, json.dumps(shell_config, indent=2) + "\n")
     return old, new
 
 
