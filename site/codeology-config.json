@@ -4,7 +4,14 @@
     "name": "Codeology",
     "shortName": "CODEOLOGY",
     "tagline": "Learn freely. Build for real. Prove what you can do.",
-    "repositoryUrl": "https://github.com/akshatporwal002/ai-engineering-from-scratch"
+    "repositoryUrl": "https://github.com/akshatporwal002/ai-engineering-from-scratch",
+    "navigation": [
+      { "label": "Academy", "href": "index.html" },
+      { "label": "Catalog", "href": "catalog.html" },
+      { "label": "Skill map", "href": "prereqs.html" },
+      { "label": "Glossary", "href": "glossary.html" },
+      { "label": "About", "href": "about.html" }
+    ]
   },
   "academySource": {
     "sourceId": "ai-engineering-from-scratch",

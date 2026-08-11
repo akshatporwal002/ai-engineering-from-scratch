@@ -20,3 +20,11 @@ Codeology preserves the imported academy's editorial and pixel character while p
 - Respect reduced motion and reduced transparency preferences.
 
 This foundation intentionally changes only the shared shell. Lesson rendering and imported masthead content remain intact until their dedicated visual-regression slice.
+
+## Homepage product contract
+
+The homepage leads with Codeology's three-part promise: learn freely, build in the learner's own environment, and connect claims to inspectable evidence. The imported AI Engineering from Scratch curriculum appears as a featured free pathway and retains its project, author, licence and baseline attribution.
+
+The shared navigation exposes only working routes. Scenario, submission and profile destinations enter navigation only when their corresponding product slices exist. Unsupported inherited social-proof and creator-marketing claims stay out of the visible Codeology surface.
+
+Reference captures live under `docs/visual-baselines/`. They are review artifacts rather than brittle pixel-perfect test fixtures; deterministic checks validate their expected viewport dimensions while browser review covers layout, responsive behavior, theme, navigation and focus visibility.

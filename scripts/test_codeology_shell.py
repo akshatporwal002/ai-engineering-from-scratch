@@ -37,6 +37,34 @@ class CodeologyShellTest(unittest.TestCase):
         )
         self.assertTrue(any("drifts from registry" in error for error in errors), errors)
 
+    def test_low_contrast_semantic_accent_is_rejected(self) -> None:
+        config = json.loads(validator.CONFIG.read_text(encoding="utf-8"))
+        registry = json.loads(validator.SOURCES.read_text(encoding="utf-8"))
+        css = validator.CSS.read_text(encoding="utf-8").replace(
+            "--codeology-accent: #c43b00", "--codeology-accent: #ff5a1f", 1
+        )
+        errors = validator.audit(
+            config,
+            css,
+            validator.SHELL.read_text(encoding="utf-8"),
+            validator.HEADER.read_text(encoding="utf-8"),
+            registry,
+        )
+        self.assertTrue(any("accent/canvas contrast" in error for error in errors), errors)
+
+    def test_script_navigation_destination_is_rejected(self) -> None:
+        config = json.loads(validator.CONFIG.read_text(encoding="utf-8"))
+        registry = json.loads(validator.SOURCES.read_text(encoding="utf-8"))
+        config["product"]["navigation"][0]["href"] = "javascript:alert(1)"
+        errors = validator.audit(
+            config,
+            validator.CSS.read_text(encoding="utf-8"),
+            validator.SHELL.read_text(encoding="utf-8"),
+            validator.HEADER.read_text(encoding="utf-8"),
+            registry,
+        )
+        self.assertTrue(any("local public route" in error for error in errors), errors)
+
 
 if __name__ == "__main__":
     unittest.main()

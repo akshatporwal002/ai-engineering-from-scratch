@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "ai-engineering-from-scratch",
+  "canonicalPath": "site/index.html",
+  "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f",
+  "adapted": true,
+  "adaptationSummary": "Reframes the imported academy homepage as the Codeology product entry point, removes unsupported social-proof marketing from the visible surface, and preserves the source curriculum as an explicitly credited free pathway."
+}
