@@ -52,3 +52,9 @@ Inputs and the scrollable table shell use shared rounded geometry and surface el
 The imported 20-phase prerequisite graph is the visual foundation for Codeology's future evidence-backed skill graph. During the academy stage it represents only free curriculum navigation and browser-local lesson activity. The interface must explicitly say that this state is not assessed, demonstrated or verified skill evidence.
 
 Local lesson progress may increase node glow, but status text, lesson counts and stroke patterns must communicate the same state without colour, animation or visual effects. The 20-phase DAG, route highlighting, inspector, URL state, keyboard navigation, panning, zoom and source links remain imported behavior. Rounded graph nodes and softly elevated containers adapt that behavior to Codeology without changing the curriculum graph.
+
+## About-page contract
+
+The About route explains Codeology's learn/build/prove proposition, open-tool policy and evidence boundary. It must not repeat inherited upstream creator, hosting, commercial or endorsement claims as though they describe Codeology.
+
+The imported academy receives a prominent source card naming AI Engineering from Scratch, its author and contributors, MIT licence, original repository, pinned source commit and non-endorsement relationship. Product principles use editorial hierarchy, rounded bounded panels and accessible pill actions on the shared pure white/black canvas.

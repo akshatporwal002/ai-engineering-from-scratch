@@ -3,74 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About - AI Engineering from Scratch</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23fafaf5'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%233553ff' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%233553ff'>AI</text></svg>">
-  <meta name="description" content="What AI Engineering from Scratch is, why it exists, who builds it, and how the site is made. A free, open-source, MIT-licensed curriculum.">
-  <link rel="canonical" href="https://aiengineeringfromscratch.com/about.html">
-  <meta property="og:title" content="About · AI Engineering from Scratch">
-  <meta property="og:description" content="Why this curriculum exists, who builds it, and how the site is made. Free, open source, MIT.">
-  <meta property="og:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
-  <meta property="og:url" content="https://aiengineeringfromscratch.com/about.html">
+  <title>About Codeology</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23000000'/><rect x='7' y='7' width='18' height='18' rx='4' fill='%23ff5a1f'/></svg>">
+  <meta name="description" content="Codeology is a free, open-tool engineering academy that connects excellent learning content to realistic work and inspectable evidence.">
+  <link rel="canonical" href="about.html">
+  <meta property="og:title" content="About Codeology">
+  <meta property="og:description" content="Learn freely, build in your own environment, and turn engineering work into honest evidence.">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="About · AI Engineering from Scratch">
-  <meta name="twitter:description" content="Why this curriculum exists, who builds it, and how the site is made.">
-  <meta name="twitter:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
+  <meta name="twitter:title" content="About Codeology">
+  <meta name="twitter:description" content="Learn freely, build in your own environment, and turn engineering work into honest evidence.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20260809a">
-  <style>
-    .about {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 100px 0 80px;
-    }
-    .about-eyebrow {
-      font-family: var(--font-mono);
-      font-size: 0.74rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--blueprint);
-      margin-bottom: 12px;
-    }
-    .about h1 {
-      font-family: var(--font-display);
-      font-size: clamp(2.4rem, 6vw, 3.6rem);
-      line-height: 1;
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
-      color: var(--blueprint);
-      margin: 0 0 28px;
-    }
-    .about h2 {
-      font-family: var(--font-mono);
-      font-size: 0.95rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--blueprint);
-      margin: 40px 0 12px;
-    }
-    .about p {
-      font-family: var(--font-body);
-      font-size: 1.05rem;
-      line-height: 1.7;
-      color: var(--ink);
-      margin: 0 0 16px;
-    }
-    .about a { color: var(--blueprint); }
-    .about ul { font-family: var(--font-body); font-size: 1.05rem; line-height: 1.7; color: var(--ink); padding-left: 1.1em; }
-    .about li { margin-bottom: 6px; }
-    .about code {
-      font-family: var(--font-mono);
-      font-size: 0.9em;
-      background: var(--bg-surface);
-      padding: 1px 5px;
-      border: 1px solid var(--rule-soft);
-    }
-    .about .lede { font-size: 1.15rem; color: var(--ink); }
-    @media (max-width: 768px) { .about { padding: 80px 0 48px; } }
-  </style>
+  <link rel="stylesheet" href="codeology.css?v=20260812g" data-codeology-style="20260812g">
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
@@ -106,42 +53,65 @@
     </div>
   </header>
 
-  <main class="container" id="main">
-    <article class="about">
-      <div class="about-eyebrow">About</div>
-      <h1>About this project</h1>
+  <main class="about-page" id="main">
+    <article class="about-codeology">
+      <header class="about-hero">
+        <span class="about-eyebrow">About Codeology</span>
+        <h1>Learn the foundations.<br>Prove the work.</h1>
+        <p class="about-lede">Codeology is a free, open-tool engineering academy. Learn from excellent curricula, build realistic projects in your own environment, and turn immutable work into evidence another person can inspect.</p>
+        <div class="about-actions">
+          <a class="about-action about-action-primary" href="catalog.html">Browse the free academy</a>
+          <a class="about-action" href="prereqs.html">Explore the learning map</a>
+        </div>
+      </header>
 
-      <p class="lede">AI Engineering from Scratch is a free, open-source curriculum that builds every core AI algorithm by hand. 503 lessons across 20 phases, from linear algebra to autonomous agents, in Python, TypeScript, Rust, and Julia.</p>
+      <section class="about-principles" aria-label="How Codeology works">
+        <article class="about-principle"><span>01</span><h2>Learn freely</h2><p>The imported academy, lessons, glossary, quizzes and learning map remain available without an account.</p></article>
+        <article class="about-principle"><span>02</span><h2>Build anywhere</h2><p>Use your own editor, compute, documentation and AI companions. Codeology evaluates the resulting engineering work—not whether you avoided modern tools.</p></article>
+        <article class="about-principle"><span>03</span><h2>Evidence before badges</h2><p>Local lesson completion is learning activity. Stronger claims require an immutable artifact, explicit checks, criteria and an honest assurance label.</p></article>
+      </section>
 
-      <h2>Why it exists</h2>
-      <p>Most AI material teaches in scattered pieces. A paper here, a fine-tuning post there, a framework demo somewhere else. You can ship a chatbot without being able to explain its loss curve, or wire a tool to an agent without knowing what attention does inside the model calling it.</p>
-      <p>This curriculum is the spine. Every algorithm gets written from raw math first, then run through the production library so you can see what the library was doing. By the time PyTorch shows up, you already know what it computes. Each lesson ends with a reusable artifact you keep: a prompt, a skill, an agent, or an MCP server.</p>
+      <section class="about-section" id="academy-source" aria-labelledby="academySourceTitle">
+        <span class="about-eyebrow">Imported academy</span>
+        <h2 id="academySourceTitle">Built on an excellent open curriculum</h2>
+        <p>AI Engineering Foundations currently includes 503 lessons across 20 phases, from mathematical foundations to production systems. The curriculum teaches core ideas from first principles and ships reusable artifacts alongside the lessons.</p>
+        <aside class="about-source-card" aria-label="AI Engineering Foundations source">
+          <div><strong>AI Engineering from Scratch</strong><span>Rohit Ghumare and contributors · MIT licence</span></div>
+          <div class="about-source-links">
+            <a href="https://github.com/rohitg00/ai-engineering-from-scratch" target="_blank" rel="noopener">Original repository</a>
+            <a href="https://github.com/rohitg00/ai-engineering-from-scratch/tree/7c3323508a5186739feecd76838ba1ae962c736f" target="_blank" rel="noopener">Pinned source</a>
+          </div>
+        </aside>
+        <p class="about-source-note">Codeology adapts the interface and adds its own future scenario and evidence layers. The original project does not sponsor or endorse Codeology.</p>
+      </section>
 
-      <h2>How it is made</h2>
-      <p>The lessons are authored with AI assistance and reviewed by a human against primary sources. Where a lesson states a fact, it cites the original: an RFC, a spec, or a research paper, not a secondary summary. Corrections are welcome and tracked in the open on GitHub.</p>
-      <p>The site itself is deliberately plain: hand-written HTML, CSS, and vanilla JavaScript, no framework. A single build script (<code>site/build.js</code>) reads the lesson Markdown in the repository and generates the catalog, search index, sitemap, and <code>llms.txt</code> on every deploy, so the published numbers can never drift from the source. It is hosted on Vercel.</p>
+      <section class="about-section" aria-labelledby="evidenceTitle">
+        <span class="about-eyebrow">Honest evidence</span>
+        <h2 id="evidenceTitle">Progress and proof are different things</h2>
+        <p>Reading lessons and completing quizzes can guide learning, but browser-local activity is not an employment credential. Codeology will reserve demonstrated and verified claims for versioned assessments that link directly to inspectable evidence and clearly state what Codeology did—and did not—check.</p>
+      </section>
 
-      <h2>Who builds it</h2>
-      <p>Maintained by <a href="https://github.com/rohitg00" target="_blank" rel="noopener">Rohit Ghumare</a> and contributors. It is MIT-licensed and free forever. There is no token, no course upsell, and no gated content.</p>
-
-      <h2>Get involved</h2>
-      <ul>
-        <li>Read the source: <a href="https://github.com/rohitg00/ai-engineering-from-scratch" target="_blank" rel="noopener">github.com/rohitg00/ai-engineering-from-scratch</a></li>
-        <li>Found an error or have a lesson idea? <a href="https://github.com/rohitg00/ai-engineering-from-scratch/issues/new/choose" target="_blank" rel="noopener">Open an issue</a>.</li>
-        <li>Start learning: <a href="catalog.html">browse the catalog</a> or <a href="prereqs.html">follow the roadmap</a>.</li>
-      </ul>
+      <section class="about-section about-contribute" aria-labelledby="contributeTitle">
+        <span class="about-eyebrow">Open development</span>
+        <h2 id="contributeTitle">Help shape Codeology</h2>
+        <p>The platform is being developed in the open. Review the implementation, report a problem, or suggest a better learning or assessment experience.</p>
+        <div class="about-actions">
+          <a class="about-action about-action-primary" href="https://github.com/akshatporwal002/ai-engineering-from-scratch" target="_blank" rel="noopener">View Codeology on GitHub</a>
+          <a class="about-action" href="https://github.com/akshatporwal002/ai-engineering-from-scratch/issues/new/choose" target="_blank" rel="noopener">Report or suggest</a>
+        </div>
+      </section>
     </article>
   </main>
 
   <footer class="site-footer">
     <div class="container footer-inner">
-      <p>© 2026 · open source · free forever</p>
+      <p>Codeology · Learn freely. Build for real. Prove what you can do.</p>
       <div class="footer-links">
-        <a href="https://github.com/rohitg00/ai-engineering-from-scratch" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/akshatporwal002/ai-engineering-from-scratch" target="_blank" rel="noopener">GitHub</a>
         <a href="about.html">About</a>
         <a href="catalog.html">Catalog</a>
         <a href="glossary.html">Glossary</a>
-        <a href="https://github.com/rohitg00/ai-engineering-from-scratch/issues/new/choose" target="_blank" rel="noopener">Report</a>
+        <a href="https://github.com/akshatporwal002/ai-engineering-from-scratch/issues/new/choose" target="_blank" rel="noopener">Report</a>
       </div>
     </div>
   </footer>
@@ -150,21 +120,27 @@
   {
     "@context": "https://schema.org",
     "@type": "AboutPage",
-    "url": "https://aiengineeringfromscratch.com/about.html",
-    "name": "About AI Engineering from Scratch",
+    "url": "about.html",
+    "name": "About Codeology",
     "mainEntity": {
       "@type": "Organization",
+      "name": "Codeology",
+      "url": "https://github.com/akshatporwal002/ai-engineering-from-scratch",
+      "sameAs": ["https://github.com/akshatporwal002/ai-engineering-from-scratch"]
+    },
+    "isBasedOn": {
+      "@type": "CreativeWork",
       "name": "AI Engineering from Scratch",
-      "url": "https://aiengineeringfromscratch.com",
-      "sameAs": ["https://github.com/rohitg00/ai-engineering-from-scratch", "https://github.com/rohitg00"],
-      "founder": { "@type": "Person", "name": "Rohit Ghumare", "url": "https://github.com/rohitg00" }
+      "url": "https://github.com/rohitg00/ai-engineering-from-scratch",
+      "license": "https://opensource.org/license/mit"
     }
   }
   </script>
   <script>
     (function () {
       var root = document.documentElement;
-      var stored = localStorage.getItem('theme');
+      var stored = null;
+      try { stored = localStorage.getItem('theme'); } catch (_) {}
       if (stored) {
         root.setAttribute('data-theme', stored);
       } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
@@ -189,7 +165,7 @@
           btn.addEventListener('click', function () {
             var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
             root.setAttribute('data-theme', next);
-            localStorage.setItem('theme', next);
+            try { localStorage.setItem('theme', next); } catch (_) {}
             updateIcon();
           });
         }
@@ -197,9 +173,7 @@
     })();
   </script>
   <script src="data.js?v=20260808g"></script>
-  <script src="progress.js?v=20260525a"></script>
   <script src="header.js?v=20260808h" defer></script>
   <script src="cmdpalette.js?v=20260808h" defer></script>
-  <script defer src="https://va.vercel-scripts.com/v1/script.js"></script>
 </body>
 </html>

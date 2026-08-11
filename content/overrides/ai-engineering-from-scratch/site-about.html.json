@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "ai-engineering-from-scratch",
+  "canonicalPath": "site/about.html",
+  "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f",
+  "adapted": true,
+  "adaptationSummary": "Replaces inherited upstream product and hosting claims with Codeology's open-tool learning and evidence proposition while retaining prominent, pinned attribution to the imported AI Engineering from Scratch curriculum and its MIT licence."
+}
