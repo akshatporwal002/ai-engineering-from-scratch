@@ -82,6 +82,7 @@
         "scripts/test_codeology_about.py",
         "scripts/test_codeology_assessment_charter.py",
         "scripts/test_audit_codeology_content.py",
+        "scripts/test_codeology_author_scenario_skill.py",
         "scripts/test_validate_content_sources.py",
         "scripts/test_upstream_intake.py",
         "scripts/validate_content_sources.py",
