@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codeology.dev/schemas/v1/evidence.schema.json",
+  "title": "Codeology immutable assessment evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "evidenceId", "evidenceVersion", "state", "artifactAssurance", "identityAssurance", "administrationMode", "submission", "checkResults", "criterionResults", "skillEvidence", "policyRef", "source"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "evidenceId": {"$ref": "common.schema.json#/$defs/stableId"},
+    "evidenceVersion": {"$ref": "common.schema.json#/$defs/version"},
+    "state": {"type": "string", "enum": ["learned", "practised", "demonstrated", "verified"]},
+    "artifactAssurance": {"type": "string", "enum": ["learner-reported", "repository-observed", "commit-bound-reviewed", "independently-executed", "controlled-follow-up"]},
+    "identityAssurance": {"type": "string", "enum": ["unverified", "account-linked", "identity-checked"]},
+    "administrationMode": {"type": "string", "enum": ["self-directed", "controlled", "supervised"]},
+    "submission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repositoryId", "commitSha", "treeSha", "subdirectory", "scenarioRef", "rubricRef"],
+      "properties": {
+        "repositoryId": {"type": "integer", "minimum": 1},
+        "commitSha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "treeSha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "subdirectory": {"type": "string", "minLength": 1},
+        "scenarioRef": {"$ref": "common.schema.json#/$defs/scenarioRef"},
+        "rubricRef": {"$ref": "common.schema.json#/$defs/rubricRef"}
+      }
+    },
+    "checkResults": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["checkId", "outcome", "controller", "observation"],
+        "properties": {
+          "checkId": {"$ref": "common.schema.json#/$defs/stableId"},
+          "outcome": {"type": "string", "enum": ["pass", "fail", "not-run"]},
+          "controller": {"type": "string", "enum": ["learner", "codeology"]},
+          "observation": {"type": "string", "minLength": 3}
+        }
+      }
+    },
+    "criterionResults": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["criterionId", "decision", "level", "evidenceItems"],
+        "properties": {
+          "criterionId": {"$ref": "common.schema.json#/$defs/stableId"},
+          "decision": {"type": "string", "enum": ["pass", "fail", "insufficient-evidence"]},
+          "level": {"type": "string", "enum": ["insufficient", "developing", "competent", "strong"]},
+          "evidenceItems": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["path", "blobSha", "startLine", "endLine", "observation"],
+              "properties": {
+                "path": {"type": "string", "minLength": 1},
+                "blobSha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+                "startLine": {"type": "integer", "minimum": 1},
+                "endLine": {"type": "integer", "minimum": 1},
+                "observation": {"type": "string", "minLength": 8}
+              }
+            }
+          }
+        }
+      }
+    },
+    "skillEvidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["skillRef", "criterionIds"],
+        "properties": {
+          "skillRef": {"$ref": "common.schema.json#/$defs/skillRef"},
+          "criterionIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"$ref": "common.schema.json#/$defs/stableId"}
+          }
+        }
+      }
+    },
+    "policyRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policyId", "policyVersion"],
+      "properties": {
+        "policyId": {"const": "codeology.assessment-charter"},
+        "policyVersion": {"const": 1}
+      }
+    },
+    "source": {"$ref": "common.schema.json#/$defs/source"}
+  }
+}

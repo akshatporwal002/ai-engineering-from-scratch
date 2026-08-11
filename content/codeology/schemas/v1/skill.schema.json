@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codeology.dev/schemas/v1/skill.schema.json",
+  "title": "Codeology skill",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "skillId", "skillVersion", "title", "definition", "category", "status", "evidenceExpectations", "source"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "skillId": {"$ref": "common.schema.json#/$defs/stableId"},
+    "skillVersion": {"$ref": "common.schema.json#/$defs/version"},
+    "title": {"type": "string", "minLength": 3},
+    "definition": {"type": "string", "minLength": 20},
+    "category": {"$ref": "common.schema.json#/$defs/stableId"},
+    "status": {"$ref": "common.schema.json#/$defs/status"},
+    "evidenceExpectations": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 10}
+    },
+    "source": {"$ref": "common.schema.json#/$defs/source"}
+  }
+}

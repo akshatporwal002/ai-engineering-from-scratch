@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codeology.dev/schemas/v1/scenario.schema.json",
+  "title": "Codeology repository-based scenario",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "scenarioId", "scenarioVersion", "pathwayRef", "title", "summary", "difficulty", "status", "skillRefs", "rubricRef", "criterionMappings", "publicBrief", "submission", "publicChecks", "assuranceCeiling", "source"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "scenarioId": {"$ref": "common.schema.json#/$defs/stableId"},
+    "scenarioVersion": {"$ref": "common.schema.json#/$defs/version"},
+    "pathwayRef": {"$ref": "common.schema.json#/$defs/pathwayRef"},
+    "title": {"type": "string", "minLength": 3},
+    "summary": {"type": "string", "minLength": 20},
+    "difficulty": {"type": "string", "enum": ["guided", "intermediate", "portfolio"]},
+    "status": {"$ref": "common.schema.json#/$defs/status"},
+    "skillRefs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "common.schema.json#/$defs/skillRef"}
+    },
+    "rubricRef": {"$ref": "common.schema.json#/$defs/rubricRef"},
+    "criterionMappings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["criterionId", "skillId", "evidenceRole"],
+        "properties": {
+          "criterionId": {"$ref": "common.schema.json#/$defs/stableId"},
+          "skillId": {"$ref": "common.schema.json#/$defs/stableId"},
+          "evidenceRole": {"type": "string", "enum": ["primary", "supporting"]}
+        }
+      }
+    },
+    "publicBrief": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["briefPath", "toolsPolicy", "estimatedMinutes", "minimumHardware", "publicRepositoryAccommodation"],
+      "properties": {
+        "briefPath": {"type": "string", "pattern": "^[a-zA-Z0-9_./-]+\\.md$"},
+        "toolsPolicy": {"const": "open-tool"},
+        "estimatedMinutes": {"type": "integer", "minimum": 15},
+        "minimumHardware": {"type": "string", "minLength": 10},
+        "publicRepositoryAccommodation": {"type": "string", "minLength": 15}
+      }
+    },
+    "submission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "publicRepositoryRequired", "allowedLanguages", "requiredFiles", "maxRepositoryBytes"],
+      "properties": {
+        "mode": {"const": "learner-owned"},
+        "publicRepositoryRequired": {"type": "boolean"},
+        "allowedLanguages": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "common.schema.json#/$defs/stableId"}
+        },
+        "requiredFiles": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "maxRepositoryBytes": {"type": "integer", "minimum": 1}
+      }
+    },
+    "publicChecks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["checkId", "kind", "description"],
+        "properties": {
+          "checkId": {"$ref": "common.schema.json#/$defs/stableId"},
+          "kind": {"type": "string", "enum": ["structure", "learner-test", "lint", "typecheck", "manual-review"]},
+          "description": {"type": "string", "minLength": 10}
+        }
+      }
+    },
+    "assuranceCeiling": {
+      "type": "string",
+      "enum": ["learner-reported", "repository-observed", "commit-bound-reviewed", "independently-executed", "controlled-follow-up"]
+    },
+    "source": {"$ref": "common.schema.json#/$defs/source"}
+  }
+}

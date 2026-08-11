@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codeology.dev/schemas/v1/common.schema.json",
+  "title": "Codeology common content definitions",
+  "$defs": {
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[./-][a-z0-9]+)*$"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "published", "retired"]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "license"],
+      "properties": {
+        "type": {"const": "codeology"},
+        "license": {"const": "MIT"}
+      }
+    },
+    "skillRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["skillId", "skillVersion"],
+      "properties": {
+        "skillId": {"$ref": "#/$defs/stableId"},
+        "skillVersion": {"$ref": "#/$defs/version"}
+      }
+    },
+    "pathwayRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pathwayId", "pathwayVersion"],
+      "properties": {
+        "pathwayId": {"$ref": "#/$defs/stableId"},
+        "pathwayVersion": {"$ref": "#/$defs/version"}
+      }
+    },
+    "scenarioRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scenarioId", "scenarioVersion"],
+      "properties": {
+        "scenarioId": {"$ref": "#/$defs/stableId"},
+        "scenarioVersion": {"$ref": "#/$defs/version"}
+      }
+    },
+    "rubricRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rubricId", "rubricVersion"],
+      "properties": {
+        "rubricId": {"$ref": "#/$defs/stableId"},
+        "rubricVersion": {"$ref": "#/$defs/version"}
+      }
+    }
+  }
+}
