@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+
+const { spawnSync } = require("node:child_process");
+
+console.log("Running Codeology pre-commit checks...");
+const result = spawnSync("npm run check:precommit", {
+  stdio: "inherit",
+  shell: true,
+});
+
+if (result.error) {
+  console.error(result.error.message);
+}
+process.exit(result.status ?? 1);
