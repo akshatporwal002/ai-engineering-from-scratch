@@ -7,7 +7,7 @@
 ## Progress
 
 - **Stage 0 — complete:** repository-local maintainer skills, cross-platform commands, pre-commit checks, GitHub quality CI and manual Vercel deployment are committed on `codex/dev`.
-- **Stage 1 — in progress:** the imported baseline, source registry, third-party notice, Codeology/override content contracts and deterministic provenance gate are implemented. The review-only upstream change-report workflow remains next.
+- **Stage 1 — implemented locally, remote exercise pending:** the imported baseline, source registry, third-party notice, Codeology/override content contracts, deterministic provenance gate and review-only upstream intake workflow are implemented and locally validated. The workflow's first branch/PR run awaits an explicitly authorized push of `codex/dev` and GitHub Actions execution.
 
 ## Objective
 

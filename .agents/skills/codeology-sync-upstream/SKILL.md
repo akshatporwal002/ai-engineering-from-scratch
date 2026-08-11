@@ -16,3 +16,5 @@ Read [references/sync-policy.md](references/sync-policy.md) before changing impo
 7. Run upstream audits, Codeology provenance checks, link checks and relevant visual smoke tests.
 8. Stop on missing attribution, changed licensing, broken adapters or validation failures.
 9. Prepare a reviewable branch or pull request only when authorized. Never auto-merge.
+
+Use `scripts/report_upstream_changes.py` for deterministic range reports and `scripts/advance_source_baseline.py` only after a clean reviewed merge. See `docs/UPSTREAM_INTAKE.md` for local commands and automation behavior.

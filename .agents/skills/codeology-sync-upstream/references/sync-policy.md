@@ -8,3 +8,5 @@
 - Discovery and labelling may be automated; merge and publication require review.
 - A rename or removal must produce an explicit migration report.
 - Never resolve a conflict by discarding Codeology work or silently rewriting upstream attribution.
+- A changed upstream licence blocks the automated workflow before any merge or baseline advance.
+- A baseline SHA advances only in the same reviewed change that contains the imported files and generated report.
