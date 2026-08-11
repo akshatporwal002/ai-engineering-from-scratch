@@ -67,6 +67,31 @@ html[data-product="codeology"] .glossary-page {
   padding-block-start: calc(var(--header-offset) + 16px);
 }
 
+html[data-product="codeology"] .catalog-page {
+  padding-block-start: calc(var(--header-offset) + 16px);
+}
+
+.catalog-source-label {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: var(--blueprint);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+html[data-product="codeology"] .catalog-search,
+html[data-product="codeology"] .catalog-filter {
+  border-radius: var(--codeology-radius-sm);
+}
+
+html[data-product="codeology"] .catalog-table-wrap {
+  border-radius: var(--codeology-radius-md);
+  box-shadow: var(--codeology-shadow-soft);
+}
+
 .glossary-stats {
   overflow: hidden;
   border-radius: var(--codeology-radius-md);
@@ -291,6 +316,11 @@ html[data-product="codeology"] .glossary-details {
   .codeology-content-source__pinned {
     width: 100%;
     margin-left: 0;
+  }
+
+  html[data-product="codeology"] .catalog-search,
+  html[data-product="codeology"] .catalog-filter {
+    width: 100%;
   }
 }
 

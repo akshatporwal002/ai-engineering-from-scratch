@@ -28,7 +28,11 @@ class CodeologyGlossaryTest(unittest.TestCase):
         self.assertTrue(any("live-result" in error for error in errors), errors)
 
     def test_missing_header_clearance_is_rejected(self) -> None:
-        broken = self.css.replace("padding-block-start: calc(var(--header-offset) + 16px)", "padding-block-start: 64px", 1)
+        broken = self.css.replace(
+            'html[data-product="codeology"] .glossary-page {\n  padding-block-start: calc(var(--header-offset) + 16px);',
+            'html[data-product="codeology"] .glossary-page {\n  padding-block-start: 64px;',
+            1,
+        )
         errors = validator.audit(self.html, self.shell, broken)
         self.assertTrue(any("header-offset" in error for error in errors), errors)
 

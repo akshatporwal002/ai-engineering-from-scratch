@@ -40,3 +40,9 @@ Lesson titles, descriptions, canonical URLs and active structured data identify 
 The imported glossary remains a reference ledger rather than becoming a generic card grid. Codeology owns its public metadata and footer, identifies it as part of AI Engineering Foundations, and preserves the complete term dataset, category and alphabet filters, URL-backed search, stable deep links, command palette and read-aloud controls.
 
 Rounded geometry is limited to bounded statistics, inputs, filters, actions and expandable details. The fixed two-row Codeology header must clear the masthead at every viewport. Search result updates remain announced through the existing polite live region, and mobile navigation retains an explicit expanded state.
+
+## Catalog contract
+
+The imported AI Engineering Foundations catalog remains a generated, sortable ledger of every free lesson. Codeology owns its metadata and public framing while preserving search, phase/status filters, URL state, keyboard-sortable columns and lesson links derived from trusted curriculum data.
+
+Inputs and the scrollable table shell use shared rounded geometry and surface elevation. On mobile, every control spans the available width while the table remains intentionally horizontally scrollable inside its bounded container. The page and table must never expand the document viewport.

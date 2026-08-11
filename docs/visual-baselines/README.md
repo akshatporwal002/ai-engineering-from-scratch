@@ -23,6 +23,13 @@ These reference captures record the reviewed appearance of representative Codeol
 | `glossary-desktop-light.jpg` | 1440 × 1000 | 1430 × 993 | Light | Imported reference framing, editorial ledger, rounded bounded controls, source strip and pure white canvas |
 | `glossary-mobile-dark.jpg` | 390 × 844 | 380 × 822 | Dark | Header clearance, stacked masthead/stats, search rail, mobile navigation and pure black canvas |
 
+## Catalog baseline
+
+| Capture | Browser viewport request | Stored image | Theme | Reviewed contracts |
+|---|---:|---:|---|---|
+| `catalog-desktop-light.jpg` | 1440 × 1000 | 1430 × 993 | Light | Imported pathway framing, filter controls, rounded table shell, current navigation and pure white canvas |
+| `catalog-mobile-dark.jpg` | 390 × 844 | 380 × 822 | Dark | Header clearance, full-width controls, contained horizontal table scrolling and pure black canvas |
+
 The in-app browser reserves a small scrollbar/control gutter, so the stored JPEG dimensions are slightly smaller than the requested page viewport. The validator checks the immutable artifact dimensions shown above.
 
 The browser review also confirmed:
@@ -35,5 +42,6 @@ The browser review also confirmed:
 - inherited reduced-motion rules disable title, reveal, figure and progress animation.
 - glossary search announces filtered result counts and preserves query state in the URL;
 - the glossary mobile menu exposes the current route and reports its expanded state.
+- catalog search/phase filters preserve URL state and sortable headers update `aria-sort`.
 
-Refresh a capture only after the matching viewport has been manually reviewed. Run the matching `check:home`, `check:lesson` or `check:glossary` command and `npm run ci` before committing the replacement.
+Refresh a capture only after the matching viewport has been manually reviewed. Run the matching page validator and `npm run ci` before committing the replacement.

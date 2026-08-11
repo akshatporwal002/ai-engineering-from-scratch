@@ -113,9 +113,12 @@ def audit(html: str, shell: str, css: str) -> list[str]:
             errors.append(f"site/glossary.html: missing glossary contract {contract!r}")
     if not re.search(r'codeology\.css\?v=20260812[a-z]" data-codeology-style="20260812[a-z]"', html):
         errors.append("site/glossary.html: direct Codeology stylesheet contract is missing")
+    if not re.search(
+        r'html\[data-product="codeology"\] \.glossary-page\s*\{\s*padding-block-start:\s*calc\(var\(--header-offset\) \+ 16px\)',
+        css,
+    ):
+        errors.append("site/codeology.css: glossary page must clear the fixed Codeology header-offset")
     for contract in (
-        'html[data-product="codeology"] .glossary-page',
-        "padding-block-start: calc(var(--header-offset) + 16px)",
         ".glossary-stats",
         "border-radius: var(--codeology-radius-md)",
     ):
