@@ -14,6 +14,7 @@ Use these explicit commands:
 
 ```bash
 npm run check:precommit     # fast commit gate
+npm run check:provenance    # source ownership, licences and adaptation sidecars
 npm test                    # full tests and non-generating audits
 npm run ci                  # tests plus static-site build
 npm run ci:strict           # CI plus the inherited global quiz-order migration gate

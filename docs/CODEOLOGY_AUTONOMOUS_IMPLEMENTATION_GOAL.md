@@ -4,6 +4,11 @@
 **Primary plan:** `docs/CODEOLOGY_PRODUCT_AND_IMPLEMENTATION_PLAN.md`  
 **Operating rules:** `AGENTS.md` and `.agents/skills/codeology-*/SKILL.md`
 
+## Progress
+
+- **Stage 0 — complete:** repository-local maintainer skills, cross-platform commands, pre-commit checks, GitHub quality CI and manual Vercel deployment are committed on `codex/dev`.
+- **Stage 1 — in progress:** the imported baseline, source registry, third-party notice, Codeology/override content contracts and deterministic provenance gate are implemented. The review-only upstream change-report workflow remains next.
+
 ## Objective
 
 Continue implementing Codeology as a free, open-tool software-engineering learning and evidence platform built on the AI Engineering from Scratch curriculum and interface. Preserve the imported academy, establish transparent provenance, then add realistic repository-based scenarios, deterministic submission checks, calibrated AI-assisted assessment, evidence-backed skill progression and employer-readable proof of work.

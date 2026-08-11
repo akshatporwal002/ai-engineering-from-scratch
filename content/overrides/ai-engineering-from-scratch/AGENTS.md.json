@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "ai-engineering-from-scratch",
+  "canonicalPath": "AGENTS.md",
+  "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f",
+  "adapted": true,
+  "adaptationSummary": "Added the Codeology development overlay, repository-local maintainer skill routing, branch policy, validation commands, deployment authorization boundary, and link to the persistent implementation goal."
+}
