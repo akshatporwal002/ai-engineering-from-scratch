@@ -80,6 +80,33 @@ class CodeologyShellTest(unittest.TestCase):
         )
         self.assertTrue(any("footer ownership" in error for error in errors), errors)
 
+    def test_persistent_source_strip_is_rejected(self) -> None:
+        config = json.loads(validator.CONFIG.read_text(encoding="utf-8"))
+        registry = json.loads(validator.SOURCES.read_text(encoding="utf-8"))
+        errors = validator.audit(
+            config,
+            validator.CSS.read_text(encoding="utf-8") + "\n.codeology-source-strip {}",
+            validator.SHELL.read_text(encoding="utf-8"),
+            validator.HEADER.read_text(encoding="utf-8"),
+            registry,
+        )
+        self.assertTrue(any("must remain removed" in error for error in errors), errors)
+
+    def test_missing_footer_credits_link_is_rejected(self) -> None:
+        config = json.loads(validator.CONFIG.read_text(encoding="utf-8"))
+        registry = json.loads(validator.SOURCES.read_text(encoding="utf-8"))
+        shell = validator.SHELL.read_text(encoding="utf-8").replace(
+            "credits.href = 'credits.html'", "credits.href = 'about.html'", 1
+        )
+        errors = validator.audit(
+            config,
+            validator.CSS.read_text(encoding="utf-8"),
+            shell,
+            validator.HEADER.read_text(encoding="utf-8"),
+            registry,
+        )
+        self.assertTrue(any("footer Credits integration" in error for error in errors), errors)
+
 
 if __name__ == "__main__":
     unittest.main()

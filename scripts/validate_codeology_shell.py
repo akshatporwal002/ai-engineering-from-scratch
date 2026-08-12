@@ -104,7 +104,7 @@ def audit(
         "--codeology-accent:",
         "--codeology-radius-md:",
         "background-image: none",
-        ".codeology-source-strip",
+        ".codeology-content-source",
     )
     for token in required_css:
         if token not in css:
@@ -130,14 +130,18 @@ def audit(
             errors.append(f"site/codeology.css: {theme} accent/canvas contrast must meet AA text contrast")
         if contrast_ratio(display_accent, canvas) < 3:
             errors.append(f"site/codeology.css: {theme} display accent must meet large-text contrast")
-    if "innerHTML" in shell:
-        errors.append("site/codeology-shell.js: build the source strip with DOM APIs, not innerHTML")
+    for removed_contract in ("addSourceStrip", "codeology-source-strip", "academy includes"):
+        if removed_contract in shell or removed_contract in css:
+            errors.append(f"Codeology shell: persistent source strip must remain removed ({removed_contract!r})")
     if "codeology-config.json" not in shell or "codeology.css" not in shell:
         errors.append("site/codeology-shell.js: config and stylesheet must load centrally")
     if "replaceNavigation(config)" not in shell:
         errors.append("site/codeology-shell.js: shared Codeology navigation is missing")
     if "replaceFooter(config)" not in shell:
         errors.append("site/codeology-shell.js: shared Codeology footer ownership is missing")
+    for contract in ('a[href="credits.html"]', "credits.href = 'credits.html'"):
+        if contract not in shell:
+            errors.append(f"site/codeology-shell.js: footer Credits integration is missing {contract!r}")
     for contract in (
         "currentLessonPath()",
         "pinnedSourceUrl(source, path)",

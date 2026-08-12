@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  var VERSION = '20260812h';
+  var VERSION = '20260812j';
   var CONFIG_URL = 'codeology-config.json?v=' + VERSION;
   var STYLE_URL = 'codeology.css?v=' + VERSION;
 
@@ -109,32 +109,6 @@
     container.insertBefore(badge, container.firstChild);
   }
 
-  function addSourceStrip(config) {
-    var headers = document.querySelectorAll('.site-header');
-    for (var i = 0; i < headers.length; i++) {
-      var header = headers[i];
-      if (header.querySelector('.codeology-source-strip')) continue;
-      var source = config.academySource;
-      var strip = document.createElement('aside');
-      strip.className = 'codeology-source-strip';
-      strip.setAttribute('aria-label', 'Curriculum source and licence');
-
-      var badge = document.createElement('strong');
-      badge.className = 'codeology-source-strip__badge';
-      badge.textContent = config.product.shortName;
-      strip.appendChild(badge);
-      appendText(strip, ' academy includes ');
-      strip.appendChild(sourceLink(source.name, source.url));
-      appendText(strip, ' by ' + source.author + ' · ' + source.license);
-
-      var baseline = document.createElement('span');
-      baseline.className = 'codeology-source-strip__baseline';
-      baseline.textContent = ' · source ' + source.baselineCommit.slice(0, 12);
-      strip.appendChild(baseline);
-      header.appendChild(strip);
-    }
-  }
-
   function replaceFooter(config) {
     var footers = document.querySelectorAll('.site-footer');
     for (var i = 0; i < footers.length; i++) {
@@ -152,6 +126,13 @@
           link.href = config.product.repositoryUrl + href.slice(config.academySource.url.length);
         }
       }
+      var footerLinks = footer.querySelector('.footer-links');
+      if (footerLinks && !footerLinks.querySelector('a[href="credits.html"]')) {
+        var credits = document.createElement('a');
+        credits.href = 'credits.html';
+        credits.textContent = 'Credits';
+        footerLinks.appendChild(credits);
+      }
     }
   }
 
@@ -161,7 +142,6 @@
     document.documentElement.setAttribute('data-product', 'codeology');
     replaceWordmark(config);
     replaceNavigation(config);
-    addSourceStrip(config);
     replaceFooter(config);
     addLessonSourceBadge(config);
     document.dispatchEvent(new CustomEvent('codeology:ready', { detail: config }));

@@ -6,7 +6,7 @@ Codeology preserves the imported academy's editorial and pixel character while p
 
 - `site/codeology-config.json` owns product identity and imported-academy attribution.
 - `site/codeology.css` owns Codeology design tokens and shell components.
-- `site/codeology-shell.js` applies the shared wordmark and visible source strip to every page that uses the inherited `header.js`.
+- `site/codeology-shell.js` applies the shared wordmark, navigation and footer Credits link to every page that uses the inherited `header.js`.
 - `content-sources.yml` remains authoritative for source IDs, licences and baseline commits. CI rejects drift between it and the public shell.
 
 ## Foundation rules
@@ -16,7 +16,7 @@ Codeology preserves the imported academy's editorial and pixel character while p
 - Use editorial typography and pixel details as identity, not as a reason for sharp or cramped controls.
 - Build new controls from the shared radius, glass, surface and shadow tokens.
 - Never communicate skill or assurance state through glow or colour alone.
-- Keep the academy source, author, licence and baseline visible and machine-validated.
+- Keep academy source, author, licence and baseline details on the dedicated Credits page and machine-validated against the registry.
 - Respect reduced motion and reduced transparency preferences.
 
 Imported lesson rendering, quizzes, figures, navigation and progress behavior remain intact. Codeology may adapt the reader shell and metadata through a tracked override, but it does not silently rewrite imported curriculum content.
@@ -57,7 +57,13 @@ Local lesson progress may increase node glow, but status text, lesson counts and
 
 The About route explains Codeology's learn/build/prove proposition, open-tool policy and evidence boundary. It must not repeat inherited upstream creator, hosting, commercial or endorsement claims as though they describe Codeology.
 
-The imported academy receives a prominent source card naming AI Engineering from Scratch, its author and contributors, MIT licence, original repository, pinned source commit and non-endorsement relationship. Product principles use editorial hierarchy, rounded bounded panels and accessible pill actions on the shared pure white/black canvas.
+The imported academy receives a concise summary and a direct link to the dedicated Credits page. Product principles use editorial hierarchy, rounded bounded panels and accessible pill actions on the shared pure white/black canvas.
+
+## Credits-page contract
+
+The Credits route is the single persistent home for project authorship, licence, original repository, immutable imported baseline and non-endorsement details. Its values must remain aligned with `site/codeology-config.json` and `content-sources.yml`; CI rejects drift.
+
+The shared footer links to Credits from every academy route. Imported lessons retain their contextual pinned-source badge, while the former global attribution strip must not return. The page uses the same editorial hierarchy, rounded ledgers and pure white/black canvas as the rest of Codeology.
 
 ## Assurance-page contract
 

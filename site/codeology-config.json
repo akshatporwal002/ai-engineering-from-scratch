@@ -10,7 +10,8 @@
       { "label": "Catalog", "href": "catalog.html" },
       { "label": "Skill map", "href": "prereqs.html" },
       { "label": "Glossary", "href": "glossary.html" },
-      { "label": "About", "href": "about.html" }
+      { "label": "About", "href": "about.html" },
+      { "label": "Credits", "href": "credits.html" }
     ]
   },
   "academySource": {

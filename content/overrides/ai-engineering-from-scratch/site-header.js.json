@@ -4,5 +4,5 @@
   "canonicalPath": "site/header.js",
   "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f",
   "adapted": true,
-  "adaptationSummary": "Loads the separate Codeology product shell so the shared wordmark, source attribution and design-token layer apply consistently without rewriting every imported page template."
+  "adaptationSummary": "Loads the separate Codeology product shell so the shared wordmark, footer Credits route and design-token layer apply consistently without rewriting every imported page template."
 }

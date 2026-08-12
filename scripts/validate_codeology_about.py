@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate Codeology's About page, attribution, and public product claims."""
+"""Validate Codeology's About page and public product claims."""
 
 from __future__ import annotations
 
@@ -15,9 +15,6 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent
 PAGE = ROOT / "site" / "about.html"
 CSS = ROOT / "site" / "codeology.css"
-BASELINE_COMMIT = "7c3323508a5186739feecd76838ba1ae962c736f"
-
-
 class AboutParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
@@ -27,7 +24,7 @@ class AboutParser(HTMLParser):
         self.description = ""
         self.canonical = ""
         self.main_count = 0
-        self.source_cards = 0
+        self.credits_links = 0
         self.external_link_errors: list[str] = []
         self.structured_data: list[str] = []
         self._in_title = False
@@ -51,8 +48,8 @@ class AboutParser(HTMLParser):
             self.description = values.get("content", "")
         elif tag == "link" and values.get("rel") == "canonical":
             self.canonical = values.get("href", "")
-        elif tag == "aside" and values.get("aria-label") == "AI Engineering Foundations source":
-            self.source_cards += 1
+        elif tag == "a" and values.get("href") == "credits.html":
+            self.credits_links += 1
         elif tag == "script" and values.get("type") == "application/ld+json":
             self.structured_data.append("")
             self._script_target = self.structured_data
@@ -94,8 +91,8 @@ def audit(html: str, css: str) -> list[str]:
         errors.append("site/about.html: canonical must be relative to the Codeology deployment")
     if parser.main_count != 1:
         errors.append("site/about.html: exactly one main landmark is required")
-    if parser.source_cards != 1:
-        errors.append("site/about.html: exactly one imported-academy source card is required")
+    if parser.credits_links != 1:
+        errors.append("site/about.html: exactly one link to the dedicated Credits page is required")
     for element_id, count in parser.ids.items():
         if count > 1:
             errors.append(f"site/about.html: duplicate id {element_id!r}")
@@ -116,10 +113,8 @@ def audit(html: str, css: str) -> list[str]:
         "Use your own editor, compute, documentation and AI companions",
         "Evidence before badges",
         "browser-local activity is not an employment credential",
-        "The original project does not sponsor or endorse Codeology",
-        "Rohit Ghumare and contributors",
-        "MIT licence",
-        BASELINE_COMMIT,
+        "Full authorship, licence and immutable source details are maintained in one place",
+        "View credits and provenance",
     ):
         if contract not in html:
             errors.append(f"site/about.html: missing product or attribution contract {contract!r}")
@@ -145,7 +140,6 @@ def audit(html: str, css: str) -> list[str]:
     for contract in (
         ".about-hero",
         ".about-principles",
-        ".about-source-card",
         "border-radius: var(--codeology-radius-lg)",
         ".about-action:focus-visible",
     ):

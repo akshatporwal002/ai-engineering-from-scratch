@@ -16,15 +16,15 @@ class CodeologyAboutTest(unittest.TestCase):
     def test_repository_about_page_passes(self) -> None:
         self.assertEqual(validator.audit(self.html, self.css), [])
 
-    def test_missing_source_card_is_rejected(self) -> None:
-        broken = self.html.replace('aria-label="AI Engineering Foundations source"', 'aria-label="Source"', 1)
+    def test_missing_credits_link_is_rejected(self) -> None:
+        broken = self.html.replace('href="credits.html"', 'href="about.html#credits"', 1)
         errors = validator.audit(broken, self.css)
-        self.assertTrue(any("source card" in error for error in errors), errors)
+        self.assertTrue(any("Credits page" in error for error in errors), errors)
 
-    def test_missing_non_endorsement_is_rejected(self) -> None:
-        broken = self.html.replace("The original project does not sponsor or endorse Codeology", "Independent adaptation", 1)
+    def test_missing_central_provenance_message_is_rejected(self) -> None:
+        broken = self.html.replace("Full authorship, licence and immutable source details are maintained in one place", "See details", 1)
         errors = validator.audit(broken, self.css)
-        self.assertTrue(any("sponsor or endorse" in error for error in errors), errors)
+        self.assertTrue(any("Full authorship" in error for error in errors), errors)
 
     def test_upstream_canonical_is_rejected(self) -> None:
         broken = self.html.replace('href="about.html"', 'href="https://aiengineeringfromscratch.com/about.html"', 1)

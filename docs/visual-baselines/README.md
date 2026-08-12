@@ -6,8 +6,8 @@ These reference captures record the reviewed appearance of representative Codeol
 
 | Capture | Browser viewport request | Stored image | Theme | Reviewed contracts |
 |---|---:|---:|---|---|
-| `homepage-desktop-light.jpg` | 1440 × 1000 | 1430 × 993 | Light | Codeology hierarchy, three-column evidence loop, shared navigation, source strip, pure white canvas, no overflow |
-| `homepage-mobile-dark.jpg` | 390 × 844 | 380 × 822 | Dark | Single-column evidence loop, compact header, source attribution, pure black canvas, no overflow |
+| `homepage-desktop-light.jpg` | 1440 × 1000 | 1430 × 993 | Light | Codeology hierarchy, three-column evidence loop, shared navigation, pure white canvas, no overflow |
+| `homepage-mobile-dark.jpg` | 390 × 844 | 380 × 822 | Dark | Single-column evidence loop, compact header, pure black canvas, no overflow |
 
 ## Lesson reader baseline
 
@@ -20,7 +20,7 @@ These reference captures record the reviewed appearance of representative Codeol
 
 | Capture | Browser viewport request | Stored image | Theme | Reviewed contracts |
 |---|---:|---:|---|---|
-| `glossary-desktop-light.jpg` | 1440 × 1000 | 1430 × 993 | Light | Imported reference framing, editorial ledger, rounded bounded controls, source strip and pure white canvas |
+| `glossary-desktop-light.jpg` | 1440 × 1000 | 1430 × 993 | Light | Imported reference framing, editorial ledger, rounded bounded controls and pure white canvas |
 | `glossary-mobile-dark.jpg` | 390 × 844 | 380 × 822 | Dark | Header clearance, stacked masthead/stats, search rail, mobile navigation and pure black canvas |
 
 ## Catalog baseline
