@@ -1,8 +1,8 @@
 /**
- * Local-only progress tracker.
+ * Local-first progress tracker.
  *
- * Stores everything in the user's own browser (localStorage). No network,
- * no account, no server. Data never leaves the device.
+ * Stores progress in the user's browser. Codeology's optional account layer
+ * can merge and sync this state after the learner signs in.
  *
  * Schema (versioned so we can migrate later without nuking users):
  *
@@ -56,8 +56,14 @@
 
   function ensureLesson(state, path) {
     if (!state.lessons[path]) {
-      state.lessons[path] = { answers: {}, completedAt: null, visitedAt: 0 };
+      state.lessons[path] = { answers: {}, completedAt: null, completionUpdatedAt: 0, visitedAt: 0 };
     }
+    if (!state.lessons[path].answers) state.lessons[path].answers = {};
+    if (!('completedAt' in state.lessons[path])) state.lessons[path].completedAt = null;
+    if (!state.lessons[path].completionUpdatedAt) {
+      state.lessons[path].completionUpdatedAt = state.lessons[path].completedAt || 0;
+    }
+    if (!state.lessons[path].visitedAt) state.lessons[path].visitedAt = 0;
     return state.lessons[path];
   }
 
@@ -83,6 +89,7 @@
     var lesson = ensureLesson(state, path);
     if (!lesson.completedAt) {
       lesson.completedAt = Date.now();
+      lesson.completionUpdatedAt = lesson.completedAt;
       write(state);
     }
   }
@@ -92,6 +99,7 @@
     var state = read();
     if (state.lessons[path] && state.lessons[path].completedAt) {
       state.lessons[path].completedAt = null;
+      state.lessons[path].completionUpdatedAt = Date.now();
       write(state);
     }
   }
@@ -99,7 +107,7 @@
   function getLessonProgress(path) {
     if (!path) return null;
     var state = read();
-    return state.lessons[path] || { answers: {}, completedAt: null, visitedAt: 0 };
+    return state.lessons[path] || { answers: {}, completedAt: null, completionUpdatedAt: 0, visitedAt: 0 };
   }
 
   function isLessonComplete(path) {
@@ -143,6 +151,21 @@
     }
   }
 
+  function exportState() {
+    return read();
+  }
+
+  function replaceState(nextState) {
+    if (!nextState || typeof nextState !== 'object' || !nextState.lessons) return;
+    var normalized = emptyState();
+    for (var path in nextState.lessons) {
+      if (!Object.prototype.hasOwnProperty.call(nextState.lessons, path)) continue;
+      normalized.lessons[path] = nextState.lessons[path];
+      ensureLesson(normalized, path);
+    }
+    write(normalized);
+  }
+
   function onChange(fn) {
     if (typeof fn === 'function') listeners.push(fn);
   }
@@ -167,6 +190,8 @@
     countCompletedFromUrls: countCompletedFromUrls,
     extractPath: extractPath,
     totalCompleted: totalCompleted,
+    exportState: exportState,
+    replaceState: replaceState,
     reset: reset,
     onChange: onChange,
   };

@@ -1,8 +1,8 @@
 {
-  "buildCommand": "node site/build.js",
+  "buildCommand": "npm run build",
   "outputDirectory": "site",
   "framework": null,
-  "installCommand": "echo skip",
+  "installCommand": "npm ci",
   "rewrites": [
     { "source": "/glossary", "destination": "/glossary.html" },
     { "source": "/catalog", "destination": "/catalog.html" },

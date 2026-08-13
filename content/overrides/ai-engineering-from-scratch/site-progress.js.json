@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "ai-engineering-from-scratch",
+  "canonicalPath": "site/progress.js",
+  "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f",
+  "adapted": true,
+  "adaptationSummary": "Keeps anonymous lesson progress local-first while exposing normalized export and replacement seams, completion-change timestamps and change notifications for optional authenticated Supabase synchronization."
+}

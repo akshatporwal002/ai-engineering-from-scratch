@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "ai-engineering-from-scratch",
+  "canonicalPath": ".gitignore",
+  "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f",
+  "adapted": true,
+  "adaptationSummary": "Ignores the generated Codeology browser auth configuration and pinned Supabase browser bundle so public deployment artifacts are rebuilt from environment-scoped configuration rather than committed."
+}

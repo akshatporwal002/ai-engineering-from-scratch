@@ -151,7 +151,10 @@ def audit(
             errors.append(f"site/codeology-shell.js: missing lesson-source integration {contract!r}")
     if "codeology-shell.js" not in header:
         errors.append("site/header.js: Codeology shell loader is missing")
-    versions = set(re.findall(r"20260812[a-z]", shell + "\n" + header))
+    versions = set(
+        re.findall(r"var (?:VERSION|AUTH_VERSION) = '(202608\d{2}[a-z])'", shell)
+        + re.findall(r"var CODEOLOGY_SHELL_VERSION = '(202608\d{2}[a-z])'", header)
+    )
     if len(versions) != 1:
         errors.append("site Codeology shell cache versions must match")
     return errors

@@ -2,7 +2,8 @@
 (function () {
   'use strict';
 
-  var VERSION = '20260812j';
+  var VERSION = '20260813a';
+  var AUTH_VERSION = '20260813a';
   var CONFIG_URL = 'codeology-config.json?v=' + VERSION;
   var STYLE_URL = 'codeology.css?v=' + VERSION;
 
@@ -52,10 +53,13 @@
       for (var j = 0; j < navigation.length; j++) {
         nav.appendChild(navigationLink(navigation[j], currentPage));
       }
-      var repository = sourceLink('GitHub', config.product.repositoryUrl);
-      repository.className = 'header-github codeology-repository-link';
-      repository.setAttribute('aria-label', 'Codeology repository on GitHub');
-      nav.appendChild(repository);
+      var login = document.createElement('button');
+      login.type = 'button';
+      login.className = 'header-github codeology-login-button';
+      login.textContent = 'Log in';
+      login.setAttribute('aria-label', 'Log in to Codeology');
+      login.setAttribute('data-codeology-auth-trigger', '');
+      nav.appendChild(login);
     }
   }
 
@@ -144,7 +148,45 @@
     replaceNavigation(config);
     replaceFooter(config);
     addLessonSourceBadge(config);
+    ensureAuth();
     document.dispatchEvent(new CustomEvent('codeology:ready', { detail: config }));
+  }
+
+  function loadScript(src, marker) {
+    return new Promise(function (resolve) {
+      var existing = document.querySelector('script[' + marker + ']');
+      if (existing) {
+        if (existing.getAttribute('data-loaded') === 'true') resolve();
+        else {
+          existing.addEventListener('load', resolve, { once: true });
+          existing.addEventListener('error', resolve, { once: true });
+        }
+        return;
+      }
+      var script = document.createElement('script');
+      script.src = src;
+      script.async = true;
+      script.setAttribute(marker, AUTH_VERSION);
+      script.addEventListener('load', function () {
+        script.setAttribute('data-loaded', 'true');
+        resolve();
+      }, { once: true });
+      script.addEventListener('error', resolve, { once: true });
+      document.head.appendChild(script);
+    });
+  }
+
+  function ensureAuth() {
+    if (window.CodeologyAuth || document.querySelector('script[data-codeology-auth]')) return;
+    loadScript('codeology-auth-config.js?v=' + AUTH_VERSION, 'data-codeology-auth-config')
+      .then(function () {
+        var config = window.CODEOLOGY_AUTH_CONFIG;
+        if (!config || !config.enabled) return null;
+        return loadScript('vendor/supabase.js?v=' + AUTH_VERSION, 'data-codeology-supabase');
+      })
+      .then(function () {
+        return loadScript('auth.js?v=' + AUTH_VERSION, 'data-codeology-auth');
+      });
   }
 
   function loadConfig() {

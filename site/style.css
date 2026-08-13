@@ -302,7 +302,8 @@ p.dropcap::first-letter {
   align-items: center;
 }
 
-.header-nav a {
+.header-nav a,
+.header-nav button {
   font-family: var(--font-mono);
   font-size: 0.8rem;
   font-weight: 500;
@@ -312,7 +313,12 @@ p.dropcap::first-letter {
   border-bottom: none;
 }
 
-.header-nav a:hover {
+.header-nav button {
+  appearance: none;
+}
+
+.header-nav a:hover,
+.header-nav button:hover {
   color: var(--blueprint);
   border-bottom: none;
 }
@@ -1065,6 +1071,7 @@ body.js-anim .toc-row.in-view {
   }
 
   .header-nav a,
+  .header-nav button,
   .header-nav .header-github {
     display: flex;
     align-items: center;
