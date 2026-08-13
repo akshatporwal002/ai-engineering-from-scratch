@@ -68,6 +68,7 @@
         "docs/UPSTREAM_INTAKE.md",
         "docs/upstream-reports/**",
         "package.json",
+        "package-lock.json",
         "scripts/run_certification_tests.py",
         "scripts/run_translation_workflow_tests.py",
         "scripts/advance_source_baseline.py",
