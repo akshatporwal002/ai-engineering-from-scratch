@@ -1162,7 +1162,7 @@ function writeSitemap(phases, glossaryCount, certifications) {
 
 // ─── llms.txt: a link-rich map of the curriculum for AI agents ───────────
 function writeLlms(phases, glossaryCount, artifactCount, certifications) {
-  const rawOrigin = 'https://raw.githubusercontent.com/rohitg00/ai-engineering-from-scratch/' + resolveRef();
+  const rawOrigin = 'https://raw.githubusercontent.com/akshatporwal002/ai-engineering-from-scratch/' + resolveRef();
   let total = 0;
   phases.forEach(p => { total += p.lessons.filter(l => lessonPath(l.url)).length; });
   let out = `# AI Engineering from Scratch\n\n`;
@@ -1198,7 +1198,7 @@ function writeLlms(phases, glossaryCount, artifactCount, certifications) {
       if (track.summary) out += ` — ${track.summary}`;
       out += `\n`;
     }
-    const certRawOrigin = 'https://raw.githubusercontent.com/rohitg00/ai-engineering-from-scratch/' + resolveRef();
+    const certRawOrigin = 'https://raw.githubusercontent.com/akshatporwal002/ai-engineering-from-scratch/' + resolveRef();
     for (const lesson of Object.values(certifications.lessonsByPath)) {
       out += `- [${lesson.name}](${SITE_ORIGIN}/lesson.html?path=${encodeURIComponent(lesson.path)}) · [raw](${certRawOrigin}/${lesson.path}/docs/en.md)`;
       if (lesson.summary) out += ` — ${lesson.summary}`;

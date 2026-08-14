@@ -4,5 +4,5 @@
   "canonicalPath": "site/lesson.html",
   "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f",
   "adapted": true,
-  "adaptationSummary": "Adds Codeology lesson metadata and a render event for the shared pinned-source badge while preserving imported lesson rendering, quizzes, figures, navigation and progress behavior."
+  "adaptationSummary": "Adds Codeology lesson metadata, branch-aware fork content loading and a render event for the shared pinned-source badge while preserving imported lesson attribution, rendering, quizzes, figures, navigation and progress behavior."
 }
