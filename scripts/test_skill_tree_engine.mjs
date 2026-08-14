@@ -1,0 +1,43 @@
+import assert from 'node:assert/strict';
+
+globalThis.window = globalThis;
+await import('../site/skill-tree-engine.js');
+
+const engine = globalThis.CodeologySkillTreeEngine;
+assert.ok(engine, 'engine should be exported to the browser global');
+
+const graph = {
+  nodes: Array.from({ length: 12 }, (_, id) => ({ id, title: `Skill ${id}` })),
+  edges: [
+    { from: 0, to: 1 }, { from: 0, to: 2 }, { from: 1, to: 3 }, { from: 1, to: 4 },
+    { from: 2, to: 5 }, { from: 2, to: 6 }, { from: 3, to: 7 }, { from: 4, to: 8 },
+    { from: 5, to: 9 }, { from: 6, to: 10 }, { from: 8, to: 11 }, { from: 9, to: 11 }
+  ]
+};
+const options = {
+  center: { x: 500, y: 500 },
+  circleRadius: 442,
+  innerRadius: 125,
+  outerRadius: 425,
+  startAngle: -112,
+  endAngle: -68
+};
+
+const first = engine.layoutGraph(graph, options);
+const second = engine.layoutGraph(graph, options);
+assert.deepEqual(first.positions, second.positions, 'layout should be deterministic');
+assert.equal(first.maxDepth, 4, 'longest prerequisite route should define graph depth');
+assert.equal(engine.countApproximateOverlaps(first, 18), 0, 'representative branch should not collide');
+for (const point of Object.values(first.positions)) {
+  assert.ok(Math.hypot(point.x - 500, point.y - 500) <= 442.001, 'nodes must stay inside the circle');
+}
+for (const edge of graph.edges) {
+  assert.match(engine.edgePath(first, edge), /^M.+ C.+/, 'edges should use one smooth cubic curve');
+}
+
+assert.throws(() => engine.layoutGraph({
+  nodes: [{ id: 'a' }, { id: 'b' }],
+  edges: [{ from: 'a', to: 'b' }, { from: 'b', to: 'a' }]
+}, options), /acyclic/, 'cyclic skill data should fail closed');
+
+console.log('Reusable skill-tree layout, bounds, spacing and cycle checks passed.');

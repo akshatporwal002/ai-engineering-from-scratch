@@ -83,6 +83,7 @@
         "scripts/test_codeology_glossary.py",
         "scripts/test_codeology_catalog.py",
         "scripts/test_codeology_skill_map.py",
+        "scripts/test_skill_tree_engine.mjs",
         "scripts/test_codeology_about.py",
         "scripts/test_codeology_credits.py",
         "scripts/test_codeology_assessment_charter.py",
@@ -112,7 +113,8 @@
         "site/assurance.html",
         "site/credits.html",
         "site/skill-tree-prototype.css",
-        "site/skill-tree-prototype.js"
+        "site/skill-tree-prototype.js",
+        "site/skill-tree-engine.js"
       ]
     }
   ]

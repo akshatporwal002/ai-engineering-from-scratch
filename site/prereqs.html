@@ -140,7 +140,7 @@
       <div class="life-tree-controls" aria-label="Tree lighting preview">
         <div class="life-tree-control-copy">
           <strong>Preview growth</strong>
-          <span>Change the sample learning state</span>
+          <span>Change the sample learning state or inspect the graph</span>
         </div>
         <div class="life-tree-levels" role="group" aria-label="Sample progression level">
           <button type="button" data-tree-level="0">Dormant</button>
@@ -148,14 +148,21 @@
           <button type="button" data-tree-level="2" aria-pressed="true">Growing</button>
           <button type="button" data-tree-level="3">Strong</button>
         </div>
+        <div class="life-tree-viewport-controls" role="group" aria-label="Skill tree zoom controls">
+          <button type="button" id="lifeTreeZoomOut" aria-label="Zoom out">&#8722;</button>
+          <output id="lifeTreeZoomValue" aria-live="polite">100%</output>
+          <button type="button" id="lifeTreeZoomIn" aria-label="Zoom in">+</button>
+          <button type="button" id="lifeTreeReset">Reset view</button>
+        </div>
       </div>
 
       <div class="life-tree-workspace">
         <div class="life-tree-stage">
-          <svg class="life-tree-svg" id="lifeTreeGraph" viewBox="0 0 1000 1000" role="group" aria-labelledby="lifeTreeSvgTitle lifeTreeSvgDescription">
+          <svg class="life-tree-svg" id="lifeTreeGraph" viewBox="0 0 1000 1000" role="group" aria-labelledby="lifeTreeSvgTitle lifeTreeSvgDescription" aria-describedby="lifeTreeKeyboardHelp">
             <title id="lifeTreeSvgTitle">Circular software engineering skill tree</title>
             <desc id="lifeTreeSvgDescription">An interactive tree with foundations in its roots, shared engineering skills in its trunk, and eight software engineering disciplines across its canopy.</desc>
           </svg>
+          <p class="roadmap-sr-only" id="lifeTreeKeyboardHelp">Use arrow keys to move between branches or skills. Use plus and minus to zoom. Drag the canvas to pan.</p>
           <div class="life-tree-axis" aria-hidden="true">
             <span>Lead scope</span><span>Senior scope</span><span>Junior ready</span><span>Intern ready</span><span>Foundations</span>
           </div>
@@ -205,6 +212,7 @@
   <script src="header.js?v=20260814b" defer></script>
   <script src="cmdpalette.js?v=20260808h" defer></script>
   <script src="roadmap.js?v=20260812a" defer></script>
-  <script src="skill-tree-prototype.js?v=20260814a" defer></script>
+  <script src="skill-tree-engine.js?v=20260814a" defer></script>
+  <script src="skill-tree-prototype.js?v=20260814b" defer></script>
 </body>
 </html>

@@ -18,6 +18,7 @@ SCRIPT = ROOT / "site" / "roadmap.js"
 CSS = ROOT / "site" / "codeology.css"
 TREE_SCRIPT = ROOT / "site" / "skill-tree-prototype.js"
 TREE_CSS = ROOT / "site" / "skill-tree-prototype.css"
+TREE_ENGINE = ROOT / "site" / "skill-tree-engine.js"
 BASELINES = {
     ROOT / "docs" / "visual-baselines" / "skill-map-desktop-light.jpg": (1430, 993),
     ROOT / "docs" / "visual-baselines" / "skill-map-mobile-dark.jpg": (380, 822),
@@ -75,7 +76,8 @@ def normalized(parts: list[str]) -> str:
     return " ".join("".join(parts).split())
 
 
-def audit(html: str, script: str, css: str, tree_script: str, tree_css: str) -> list[str]:
+def audit(html: str, script: str, css: str, tree_script: str, tree_css: str,
+          tree_engine: str | None = None) -> list[str]:
     parser = SkillMapParser()
     parser.feed(html)
     errors: list[str] = []
@@ -101,6 +103,10 @@ def audit(html: str, script: str, css: str, tree_script: str, tree_css: str) -> 
         "skillTreeTitle",
         "lifeTreeGraph",
         "lifeTreeInspector",
+        "lifeTreeZoomOut",
+        "lifeTreeZoomIn",
+        "lifeTreeReset",
+        "lifeTreeZoomValue",
     ):
         if parser.ids[element_id] != 1:
             errors.append(f"site/prereqs.html: requires one #{element_id}")
@@ -173,14 +179,15 @@ def audit(html: str, script: str, css: str, tree_script: str, tree_css: str) -> 
 
     for contract in (
         "var domains = [",
-        "id: 'systems'",
-        "id: 'cyber'",
-        "id: 'cloud'",
+        "domain('systems'",
+        "domain('cyber'",
+        "domain('cloud'",
         "id: 'ai'",
-        "id: 'backend'",
-        "id: 'web'",
-        "id: 'mobile'",
-        "id: 'game'",
+        "domain('backend'",
+        "domain('web'",
+        "domain('mobile'",
+        "domain('game'",
+        "domain('foundation'",
         "data-strength",
         "strengthFor(",
         "prepareAiRoadmap()",
@@ -192,7 +199,10 @@ def audit(html: str, script: str, css: str, tree_script: str, tree_css: str) -> 
         "localLessonPath(",
         "ArrowLeft",
         "ArrowRight",
-        "escapeHtml(domain.title)",
+        "escapeHtml(domainItem.title)",
+        "setZoom(",
+        "startPan(",
+        "countApproximateOverlaps",
     ):
         if contract not in tree_script:
             errors.append(f"site/skill-tree-prototype.js: missing prototype contract {contract!r}")
@@ -212,6 +222,24 @@ def audit(html: str, script: str, css: str, tree_script: str, tree_css: str) -> 
     ):
         if contract not in tree_css:
             errors.append(f"site/skill-tree-prototype.css: missing visual contract {contract!r}")
+
+    if tree_engine is None:
+        tree_engine = TREE_ENGINE.read_text(encoding="utf-8")
+    for contract in (
+        "window.CodeologySkillTreeEngine",
+        "layoutGraph:",
+        "edgePath:",
+        "validateGraph:",
+        "countApproximateOverlaps:",
+        "assignDepths(",
+        "orderTiers(",
+        "capToCircle(",
+        "Skill graph must be acyclic",
+    ):
+        if contract not in tree_engine:
+            errors.append(f"site/skill-tree-engine.js: missing reusable graph contract {contract!r}")
+    if 'src="skill-tree-engine.js?' not in html:
+        errors.append("site/prereqs.html: reusable skill-tree engine must load before the prototype")
     return errors
 
 
@@ -222,6 +250,7 @@ def main() -> int:
         CSS.read_text(encoding="utf-8"),
         TREE_SCRIPT.read_text(encoding="utf-8"),
         TREE_CSS.read_text(encoding="utf-8"),
+        TREE_ENGINE.read_text(encoding="utf-8"),
     ) + audit_baselines(BASELINES)
     if errors:
         for error in errors:

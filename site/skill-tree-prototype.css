@@ -640,3 +640,204 @@
     transition: none;
   }
 }
+
+/* Reusable DAG composition ------------------------------------------------- */
+.life-tree-viewport-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-inline-start: 10px;
+  border-inline-start: 1px solid var(--codeology-line, #2f2f2f);
+}
+
+.life-tree-viewport-controls button,
+.life-tree-viewport-controls output {
+  min-width: 36px;
+  min-height: 36px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--codeology-line, #343434);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: 700 11px/1 var(--codeology-font-mono, monospace);
+  letter-spacing: 0.05em;
+}
+
+.life-tree-viewport-controls button {
+  cursor: pointer;
+}
+
+.life-tree-viewport-controls button:last-child {
+  width: auto;
+  padding-inline: 14px;
+}
+
+.life-tree-viewport-controls button:hover {
+  color: #ff6b2c;
+  border-color: #ff6b2c;
+}
+
+.life-tree-viewport-controls button:focus-visible,
+.life-tree-skill-node:focus-visible .life-tree-ai-phase-node,
+.life-tree-domain-label:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.life-tree-svg {
+  cursor: grab;
+  touch-action: none;
+}
+
+.life-tree-svg.is-panning {
+  cursor: grabbing;
+}
+
+.life-tree-rings {
+  pointer-events: none;
+}
+
+.life-tree-structure .life-tree-trunk {
+  fill: #111;
+  stroke: #343434;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.life-tree-structure[data-strength="1"] .life-tree-trunk,
+.life-tree-structure[data-strength="2"] .life-tree-trunk,
+.life-tree-structure[data-strength="3"] .life-tree-trunk,
+.life-tree-structure[data-strength="4"] .life-tree-trunk {
+  fill: #ff6b2c;
+  stroke: #ff9a6c;
+  filter: drop-shadow(0 0 7px rgba(255, 107, 44, 0.8));
+}
+
+.life-tree-dag .life-tree-branch-line {
+  fill: none;
+  stroke: #393939;
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.life-tree-dag .life-tree-branch-line.is-secondary {
+  opacity: 0.16;
+  stroke-dasharray: 2 5;
+}
+
+.life-tree-dag.is-selected .life-tree-branch-line.is-secondary {
+  opacity: 0.5;
+}
+
+.life-tree-skill-node {
+  cursor: pointer;
+}
+
+.life-tree-skill-node .life-tree-ai-phase-hit {
+  fill: transparent;
+}
+
+.life-tree-skill-node .life-tree-node {
+  fill: #050505;
+  stroke: #4b4b4b;
+  stroke-width: 1.25;
+  vector-effect: non-scaling-stroke;
+}
+
+.life-tree-skill-node.is-terminal .life-tree-node {
+  stroke-width: 1.6;
+}
+
+.life-tree-skill-node:hover .life-tree-node,
+.life-tree-skill-node:focus-visible .life-tree-node,
+.life-tree-skill-node.is-selected .life-tree-node {
+  stroke: #fff;
+  fill: #ff6b2c;
+}
+
+.life-tree-skill-code {
+  opacity: 0;
+  pointer-events: none;
+  font-size: 7px;
+  paint-order: stroke;
+  stroke: #000;
+  stroke-width: 2px;
+  stroke-linejoin: round;
+}
+
+.life-tree-svg.is-detail-view .life-tree-skill-code,
+.life-tree-skill-node.is-selected .life-tree-skill-code {
+  opacity: 1;
+}
+
+.life-tree-domain-label {
+  fill: #8e8e8e;
+  font-size: 11px;
+  paint-order: stroke;
+  stroke: #000;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  cursor: pointer;
+}
+
+.life-tree-domain-count {
+  fill: #666;
+  font-size: 5.5px;
+  letter-spacing: 0.08em;
+}
+
+.life-tree-domain.is-selected .life-tree-domain-label {
+  fill: #fff;
+}
+
+.life-tree-domain[data-strength="1"] .life-tree-branch-line,
+.life-tree-domain[data-strength="1"] .life-tree-node {
+  stroke: #88401f;
+}
+
+.life-tree-domain[data-strength="2"] .life-tree-branch-line,
+.life-tree-domain[data-strength="2"] .life-tree-node {
+  stroke: #d84b12;
+}
+
+.life-tree-domain[data-strength="3"] .life-tree-branch-line,
+.life-tree-domain[data-strength="3"] .life-tree-node {
+  stroke: #ff6b2c;
+  filter: drop-shadow(0 0 2px rgba(255, 107, 44, 0.6));
+}
+
+.life-tree-domain[data-strength="4"] .life-tree-branch-line,
+.life-tree-domain[data-strength="4"] .life-tree-node {
+  stroke: #fff1e9;
+  filter: drop-shadow(0 0 4px rgba(255, 107, 44, 0.9));
+}
+
+.life-tree-domain[data-strength="2"] .life-tree-node,
+.life-tree-domain[data-strength="3"] .life-tree-node,
+.life-tree-domain[data-strength="4"] .life-tree-node {
+  fill: #120803;
+}
+
+.life-tree-domain[data-strength="3"] .life-tree-skill-node.is-selected .life-tree-node,
+.life-tree-domain[data-strength="4"] .life-tree-skill-node.is-selected .life-tree-node {
+  fill: #fff1e9;
+  stroke: #ff6b2c;
+}
+
+@media (max-width: 760px) {
+  .life-tree-viewport-controls {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 0 0;
+    border-inline-start: 0;
+    border-block-start: 1px solid var(--codeology-line, #2f2f2f);
+  }
+
+  .life-tree-svg {
+    width: 720px;
+    max-width: none;
+    height: 720px;
+  }
+}

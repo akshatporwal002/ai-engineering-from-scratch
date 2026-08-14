@@ -1,77 +1,81 @@
 (function () {
+  'use strict';
+
   var SVG_NS = 'http://www.w3.org/2000/svg';
   var LEVEL_LABELS = ['Dormant', 'Started', 'Learning complete', 'Applied strength', 'Evidence proven'];
   var BAND_LABELS = ['Foundations', 'Intern-ready scope', 'Junior-ready scope', 'Senior scope', 'Lead scope'];
+  var CENTER = { x: 500, y: 500 };
+  var SAFE_RADIUS = 442;
 
   var domains = [
-    {
-      id: 'systems', title: 'Systems', x: 120, y: 558, band: 2,
-      description: 'Understand operating systems, hardware boundaries, performance, networking and embedded constraints.',
-      skills: ['Operating systems', 'Networking', 'Embedded systems'],
-      curve: [[500, 650], [420, 650], [260, 620], [140, 575]],
-      twigs: [[0.42, 300, 530], [0.67, 185, 520], [0.78, 130, 635]]
-    },
-    {
-      id: 'cyber', title: 'Cybersecurity', x: 190, y: 318, band: 3,
-      description: 'Protect software, infrastructure and identities through secure design, testing and incident response.',
-      skills: ['Application security', 'Identity', 'Threat modelling'],
-      curve: [[500, 530], [420, 520], [300, 425], [210, 340]],
-      twigs: [[0.40, 330, 350], [0.64, 180, 410], [0.78, 245, 285]]
-    },
-    {
-      id: 'cloud', title: 'Cloud & SRE', x: 335, y: 150, band: 3,
-      description: 'Operate resilient services with automation, observability, infrastructure as code and reliability practices.',
-      skills: ['Containers', 'Infrastructure as code', 'Observability'],
-      curve: [[500, 410], [458, 355], [405, 250], [350, 175]],
-      twigs: [[0.38, 410, 210], [0.63, 300, 245], [0.79, 320, 115]]
-    },
-    {
-      id: 'ai', title: 'Data & AI', x: 500, y: 30, band: 3,
-      description: 'Build data systems, production machine-learning workflows, and AI-enabled products on shared engineering foundations.',
-      skills: ['Python systems', 'Data pipelines', 'Model delivery'],
-      curve: [[500, 410], [500, 402], [500, 394], [500, 386]],
-      twigs: []
-    },
-    {
-      id: 'backend', title: 'Backend', x: 665, y: 150, band: 3,
-      description: 'Design APIs, databases and distributed services that remain reliable as systems and teams grow.',
-      skills: ['API design', 'Databases', 'Distributed systems'],
-      curve: [[500, 410], [542, 355], [595, 250], [650, 175]],
-      twigs: [[0.38, 590, 210], [0.63, 700, 245], [0.79, 680, 115]]
-    },
-    {
-      id: 'web', title: 'Web & Product', x: 810, y: 318, band: 2,
-      description: 'Create accessible product interfaces, stateful applications and fast experiences for the web.',
-      skills: ['Frontend systems', 'Accessibility', 'Performance'],
-      curve: [[500, 530], [580, 520], [700, 425], [790, 340]],
-      twigs: [[0.40, 670, 350], [0.64, 820, 410], [0.78, 755, 285]]
-    },
-    {
-      id: 'mobile', title: 'Mobile', x: 880, y: 558, band: 2,
-      description: 'Ship native and cross-platform applications with resilient state, platform integration and polished interaction.',
-      skills: ['Platform APIs', 'Offline state', 'Mobile delivery'],
-      curve: [[500, 650], [580, 650], [740, 620], [860, 575]],
-      twigs: [[0.42, 700, 530], [0.67, 815, 520], [0.78, 870, 635]]
-    },
-    {
-      id: 'game', title: 'Games & Graphics', x: 790, y: 770, band: 3,
-      description: 'Build interactive simulations, rendering systems and real-time experiences under strict performance constraints.',
-      skills: ['Game loops', 'Rendering', 'Real-time systems'],
-      curve: [[500, 740], [610, 700], [705, 720], [825, 780]],
-      twigs: [[0.35, 650, 650], [0.58, 760, 660], [0.76, 850, 720]]
-    }
+    domain('systems', 'Systems', 155, 38, 'Operating systems, hardware boundaries, networking and performance.', [
+      skill('systems-core', 'Systems core'), skill('os', 'Operating systems'), skill('networks', 'Networking'),
+      skill('concurrency', 'Concurrency'), skill('performance', 'Performance'), skill('embedded', 'Embedded'), skill('kernels', 'Kernels')
+    ], [['systems-core', 'os'], ['systems-core', 'networks'], ['os', 'concurrency'], ['os', 'kernels'], ['concurrency', 'performance'], ['networks', 'embedded']]),
+    domain('cyber', 'Cybersecurity', -165, 32, 'Secure design, identity, testing, detection and incident response.', [
+      skill('cyber-core', 'Security core'), skill('appsec', 'Application security'), skill('identity', 'Identity'),
+      skill('threats', 'Threat modelling'), skill('testing', 'Security testing'), skill('response', 'Incident response'), skill('cloudsec', 'Cloud security')
+    ], [['cyber-core', 'appsec'], ['cyber-core', 'identity'], ['appsec', 'threats'], ['appsec', 'testing'], ['identity', 'cloudsec'], ['testing', 'response']]),
+    domain('cloud', 'Cloud & SRE', -130, 26, 'Resilient services, infrastructure automation, observability and reliability.', [
+      skill('cloud-core', 'Cloud core'), skill('containers', 'Containers'), skill('iac', 'Infrastructure as code'),
+      skill('delivery', 'Delivery systems'), skill('observability', 'Observability'), skill('reliability', 'Reliability'), skill('platforms', 'Platform engineering')
+    ], [['cloud-core', 'containers'], ['cloud-core', 'iac'], ['containers', 'delivery'], ['iac', 'observability'], ['delivery', 'reliability'], ['observability', 'platforms']]),
+    { id: 'ai', title: 'Data & AI', angle: -90, width: 46, description: 'Data systems, machine-learning foundations and production AI engineering.', skills: [], graph: null, band: 3 },
+    domain('backend', 'Backend', -49, 22, 'APIs, databases and distributed services that remain reliable as they grow.', [
+      skill('backend-core', 'Backend core'), skill('apis', 'API design'), skill('databases', 'Databases'),
+      skill('services', 'Service architecture'), skill('distributed', 'Distributed systems'), skill('queues', 'Messaging'), skill('scale', 'Scale & resilience')
+    ], [['backend-core', 'apis'], ['backend-core', 'databases'], ['apis', 'services'], ['databases', 'queues'], ['services', 'distributed'], ['distributed', 'scale']]),
+    domain('web', 'Web & Product', -25, 18, 'Accessible, stateful and fast product experiences for the web.', [
+      skill('web-core', 'Web core'), skill('html-css', 'Web platform'), skill('javascript', 'JavaScript'),
+      skill('accessibility', 'Accessibility'), skill('state', 'Application state'), skill('performance-web', 'Web performance'), skill('product', 'Product systems')
+    ], [['web-core', 'html-css'], ['web-core', 'javascript'], ['html-css', 'accessibility'], ['javascript', 'state'], ['state', 'product'], ['accessibility', 'performance-web']]),
+    domain('mobile', 'Mobile', 0, 22, 'Native and cross-platform applications with resilient state and platform integration.', [
+      skill('mobile-core', 'Mobile core'), skill('platform-api', 'Platform APIs'), skill('mobile-ui', 'Native UI'),
+      skill('offline', 'Offline state'), skill('device', 'Device integration'), skill('mobile-delivery', 'Mobile delivery'), skill('mobile-performance', 'Mobile performance')
+    ], [['mobile-core', 'platform-api'], ['mobile-core', 'mobile-ui'], ['platform-api', 'device'], ['platform-api', 'offline'], ['mobile-ui', 'mobile-performance'], ['offline', 'mobile-delivery']]),
+    domain('game', 'Games & Graphics', 35, 38, 'Interactive simulation, rendering and real-time systems.', [
+      skill('game-core', 'Interactive core'), skill('loops', 'Game loops'), skill('rendering', 'Rendering'),
+      skill('physics', 'Simulation'), skill('shaders', 'Shaders'), skill('engines', 'Engine architecture'), skill('realtime', 'Real-time systems')
+    ], [['game-core', 'loops'], ['game-core', 'rendering'], ['loops', 'physics'], ['loops', 'engines'], ['rendering', 'shaders'], ['engines', 'realtime']])
   ];
+
+  var foundation = domain('foundation', 'Shared foundations', 90, 58, 'The common roots that support every software engineering pathway.', [
+    skill('foundation-core', 'Computing foundations'), skill('languages', 'Programming languages'), skill('devtools', 'Developer tools'),
+    skill('dsa', 'Data structures & algorithms'), skill('git', 'Git & collaboration'), skill('linux', 'Linux & shell'),
+    skill('data', 'Data fundamentals'), skill('testing-core', 'Testing'), skill('networking-core', 'Networking basics')
+  ], [['foundation-core', 'languages'], ['foundation-core', 'devtools'], ['languages', 'dsa'], ['languages', 'data'], ['devtools', 'git'], ['devtools', 'linux'], ['dsa', 'testing-core'], ['linux', 'networking-core']]);
 
   var svg;
   var inspector;
+  var viewport;
+  var layouts = {};
   var aiRoadmap = [];
-  var aiLayout = {};
-  var aiPhaseLayer;
   var selectedId = 'ai';
-  var selectedAiPhaseId = null;
+  var selectedNode = null;
   var previewLevel = 2;
+  var zoom = 1;
+  var view = { x: 0, y: 0, width: 1000, height: 1000 };
+  var dragState = null;
+  var interactiveNodes = [];
 
   document.addEventListener('DOMContentLoaded', init);
+
+  function skill(id, title) {
+    return { id: id, title: title, description: title + ' learning route.' };
+  }
+
+  function domain(id, title, angle, width, description, nodes, edges) {
+    return {
+      id: id,
+      title: title,
+      angle: angle,
+      width: width,
+      description: description,
+      skills: nodes.slice(1, 4).map(function (node) { return node.title; }),
+      graph: { nodes: nodes, edges: edges.map(function (edge) { return { from: edge[0], to: edge[1] }; }) },
+      band: id === 'foundation' ? 0 : 3
+    };
+  }
 
   function svgEl(tag, attrs) {
     var element = document.createElementNS(SVG_NS, tag);
@@ -82,288 +86,242 @@
   function init() {
     svg = document.getElementById('lifeTreeGraph');
     inspector = document.getElementById('lifeTreeInspector');
-    if (!svg || !inspector) return;
+    if (!svg || !inspector || !window.CodeologySkillTreeEngine) return;
     prepareAiRoadmap();
+    buildLayouts();
     renderTree();
     bindControls();
     updateTree();
+    applyView();
     centerTreeViewport();
     window.addEventListener('resize', centerTreeViewport);
-  }
-
-  function renderTree() {
-    var rings = svgEl('g', { 'aria-hidden': 'true' });
-    rings.appendChild(svgEl('circle', { class: 'life-tree-boundary', cx: 500, cy: 500, r: 455 }));
-    [150, 250, 350].forEach(function (radius) {
-      rings.appendChild(svgEl('circle', { class: 'life-tree-ring', cx: 500, cy: 555, r: radius }));
-    });
-    svg.appendChild(rings);
-
-    var structure = svgEl('g', { class: 'life-tree-structure', 'data-strength': '0', 'aria-hidden': 'true' });
-    [
-      [[500, 850], [420, 835], [315, 855], [205, 900]],
-      [[500, 850], [580, 835], [685, 855], [795, 900]]
-    ].forEach(function (rootCurve) {
-      structure.appendChild(svgEl('path', { class: 'life-tree-root', d: centerlinePath(rootCurve) }));
-    });
-    structure.appendChild(svgEl('path', {
-      class: 'life-tree-trunk',
-      d: 'M500 852 C500 720 500 530 500 360'
-    }));
-    svg.appendChild(structure);
-    domains.forEach(function (domain, index) {
-      var group = svgEl('g', {
-        class: 'life-tree-domain' + (domain.id === selectedId ? ' is-selected' : ''),
-        'data-domain': domain.id,
-        'data-index': index,
-        'data-strength': '0',
-        tabindex: domain.id === selectedId ? '0' : '-1',
-        role: 'button',
-        'aria-pressed': domain.id === selectedId ? 'true' : 'false',
-        'aria-label': domain.title + ' branch'
-      });
-      group.appendChild(svgEl('path', { class: 'life-tree-hit', d: centerlinePath(domain.curve) }));
-      group.appendChild(svgEl('path', { class: 'life-tree-branch-line', d: centerlinePath(domain.curve) }));
-      domain.twigs.forEach(function (twig, twigIndex) {
-        var twigCurve = makeTwigCurve(domain.curve, twig[0], [twig[1], twig[2]], twigIndex);
-        group.appendChild(svgEl('path', { class: 'life-tree-twig', d: centerlinePath(twigCurve) }));
-        group.appendChild(node(twig[1], twig[2], false));
-      });
-      if (domain.id !== 'ai') group.appendChild(node(domain.curve[3][0], domain.curve[3][1], true));
-      var label = svgEl('text', { class: 'life-tree-domain-label', x: domain.x, y: domain.y });
-      label.textContent = domain.title;
-      group.appendChild(label);
-      if (domain.id === 'ai' && aiRoadmap.length) {
-        var countLabel = svgEl('text', { class: 'life-tree-domain-count', x: domain.x, y: domain.y + 20 });
-        countLabel.textContent = aiRoadmap.length + ' phases · ' + aiLessonCount() + ' lessons';
-        group.appendChild(countLabel);
-      }
-      group.addEventListener('click', function () { selectDomain(domain.id, true); });
-      group.addEventListener('keydown', function (event) {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          selectDomain(domain.id, true);
-          return;
-        }
-        if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') moveFocus(index, -1);
-        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') moveFocus(index, 1);
-      });
-      svg.appendChild(group);
-    });
-    renderAiRoadmap();
-  }
-
-  function node(x, y, isPrimary) {
-    return svgEl('circle', {
-      class: 'life-tree-node' + (isPrimary ? ' is-primary' : ''),
-      cx: x,
-      cy: y,
-      r: isPrimary ? 8 : 6
-    });
   }
 
   function prepareAiRoadmap() {
     aiRoadmap = typeof PHASES !== 'undefined' && Array.isArray(PHASES)
       ? PHASES.slice().sort(function (a, b) { return a.id - b.id; })
       : [];
-    aiLayout = buildAiLayout(aiRoadmap);
-  }
-
-  function aiLessonCount() {
-    return aiRoadmap.reduce(function (total, phase) {
-      return total + (Array.isArray(phase.lessons) ? phase.lessons.length : 0);
-    }, 0);
-  }
-
-  function buildAiLayout(phases) {
-    var layout = {};
-    if (!phases.length) return layout;
-    var phaseById = {};
-    var children = {};
-    var parentById = {};
-    phases.forEach(function (phase) {
-      phaseById[phase.id] = phase;
-      children[phase.id] = [];
+    var phaseNodes = aiRoadmap.map(function (phase) {
+      return {
+        id: 'ai-' + phase.id,
+        title: phase.name,
+        description: phase.desc || 'AI Engineering pathway phase.',
+        phase: phase,
+        code: padPhase(phase.id)
+      };
     });
-    phases.forEach(function (phase) {
+    var phaseIds = {};
+    aiRoadmap.forEach(function (phase) { phaseIds[phase.id] = true; });
+    var phaseEdges = [];
+    aiRoadmap.forEach(function (phase) {
       var prereqs = typeof ROADMAP_PREREQS !== 'undefined' && ROADMAP_PREREQS[phase.id]
         ? ROADMAP_PREREQS[phase.id]
         : [];
-      var primaryParent = prereqs.find(function (id) { return phaseById[id]; });
-      if (primaryParent !== undefined) {
-        parentById[phase.id] = primaryParent;
-        children[primaryParent].push(phase.id);
-      }
+      prereqs.forEach(function (parentId) {
+        if (phaseIds[parentId]) phaseEdges.push({ from: 'ai-' + parentId, to: 'ai-' + phase.id });
+      });
     });
-    Object.keys(children).forEach(function (id) {
-      children[id].sort(function (a, b) { return a - b; });
-    });
-
-    var roots = phases.filter(function (phase) { return parentById[phase.id] === undefined; }).map(function (phase) { return phase.id; });
-    var depthById = {};
-    var maxDepth = 0;
-    function setDepth(id, depth) {
-      depthById[id] = depth;
-      maxDepth = Math.max(maxDepth, depth);
-      children[id].forEach(function (childId) { setDepth(childId, depth + 1); });
-    }
-    roots.forEach(function (id) { setDepth(id, 0); });
-
-    var leaves = [];
-    function collectLeaves(id) {
-      if (!children[id].length) {
-        leaves.push(id);
-        return;
-      }
-      children[id].forEach(collectLeaves);
-    }
-    roots.forEach(collectLeaves);
-    var minAngle = -116;
-    var maxAngle = -64;
-    var angleById = {};
-    leaves.forEach(function (id, index) {
-      angleById[id] = leaves.length === 1
-        ? -90
-        : minAngle + (maxAngle - minAngle) * index / (leaves.length - 1);
-    });
-    function assignInternalAngle(id) {
-      if (angleById[id] !== undefined) return angleById[id];
-      var childAngles = children[id].map(assignInternalAngle);
-      angleById[id] = childAngles.reduce(function (sum, angle) { return sum + angle; }, 0) / childAngles.length;
-      return angleById[id];
-    }
-    roots.forEach(assignInternalAngle);
-
-    var anchor = { x: 500, y: 410 };
-    phases.forEach(function (phase) {
-      var angle = angleById[phase.id] === undefined ? -90 : angleById[phase.id];
-      var radians = angle * Math.PI / 180;
-      var direction = { x: Math.cos(radians), y: Math.sin(radians) };
-      var boundary = distanceToCircleEdge(anchor, direction, 441);
-      var isLeaf = children[phase.id].length === 0;
-      var depthRatio = depthById[phase.id] / Math.max(1, maxDepth);
-      var densityRadius = isLeaf ? 0.985 : 0.08 + 0.69 * Math.pow(depthRatio, 0.72);
-      var distance = Math.max(24, boundary * densityRadius);
-      var point = capToCircle({
-        x: anchor.x + direction.x * distance,
-        y: anchor.y + direction.y * distance
-      }, 441);
-      layout[phase.id] = {
-        angle: angle,
-        children: children[phase.id],
-        depth: depthById[phase.id],
-        parentId: parentById[phase.id],
-        point: point,
-        isLeaf: isLeaf
-      };
-    });
-    layout.anchor = anchor;
-    layout.maxDepth = maxDepth;
-    return layout;
+    domains.filter(function (item) { return item.id === 'ai'; })[0].graph = { nodes: phaseNodes, edges: phaseEdges };
+    domains.filter(function (item) { return item.id === 'ai'; })[0].skills = phaseNodes.slice(0, 3).map(function (node) { return node.title; });
   }
 
-  function distanceToCircleEdge(origin, direction, radius) {
-    var cx = origin.x - 500;
-    var cy = origin.y - 500;
-    var projection = cx * direction.x + cy * direction.y;
-    var discriminant = projection * projection - (cx * cx + cy * cy - radius * radius);
-    return -projection + Math.sqrt(Math.max(0, discriminant));
+  function buildAiLayout(graph, settings) {
+    return window.CodeologySkillTreeEngine.layoutGraph(graph, settings);
   }
 
   function capToCircle(point, radius) {
-    var dx = point.x - 500;
-    var dy = point.y - 500;
-    var distance = Math.sqrt(dx * dx + dy * dy) || 1;
-    if (distance <= radius) return point;
-    return { x: 500 + dx / distance * radius, y: 500 + dy / distance * radius };
+    return window.CodeologySkillTreeEngine.capToCircle(point, CENTER, radius);
   }
 
-  function renderAiRoadmap() {
-    if (!aiRoadmap.length || !aiLayout.anchor) return;
-    aiPhaseLayer = svgEl('g', {
-      class: 'life-tree-ai-roadmap',
+  function buildLayouts() {
+    domains.concat([foundation]).forEach(function (item) {
+      if (!item.graph || !item.graph.nodes.length) return;
+      var settings = {
+        center: CENTER,
+        circleRadius: SAFE_RADIUS,
+        innerRadius: item.id === 'foundation' ? 104 : 128,
+        outerRadius: 425,
+        startAngle: item.angle - item.width / 2,
+        endAngle: item.angle + item.width / 2
+      };
+      layouts[item.id] = item.id === 'ai'
+        ? buildAiLayout(item.graph, settings)
+        : window.CodeologySkillTreeEngine.layoutGraph(item.graph, settings);
+    });
+    capToCircle({ x: 500, y: 960 }, SAFE_RADIUS);
+  }
+
+  function renderTree() {
+    svg.textContent = '';
+    interactiveNodes = [];
+    var title = svgEl('title', { id: 'lifeTreeSvgTitle' });
+    title.textContent = 'Circular software engineering skill tree';
+    var description = svgEl('desc', { id: 'lifeTreeSvgDescription' });
+    description.textContent = 'A reusable dependency graph engine arranges shared foundations and eight software engineering disciplines inside one circular map.';
+    svg.appendChild(title);
+    svg.appendChild(description);
+
+    viewport = svgEl('g', { class: 'life-tree-viewport' });
+    var rings = svgEl('g', { class: 'life-tree-rings', 'aria-hidden': 'true' });
+    rings.appendChild(svgEl('circle', { class: 'life-tree-boundary', cx: 500, cy: 500, r: 455 }));
+    [128, 225, 325, 425].forEach(function (radius) {
+      rings.appendChild(svgEl('circle', { class: 'life-tree-ring', cx: 500, cy: 500, r: radius }));
+    });
+    viewport.appendChild(rings);
+
+    var structure = svgEl('g', { class: 'life-tree-structure', 'data-strength': '0', 'aria-hidden': 'true' });
+    structure.appendChild(svgEl('circle', { class: 'life-tree-trunk', cx: 500, cy: 500, r: 17 }));
+    viewport.appendChild(structure);
+
+    domains.concat([foundation]).forEach(renderDomainGraph);
+    svg.appendChild(viewport);
+  }
+
+  function renderDomainGraph(domainItem, domainIndex) {
+    var layout = layouts[domainItem.id];
+    if (!layout) return;
+    var group = svgEl('g', {
+      class: 'life-tree-domain life-tree-dag' + (domainItem.id === 'ai' ? ' life-tree-ai-roadmap' : ''),
+      'data-domain': domainItem.id,
+      'data-index': domainIndex,
       'data-strength': '0',
       role: 'group',
-      'aria-label': 'AI and machine learning pathway with ' + aiRoadmap.length + ' phases and ' + aiLessonCount() + ' lessons'
+      'aria-label': domainItem.title + ' skill tree'
     });
-    var edges = svgEl('g', { class: 'life-tree-ai-edges', 'aria-hidden': 'true' });
-    aiRoadmap.forEach(function (phase) {
-      var item = aiLayout[phase.id];
-      var parent = item.parentId === undefined ? aiLayout.anchor : aiLayout[item.parentId].point;
-      var parentAngle = item.parentId === undefined ? item.angle : aiLayout[item.parentId].angle;
-      edges.appendChild(svgEl('path', {
-        class: 'life-tree-ai-edge',
-        d: centerlinePath(aiEdgeCurve(parent, item.point, parentAngle, item.angle))
+    var edgeLayer = svgEl('g', { class: 'life-tree-dag-edges', 'aria-hidden': 'true' });
+    layout.graph.edges.forEach(function (edge) {
+      var parentList = layout.parents[String(edge.to)] || [];
+      var secondary = parentList.indexOf(String(edge.from)) > 0;
+      edgeLayer.appendChild(svgEl('path', {
+        class: 'life-tree-branch-line life-tree-ai-edge' + (secondary ? ' is-secondary' : ''),
+        d: window.CodeologySkillTreeEngine.edgePath(layout, edge),
+        'data-from': edge.from,
+        'data-to': edge.to
       }));
     });
-    aiPhaseLayer.appendChild(edges);
+    group.appendChild(edgeLayer);
 
-    aiRoadmap.forEach(function (phase, index) {
-      var item = aiLayout[phase.id];
-      var lessonCount = Array.isArray(phase.lessons) ? phase.lessons.length : 0;
-      var group = svgEl('g', {
-        class: 'life-tree-ai-phase',
-        'data-phase-id': phase.id,
-        tabindex: phase.id === selectedAiPhaseId ? '0' : '-1',
+    layout.graph.nodes.forEach(function (node, nodeIndex) {
+      var position = layout.positions[String(node.id)];
+      var button = svgEl('g', {
+        class: 'life-tree-skill-node life-tree-ai-phase' + (position.terminal ? ' is-terminal' : ''),
+        'data-domain': domainItem.id,
+        'data-node': node.id,
+        tabindex: domainItem.id === selectedId && nodeIndex === 0 ? '0' : '-1',
         role: 'button',
-        'aria-pressed': phase.id === selectedAiPhaseId ? 'true' : 'false',
-        'aria-label': 'Phase ' + padPhase(phase.id) + ': ' + phase.name + '. ' + lessonCount + ' lessons.'
+        'aria-pressed': 'false',
+        'aria-label': domainItem.title + ': ' + node.title
       });
-      var title = svgEl('title');
-      title.textContent = 'Phase ' + padPhase(phase.id) + ' · ' + phase.name + ' · ' + lessonCount + ' lessons';
-      group.appendChild(title);
-      group.appendChild(svgEl('circle', {
-        class: 'life-tree-ai-phase-hit',
-        cx: item.point.x,
-        cy: item.point.y,
-        r: 15
+      button.appendChild(svgEl('circle', { class: 'life-tree-ai-phase-hit', cx: position.x, cy: position.y, r: 15 }));
+      button.appendChild(svgEl('circle', {
+        class: 'life-tree-node life-tree-ai-phase-node' + (position.terminal ? ' is-terminal' : ''),
+        cx: position.x,
+        cy: position.y,
+        r: node.phase ? Math.min(7.5, 4.2 + Math.sqrt((node.phase.lessons || []).length) * 0.32) : 5.5
       }));
-      group.appendChild(svgEl('circle', {
-        class: 'life-tree-ai-phase-node' + (item.isLeaf ? ' is-terminal' : ''),
-        cx: item.point.x,
-        cy: item.point.y,
-        r: Math.min(7.5, 4.2 + Math.sqrt(lessonCount) * 0.32)
-      }));
-      var code = svgEl('text', {
-        class: 'life-tree-ai-phase-code',
-        x: item.point.x,
-        y: item.point.y - 10
-      });
-      code.textContent = padPhase(phase.id);
-      group.appendChild(code);
-      group.addEventListener('click', function (event) {
+      var code = svgEl('text', { class: 'life-tree-ai-phase-code life-tree-skill-code', x: position.x, y: position.y - 10 });
+      code.textContent = node.code || node.title;
+      button.appendChild(code);
+      button.addEventListener('click', function (event) {
         event.stopPropagation();
-        selectAiPhase(phase.id, true);
+        selectSkill(domainItem.id, node.id, true);
       });
-      group.addEventListener('keydown', function (event) {
+      button.addEventListener('keydown', function (event) {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
-          selectAiPhase(phase.id, true);
-          return;
+          selectSkill(domainItem.id, node.id, true);
+        } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+          event.preventDefault();
+          moveNodeFocus(button, -1);
+        } else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+          event.preventDefault();
+          moveNodeFocus(button, 1);
         }
-        if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') moveAiPhaseFocus(index, -1);
-        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') moveAiPhaseFocus(index, 1);
       });
-      aiPhaseLayer.appendChild(group);
+      interactiveNodes.push(button);
+      group.appendChild(button);
     });
-    svg.appendChild(aiPhaseLayer);
+
+    var labelPoint = polarPoint(98, domainItem.angle);
+    var label = svgEl('text', {
+      class: 'life-tree-domain-label',
+      x: labelPoint.x,
+      y: labelPoint.y,
+      'text-anchor': 'middle',
+      role: 'button',
+      tabindex: '-1',
+      'data-domain-label': domainItem.id
+    });
+    label.textContent = domainItem.title;
+    label.addEventListener('click', function () { selectDomain(domainItem.id, false); });
+    group.appendChild(label);
+    if (domainItem.id === 'ai') {
+      var countPoint = polarPoint(113, domainItem.angle);
+      var count = svgEl('text', { class: 'life-tree-domain-count', x: countPoint.x, y: countPoint.y, 'text-anchor': 'middle' });
+      count.textContent = aiRoadmap.length + ' phases · ' + aiLessonCount() + ' lessons';
+      group.appendChild(count);
+    }
+    viewport.appendChild(group);
   }
 
-  function aiEdgeCurve(start, end, startAngle, endAngle) {
-    var distance = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2));
-    var lead = Math.min(52, distance * 0.34);
-    var startRadians = startAngle * Math.PI / 180;
-    var endRadians = endAngle * Math.PI / 180;
-    return [
-      [start.x, start.y],
-      [start.x + Math.cos(startRadians) * lead, start.y + Math.sin(startRadians) * lead],
-      [end.x - Math.cos(endRadians) * lead, end.y - Math.sin(endRadians) * lead],
-      [end.x, end.y]
-    ];
+  function polarPoint(radius, angle) {
+    var radians = angle * Math.PI / 180;
+    return { x: CENTER.x + Math.cos(radians) * radius, y: CENTER.y + Math.sin(radians) * radius };
   }
 
-  function padPhase(id) {
-    return String(id).padStart(2, '0');
+  function aiLessonCount() {
+    return aiRoadmap.reduce(function (total, phase) { return total + (phase.lessons || []).length; }, 0);
+  }
+
+  function bindControls() {
+    document.querySelectorAll('[data-tree-level]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        previewLevel = Number(button.getAttribute('data-tree-level'));
+        document.querySelectorAll('[data-tree-level]').forEach(function (item) {
+          item.setAttribute('aria-pressed', item === button ? 'true' : 'false');
+        });
+        updateTree();
+      });
+    });
+    document.getElementById('lifeTreeZoomOut').addEventListener('click', function () { setZoom(zoom / 1.2); });
+    document.getElementById('lifeTreeZoomIn').addEventListener('click', function () { setZoom(zoom * 1.2); });
+    document.getElementById('lifeTreeReset').addEventListener('click', resetView);
+    svg.addEventListener('wheel', function (event) {
+      if (!event.ctrlKey && Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
+      event.preventDefault();
+      setZoom(zoom * (event.deltaY < 0 ? 1.12 : 0.89), event.offsetX, event.offsetY);
+    }, { passive: false });
+    svg.addEventListener('pointerdown', startPan);
+    svg.addEventListener('pointermove', movePan);
+    svg.addEventListener('pointerup', endPan);
+    svg.addEventListener('pointercancel', endPan);
+    svg.addEventListener('keydown', function (event) {
+      if (event.key === '+' || event.key === '=') setZoom(zoom * 1.2);
+      if (event.key === '-') setZoom(zoom / 1.2);
+      if (event.key === 'Escape') resetView();
+    });
+  }
+
+  function setZoom(nextZoom, pointerX, pointerY) {
+    var clamped = Math.max(0.85, Math.min(3, nextZoom));
+    var focusX = pointerX === undefined ? view.x + view.width / 2 : view.x + pointerX / svg.clientWidth * view.width;
+    var focusY = pointerY === undefined ? view.y + view.height / 2 : view.y + pointerY / svg.clientHeight * view.height;
+    var nextWidth = 1000 / clamped;
+    var nextHeight = 1000 / clamped;
+    view.x = focusX - (focusX - view.x) * nextWidth / view.width;
+    view.y = focusY - (focusY - view.y) * nextHeight / view.height;
+    view.width = nextWidth;
+    view.height = nextHeight;
+    zoom = clamped;
+    constrainView();
+    applyView();
+  }
+
+  function resetView() {
+    zoom = 1;
+    view = { x: 0, y: 0, width: 1000, height: 1000 };
+    applyView();
+    centerTreeViewport();
   }
 
   function centerTreeViewport() {
@@ -373,103 +331,65 @@
     stage.scrollLeft = Math.max(0, (svg.scrollWidth - stage.clientWidth) / 2);
   }
 
-  function centerlinePath(curve) {
-    return 'M' + curve[0][0] + ' ' + curve[0][1] +
-      ' C' + curve[1][0] + ' ' + curve[1][1] +
-      ' ' + curve[2][0] + ' ' + curve[2][1] +
-      ' ' + curve[3][0] + ' ' + curve[3][1];
+  function constrainView() {
+    view.x = Math.max(-80, Math.min(1080 - view.width, view.x));
+    view.y = Math.max(-80, Math.min(1080 - view.height, view.y));
   }
 
-  function cubicPoint(curve, t) {
-    var mt = 1 - t;
-    return {
-      x: mt * mt * mt * curve[0][0] + 3 * mt * mt * t * curve[1][0] + 3 * mt * t * t * curve[2][0] + t * t * t * curve[3][0],
-      y: mt * mt * mt * curve[0][1] + 3 * mt * mt * t * curve[1][1] + 3 * mt * t * t * curve[2][1] + t * t * t * curve[3][1]
-    };
+  function applyView() {
+    svg.setAttribute('viewBox', [view.x, view.y, view.width, view.height].join(' '));
+    svg.classList.toggle('is-detail-view', zoom >= 1.35);
+    document.getElementById('lifeTreeZoomValue').textContent = Math.round(zoom * 100) + '%';
   }
 
-  function cubicDerivative(curve, t) {
-    var mt = 1 - t;
-    return {
-      x: 3 * mt * mt * (curve[1][0] - curve[0][0]) + 6 * mt * t * (curve[2][0] - curve[1][0]) + 3 * t * t * (curve[3][0] - curve[2][0]),
-      y: 3 * mt * mt * (curve[1][1] - curve[0][1]) + 6 * mt * t * (curve[2][1] - curve[1][1]) + 3 * t * t * (curve[3][1] - curve[2][1])
-    };
+  function startPan(event) {
+    if (event.button !== 0 || event.target.closest('.life-tree-skill-node')) return;
+    dragState = { x: event.clientX, y: event.clientY, viewX: view.x, viewY: view.y };
+    svg.setPointerCapture(event.pointerId);
+    svg.classList.add('is-panning');
   }
 
-  function makeTwigCurve(parentCurve, t, end, index) {
-    var start = cubicPoint(parentCurve, t);
-    var tangent = cubicDerivative(parentCurve, t);
-    var magnitude = Math.sqrt(tangent.x * tangent.x + tangent.y * tangent.y) || 1;
-    var tx = tangent.x / magnitude;
-    var ty = tangent.y / magnitude;
-    var dx = end[0] - start.x;
-    var dy = end[1] - start.y;
-    var distance = Math.sqrt(dx * dx + dy * dy) || 1;
-    var approachX = dx / distance;
-    var approachY = dy / distance;
-    var lead = Math.min(64, distance * (0.28 + index * 0.015));
-    return [
-      [start.x, start.y],
-      [start.x + tx * lead, start.y + ty * lead],
-      [end[0] - approachX * lead, end[1] - approachY * lead],
-      [end[0], end[1]]
-    ];
+  function movePan(event) {
+    if (!dragState) return;
+    view.x = dragState.viewX - (event.clientX - dragState.x) / svg.clientWidth * view.width;
+    view.y = dragState.viewY - (event.clientY - dragState.y) / svg.clientHeight * view.height;
+    constrainView();
+    applyView();
   }
 
-  function bindControls() {
-    var buttons = document.querySelectorAll('[data-tree-level]');
-    for (var i = 0; i < buttons.length; i++) {
-      buttons[i].addEventListener('click', function (event) {
-        previewLevel = parseInt(event.currentTarget.getAttribute('data-tree-level'), 10);
-        for (var j = 0; j < buttons.length; j++) {
-          buttons[j].setAttribute('aria-pressed', buttons[j] === event.currentTarget ? 'true' : 'false');
-        }
-        updateTree();
-      });
-    }
+  function endPan(event) {
+    if (!dragState) return;
+    dragState = null;
+    svg.classList.remove('is-panning');
+    if (svg.hasPointerCapture(event.pointerId)) svg.releasePointerCapture(event.pointerId);
   }
 
-  function selectDomain(id, shouldFocus, preserveAiPhase) {
+  function selectDomain(id, shouldFocus) {
     selectedId = id;
-    if (!preserveAiPhase) selectedAiPhaseId = null;
-    var groups = svg.querySelectorAll('.life-tree-domain');
-    for (var i = 0; i < groups.length; i++) {
-      var selected = groups[i].getAttribute('data-domain') === id;
-      groups[i].classList.toggle('is-selected', selected);
-      groups[i].setAttribute('aria-pressed', selected ? 'true' : 'false');
-      groups[i].setAttribute('tabindex', selected ? '0' : '-1');
-      if (selected && shouldFocus) groups[i].focus();
-    }
-    updateAiPhaseSelection(false);
+    selectedNode = null;
     updateTree();
-  }
-
-  function moveFocus(index, direction) {
-    var next = (index + direction + domains.length) % domains.length;
-    selectDomain(domains[next].id, true);
-  }
-
-  function selectAiPhase(id, shouldFocus) {
-    selectedAiPhaseId = id;
-    selectDomain('ai', false, true);
-    updateAiPhaseSelection(shouldFocus);
-  }
-
-  function moveAiPhaseFocus(index, direction) {
-    var next = (index + direction + aiRoadmap.length) % aiRoadmap.length;
-    selectAiPhase(aiRoadmap[next].id, true);
-  }
-
-  function updateAiPhaseSelection(shouldFocus) {
-    if (!aiPhaseLayer) return;
-    var phaseGroups = aiPhaseLayer.querySelectorAll('.life-tree-ai-phase');
-    for (var i = 0; i < phaseGroups.length; i++) {
-      var selected = Number(phaseGroups[i].getAttribute('data-phase-id')) === selectedAiPhaseId;
-      phaseGroups[i].classList.toggle('is-selected', selected);
-      phaseGroups[i].setAttribute('aria-pressed', selected ? 'true' : 'false');
-      phaseGroups[i].setAttribute('tabindex', selected ? '0' : '-1');
-      if (selected && shouldFocus) phaseGroups[i].focus();
+    if (shouldFocus) {
+      var target = interactiveNodes.find(function (node) { return node.getAttribute('data-domain') === id; });
+      if (target) target.focus();
     }
+  }
+
+  function selectSkill(domainId, nodeId, shouldFocus) {
+    selectedId = domainId;
+    selectedNode = String(nodeId);
+    updateTree();
+    if (shouldFocus) {
+      var target = interactiveNodes.find(function (node) {
+        return node.getAttribute('data-domain') === domainId && node.getAttribute('data-node') === String(nodeId);
+      });
+      if (target) target.focus();
+    }
+  }
+
+  function moveNodeFocus(current, direction) {
+    var index = interactiveNodes.indexOf(current);
+    var next = interactiveNodes[(index + direction + interactiveNodes.length) % interactiveNodes.length];
+    selectSkill(next.getAttribute('data-domain'), next.getAttribute('data-node'), true);
   }
 
   function strengthFor(index, selectedIndex) {
@@ -481,47 +401,55 @@
   }
 
   function updateTree() {
-    var selectedIndex = domains.findIndex(function (domain) { return domain.id === selectedId; });
-    var groups = svg.querySelectorAll('.life-tree-domain');
-    for (var i = 0; i < groups.length; i++) {
-      groups[i].setAttribute('data-strength', String(strengthFor(i, selectedIndex)));
-    }
-    var aiIndex = domains.findIndex(function (domain) { return domain.id === 'ai'; });
-    if (aiPhaseLayer) aiPhaseLayer.setAttribute('data-strength', String(strengthFor(aiIndex, selectedIndex)));
-    updateAiPhaseSelection(false);
+    var selectedIndex = domains.findIndex(function (item) { return item.id === selectedId; });
+    svg.querySelectorAll('.life-tree-domain').forEach(function (group) {
+      var id = group.getAttribute('data-domain');
+      var index = domains.findIndex(function (item) { return item.id === id; });
+      var strength = id === 'foundation'
+        ? (previewLevel === 0 ? 0 : Math.min(4, previewLevel + 1))
+        : strengthFor(index, selectedIndex);
+      group.setAttribute('data-strength', String(strength));
+      group.classList.toggle('is-selected', id === selectedId);
+    });
+    svg.querySelectorAll('.life-tree-skill-node').forEach(function (node) {
+      var selected = node.getAttribute('data-domain') === selectedId && node.getAttribute('data-node') === selectedNode;
+      node.classList.toggle('is-selected', selected);
+      node.setAttribute('aria-pressed', selected ? 'true' : 'false');
+      node.setAttribute('tabindex', selected ? '0' : '-1');
+    });
     var structure = svg.querySelector('.life-tree-structure');
     if (structure) structure.setAttribute('data-strength', String(previewLevel === 0 ? 0 : Math.min(4, previewLevel + 1)));
-    if (selectedId === 'ai' && selectedAiPhaseId !== null) {
-      renderAiPhaseInspector(selectedAiPhaseId, strengthFor(selectedIndex, selectedIndex));
-    } else {
-      renderInspector(domains[selectedIndex], strengthFor(selectedIndex, selectedIndex));
-    }
+    if (selectedNode) renderSkillInspector(selectedId, selectedNode);
+    else renderInspector(findDomain(selectedId), selectedIndex < 0 ? previewLevel + 1 : strengthFor(selectedIndex, selectedIndex));
   }
 
-  function renderAiPhaseInspector(phaseId, strength) {
-    var phase = aiRoadmap.find(function (item) { return item.id === phaseId; });
-    if (!phase) return;
-    var prereqIds = typeof ROADMAP_PREREQS !== 'undefined' && ROADMAP_PREREQS[phaseId] ? ROADMAP_PREREQS[phaseId] : [];
-    var prereqNames = prereqIds.map(function (id) {
-      var prereq = aiRoadmap.find(function (item) { return item.id === id; });
-      return prereq ? prereq.name : 'Phase ' + padPhase(id);
+  function findDomain(id) {
+    return domains.concat([foundation]).find(function (item) { return item.id === id; }) || domains[3];
+  }
+
+  function renderSkillInspector(domainId, nodeId) {
+    var domainItem = findDomain(domainId);
+    var node = domainItem.graph.nodes.find(function (item) { return String(item.id) === String(nodeId); });
+    if (!node) return;
+    var layout = layouts[domainId];
+    var prereqs = (layout.parents[String(nodeId)] || []).map(function (id) {
+      var parent = domainItem.graph.nodes.find(function (item) { return String(item.id) === id; });
+      return parent ? parent.title : id;
     });
-    var lessons = Array.isArray(phase.lessons) ? phase.lessons : [];
+    var lessons = node.phase && Array.isArray(node.phase.lessons) ? node.phase.lessons : [];
     var firstLessonPath = lessons.length ? localLessonPath(lessons[0].url) : '';
     inspector.innerHTML =
-      '<span class="life-tree-inspector-kicker">AI / ML pathway · Phase ' + padPhase(phase.id) + '</span>' +
-      '<h3>' + escapeHtml(phase.name) + '</h3>' +
-      '<p>' + escapeHtml(phase.desc || 'A phase in the imported AI Engineering from Scratch pathway.') + '</p>' +
+      '<span class="life-tree-inspector-kicker">' + escapeHtml(domainItem.title) + (node.phase ? ' · Phase ' + node.code : ' · Skill') + '</span>' +
+      '<h3>' + escapeHtml(node.title) + '</h3>' +
+      '<p>' + escapeHtml(node.description) + '</p>' +
       '<dl>' +
-        '<div><dt>Learning density</dt><dd>' + lessons.length + ' lessons in this branch</dd></div>' +
-        '<div><dt>Prerequisites</dt><dd>' + (prereqNames.length ? escapeHtml(prereqNames.join(', ')) : 'Starting phase') + '</dd></div>' +
-        '<div><dt>Preview light</dt><dd>Level ' + strength + ' · ' + LEVEL_LABELS[strength] + '</dd></div>' +
+        '<div><dt>Prerequisites</dt><dd>' + (prereqs.length ? escapeHtml(prereqs.join(', ')) : 'Branch starting point') + '</dd></div>' +
+        '<div><dt>Graph tier</dt><dd>' + (layout.positions[String(nodeId)].depth + 1) + ' of ' + (layout.maxDepth + 1) + '</dd></div>' +
+        '<div><dt>Content</dt><dd>' + (node.phase ? lessons.length + ' lessons' : 'Curriculum fixture') + '</dd></div>' +
       '</dl>' +
-      '<div class="life-tree-inspector-skills" aria-label="Example lessons">' +
-        lessons.slice(0, 3).map(function (lesson) { return '<span>' + escapeHtml(lesson.name) + '</span>'; }).join('') +
-      '</div>' +
+      (lessons.length ? '<div class="life-tree-inspector-skills">' + lessons.slice(0, 3).map(function (lesson) { return '<span>' + escapeHtml(lesson.name) + '</span>'; }).join('') + '</div>' : '') +
       (firstLessonPath ? '<a class="life-tree-inspector-link" href="lesson.html?path=' + encodeURIComponent(firstLessonPath) + '">Open first lesson</a>' : '') +
-      '<p class="life-tree-inspector-note">All ' + aiRoadmap.length + ' original phases are mapped here. New phases are placed automatically and make this canopy denser without crossing the circle boundary.</p>';
+      '<p class="life-tree-inspector-note">Solid lines show the primary route. Additional prerequisites stay faint until this skill is selected.</p>';
   }
 
   function localLessonPath(url) {
@@ -529,23 +457,25 @@
     return match ? 'phases/' + match[1] : '';
   }
 
-  function renderInspector(domain, strength) {
-    var supporting = domains
-      .filter(function (_, index) { return strengthFor(index, domains.indexOf(domain)) > 0 && domains[index].id !== domain.id; })
-      .map(function (item) { return item.title; });
+  function renderInspector(domainItem, strength) {
+    var layout = layouts[domainItem.id];
+    var overlapCount = window.CodeologySkillTreeEngine.countApproximateOverlaps(layout, 16);
     inspector.innerHTML =
       '<span class="life-tree-inspector-kicker">Selected branch</span>' +
-      '<h3>' + escapeHtml(domain.title) + '</h3>' +
-      '<p>' + escapeHtml(domain.description) + '</p>' +
+      '<h3>' + escapeHtml(domainItem.title) + '</h3>' +
+      '<p>' + escapeHtml(domainItem.description) + '</p>' +
       '<dl>' +
-        '<div><dt>Direct light</dt><dd>Level ' + strength + ' · ' + LEVEL_LABELS[strength] + '</dd></div>' +
-        '<div><dt>Ambient strength</dt><dd>' + (supporting.length ? 'Reinforced by ' + escapeHtml(supporting.join(', ')) : 'No related glow yet') + '</dd></div>' +
-        '<div><dt>Current band</dt><dd>' + BAND_LABELS[domain.band] + '</dd></div>' +
+        '<div><dt>Preview light</dt><dd>Level ' + Math.min(4, strength) + ' · ' + LEVEL_LABELS[Math.min(4, strength)] + '</dd></div>' +
+        '<div><dt>Graph capacity</dt><dd>' + domainItem.graph.nodes.length + ' skills across ' + (layout.maxDepth + 1) + ' tiers</dd></div>' +
+        '<div><dt>Layout check</dt><dd>' + (overlapCount ? overlapCount + ' close node pairs' : 'No node collisions detected') + '</dd></div>' +
+        '<div><dt>Current band</dt><dd>' + BAND_LABELS[domainItem.band] + '</dd></div>' +
       '</dl>' +
-      '<div class="life-tree-inspector-skills" aria-label="Example skills">' +
-        domain.skills.map(function (skill) { return '<span>' + escapeHtml(skill) + '</span>'; }).join('') +
-      '</div>' +
-      '<p class="life-tree-inspector-note">Direct light comes from work in this branch. Nearby glow shows supporting knowledge without marking this branch complete.</p>';
+      '<div class="life-tree-inspector-skills">' + domainItem.skills.map(function (item) { return '<span>' + escapeHtml(item) + '</span>'; }).join('') + '</div>' +
+      '<p class="life-tree-inspector-note">This branch is generated by the same engine as every other subsystem. Add skills and prerequisites to its data; the tree recalculates its tiers and becomes denser within its fixed sector.</p>';
+  }
+
+  function padPhase(id) {
+    return String(id).padStart(2, '0');
   }
 
   function escapeHtml(value) {
