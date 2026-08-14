@@ -105,6 +105,7 @@ def audit(
         "--codeology-radius-md:",
         "background-image: none",
         ".codeology-content-source",
+        ".header-actions",
     )
     for token in required_css:
         if token not in css:
@@ -137,6 +138,8 @@ def audit(
         errors.append("site/codeology-shell.js: config and stylesheet must load centrally")
     if "replaceNavigation(config)" not in shell:
         errors.append("site/codeology-shell.js: shared Codeology navigation is missing")
+    if "actions.appendChild(login)" not in shell or "nav.appendChild(login)" in shell:
+        errors.append("site/codeology-shell.js: login must live in the right-side action group")
     if "replaceFooter(config)" not in shell:
         errors.append("site/codeology-shell.js: shared Codeology footer ownership is missing")
     for contract in ('a[href="credits.html"]', "credits.href = 'credits.html'"):
@@ -151,6 +154,9 @@ def audit(
             errors.append(f"site/codeology-shell.js: missing lesson-source integration {contract!r}")
     if "codeology-shell.js" not in header:
         errors.append("site/header.js: Codeology shell loader is missing")
+    for retired in ("ensureNarration", "tts.js", "NARRATION_VERSION"):
+        if retired in header:
+            errors.append(f"site/header.js: retired narration loader remains active ({retired!r})")
     versions = set(
         re.findall(r"var (?:VERSION|AUTH_VERSION) = '(202608\d{2}[a-z])'", shell)
         + re.findall(r"var CODEOLOGY_SHELL_VERSION = '(202608\d{2}[a-z])'", header)

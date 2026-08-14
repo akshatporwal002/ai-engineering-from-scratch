@@ -841,7 +841,6 @@ html[data-product="codeology"] .glossary-clear,
 html[data-product="codeology"] .glossary-filter,
 html[data-product="codeology"] .glossary-letter,
 html[data-product="codeology"] .glossary-copy-link,
-html[data-product="codeology"] .glossary-read-aloud,
 html[data-product="codeology"] .glossary-details {
   border-radius: var(--codeology-radius-sm);
 }
@@ -1134,10 +1133,42 @@ html[data-product="codeology"] .glossary-details {
 .header-menu-toggle,
 .search-toggle,
 .theme-toggle,
-.lang-picker-btn,
 .masthead-btn,
 .copy-chip {
   border-radius: var(--codeology-radius-pill);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.codeology-login-button {
+  min-height: 36px;
+  padding: 7px 14px;
+  border: 1px solid var(--blueprint);
+  border-radius: var(--codeology-radius-pill);
+  background: var(--blueprint);
+  color: var(--codeology-canvas);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.codeology-login-button:hover {
+  border-color: var(--accent-hover);
+  background: var(--accent-hover);
+}
+
+.codeology-login-button:focus-visible {
+  outline: 2px solid var(--blueprint);
+  outline-offset: 2px;
 }
 
 @media (max-width: 700px) {
@@ -1167,6 +1198,20 @@ html[data-product="codeology"] .glossary-details {
   .codeology-content-source__pinned {
     width: 100%;
     margin-left: 0;
+  }
+
+  .header-mobile-tools .header-actions {
+    width: 100%;
+  }
+
+  .header-actions .search-toggle,
+  .header-actions .theme-toggle {
+    width: 44px;
+    height: 44px;
+  }
+
+  .header-actions .codeology-login-button {
+    min-height: 44px;
   }
 
   html[data-product="codeology"] .catalog-search,

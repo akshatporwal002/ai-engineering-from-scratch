@@ -228,7 +228,7 @@ def audit_page(html: str, css: str, charter: dict[str, Any]) -> list[str]:
     ):
         if contract and contract not in page_text:
             errors.append(f"site/assurance.html: missing assurance limit {contract!r}")
-    if not re.search(r'codeology\.css\?v=20260812[a-z]" data-codeology-style="20260812[a-z]"', html):
+    if not re.search(r'codeology\.css\?v=20260814[a-z]" data-codeology-style="20260814[a-z]"', html):
         errors.append("site/assurance.html: direct Codeology stylesheet contract is missing")
     if not re.search(r"\.assurance-page\s*\{[^}]*padding:\s*calc\(var\(--header-offset\) \+ 16px\)", css, re.DOTALL):
         errors.append("site/codeology.css: assurance page must clear the fixed Codeology header-offset")

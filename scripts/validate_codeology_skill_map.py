@@ -109,7 +109,7 @@ def audit(html: str, script: str, css: str) -> list[str]:
     ):
         if contract not in html:
             errors.append(f"site/prereqs.html: missing learning-map contract {contract!r}")
-    if not re.search(r'codeology\.css\?v=20260812[a-z]" data-codeology-style="20260812[a-z]"', html):
+    if not re.search(r'codeology\.css\?v=20260814[a-z]" data-codeology-style="20260814[a-z]"', html):
         errors.append("site/prereqs.html: direct Codeology stylesheet contract is missing")
 
     tier_match = re.search(r"var TIER_ORDER = \[(.*?)\];\s*\n\s*var STAGES", script, re.DOTALL)

@@ -2,8 +2,8 @@
 (function () {
   'use strict';
 
-  var VERSION = '20260814a';
-  var AUTH_VERSION = '20260814a';
+  var VERSION = '20260814b';
+  var AUTH_VERSION = '20260814b';
   var CONFIG_URL = 'codeology-config.json?v=' + VERSION;
   var STYLE_URL = 'codeology.css?v=' + VERSION;
 
@@ -53,13 +53,16 @@
       for (var j = 0; j < navigation.length; j++) {
         nav.appendChild(navigationLink(navigation[j], currentPage));
       }
+      var header = nav.closest('.site-header');
+      var actions = header && header.querySelector('.header-actions');
+      if (!actions) continue;
       var login = document.createElement('button');
       login.type = 'button';
-      login.className = 'header-github codeology-login-button';
+      login.className = 'codeology-login-button';
       login.textContent = 'Log in';
       login.setAttribute('aria-label', 'Log in to Codeology');
       login.setAttribute('data-codeology-auth-trigger', '');
-      nav.appendChild(login);
+      actions.appendChild(login);
     }
   }
 

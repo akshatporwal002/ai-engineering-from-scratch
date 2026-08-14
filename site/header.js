@@ -9,8 +9,7 @@
   var CACHE_KEY = 'gh:stars:' + REPO;
   var CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
   var COMPACT_HEADER_QUERY = '(max-width: 1100px)';
-  var NARRATION_VERSION = '20260809a';
-  var CODEOLOGY_SHELL_VERSION = '20260814a';
+  var CODEOLOGY_SHELL_VERSION = '20260814b';
   var navId = 0;
 
   function ensureCodeologyShell() {
@@ -80,19 +79,6 @@
       .catch(function () {
         // Leave the placeholder; the link still works.
       });
-  }
-
-  /**
-   * Narration is a site capability, not a page-template responsibility. Load
-   * it once from the shared header so new pages cannot silently omit it.
-   */
-  function ensureNarration() {
-    if (window.__AIFS_TTS_VERSION === NARRATION_VERSION || document.querySelector('script[data-aifs-tts="' + NARRATION_VERSION + '"]')) return;
-    var script = document.createElement('script');
-    script.src = 'tts.js?v=' + NARRATION_VERSION;
-    script.async = true;
-    script.setAttribute('data-aifs-tts', NARRATION_VERSION);
-    document.head.appendChild(script);
   }
 
   function pageFile(url) {
@@ -180,6 +166,19 @@
       + '<span></span><span></span><span></span></span>';
     inner.insertBefore(toggle, nav);
 
+    var actions = document.createElement('div');
+    actions.className = 'header-actions';
+    actions.setAttribute('role', 'group');
+    actions.setAttribute('aria-label', 'Site actions');
+    var directChildren = Array.prototype.slice.call(inner.children);
+    var firstTool = directChildren.find(function (child) {
+      return child !== logo && child !== nav && child !== toggle;
+    });
+    inner.insertBefore(actions, firstTool || null);
+    directChildren.forEach(function (child) {
+      if (child !== logo && child !== nav && child !== toggle && child !== actions) actions.appendChild(child);
+    });
+
     var tools = document.createElement('div');
     tools.className = 'header-mobile-tools';
     tools.setAttribute('role', 'group');
@@ -187,11 +186,7 @@
     nav.appendChild(tools);
 
     var toolAnchor = document.createComment('header-tools');
-    var directChildren = Array.prototype.slice.call(inner.children);
-    var firstTool = directChildren.find(function (child) {
-      return child !== logo && child !== nav && child !== toggle;
-    });
-    inner.insertBefore(toolAnchor, firstTool || null);
+    inner.insertBefore(toolAnchor, actions);
 
     var compact = window.matchMedia ? window.matchMedia(COMPACT_HEADER_QUERY) : null;
     var open = false;
@@ -261,7 +256,6 @@
     ensureCodeologyShell();
     var headers = document.querySelectorAll('.site-header');
     for (var i = 0; i < headers.length; i++) setupNavigation(headers[i]);
-    ensureNarration();
   }
 
   if (document.readyState === 'loading') {

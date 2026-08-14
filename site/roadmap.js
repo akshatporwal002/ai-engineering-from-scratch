@@ -316,9 +316,6 @@
     var group = svgEl('g', {
       class: 'roadmap-node roadmap-node--' + state.key + (progress.done > 0 ? ' has-local-progress' : ''),
       'data-phase': phase.id,
-      'data-tts-read': '',
-      'data-tts-section': 'Phase ' + formatPhase(phase.id) + ': ' + phase.name,
-      'data-tts-label': narration,
       transform: 'translate(' + pos.x + ',' + pos.y + ')',
       tabindex: '-1',
       role: 'button',

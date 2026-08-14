@@ -118,7 +118,7 @@ def audit(html: str, css: str) -> list[str]:
     ):
         if contract not in html:
             errors.append(f"site/about.html: missing product or attribution contract {contract!r}")
-    if not re.search(r'codeology\.css\?v=20260812[a-z]" data-codeology-style="20260812[a-z]"', html):
+    if not re.search(r'codeology\.css\?v=20260814[a-z]" data-codeology-style="20260814[a-z]"', html):
         errors.append("site/about.html: direct Codeology stylesheet contract is missing")
     if len(parser.structured_data) != 1:
         errors.append("site/about.html: exactly one active JSON-LD block is required")
