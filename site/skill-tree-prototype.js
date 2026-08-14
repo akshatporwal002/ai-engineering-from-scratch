@@ -5,68 +5,60 @@
 
   var domains = [
     {
-      id: 'systems', title: 'Systems', x: 145, y: 558, band: 2,
+      id: 'systems', title: 'Systems', x: 120, y: 558, band: 2,
       description: 'Understand operating systems, hardware boundaries, performance, networking and embedded constraints.',
       skills: ['Operating systems', 'Networking', 'Embedded systems'],
-      curve: [[486, 704], [410, 696], [270, 646], [160, 574]],
-      width: 19,
-      twigs: [[0.36, -1, 102], [0.55, 1, 82], [0.72, -1, 70], [0.84, 1, 58]]
+      curve: [[500, 650], [420, 650], [260, 620], [140, 575]],
+      twigs: [[0.42, 300, 530], [0.67, 185, 520], [0.78, 130, 635]]
     },
     {
-      id: 'cyber', title: 'Cybersecurity', x: 224, y: 322, band: 3,
+      id: 'cyber', title: 'Cybersecurity', x: 190, y: 318, band: 3,
       description: 'Protect software, infrastructure and identities through secure design, testing and incident response.',
       skills: ['Application security', 'Identity', 'Threat modelling'],
-      curve: [[489, 622], [406, 584], [304, 462], [232, 340]],
-      width: 17,
-      twigs: [[0.30, -1, 96], [0.48, 1, 76], [0.66, -1, 76], [0.82, 1, 58]]
+      curve: [[500, 530], [420, 520], [300, 425], [210, 340]],
+      twigs: [[0.40, 330, 350], [0.64, 180, 410], [0.78, 245, 285]]
     },
     {
-      id: 'cloud', title: 'Cloud & SRE', x: 354, y: 186, band: 3,
+      id: 'cloud', title: 'Cloud & SRE', x: 335, y: 150, band: 3,
       description: 'Operate resilient services with automation, observability, infrastructure as code and reliability practices.',
       skills: ['Containers', 'Infrastructure as code', 'Observability'],
-      curve: [[494, 548], [454, 472], [405, 310], [362, 208]],
-      width: 15,
-      twigs: [[0.29, -1, 88], [0.48, 1, 72], [0.68, -1, 66], [0.82, 1, 50]]
+      curve: [[500, 410], [458, 355], [405, 250], [350, 175]],
+      twigs: [[0.38, 410, 210], [0.63, 300, 245], [0.79, 320, 115]]
     },
     {
-      id: 'ai', title: 'Data & AI', x: 500, y: 112, band: 3,
+      id: 'ai', title: 'Data & AI', x: 500, y: 68, band: 3,
       description: 'Build data systems, production machine-learning workflows, and AI-enabled products on shared engineering foundations.',
       skills: ['Python systems', 'Data pipelines', 'Model delivery'],
-      curve: [[500, 456], [486, 366], [510, 220], [500, 136]],
-      width: 15,
-      twigs: [[0.24, -1, 90], [0.42, 1, 86], [0.61, -1, 74], [0.78, 1, 56]]
+      curve: [[500, 360], [500, 290], [500, 175], [500, 95]],
+      twigs: [[0.38, 440, 205], [0.58, 560, 175], [0.76, 448, 125]]
     },
     {
-      id: 'backend', title: 'Backend', x: 646, y: 186, band: 3,
+      id: 'backend', title: 'Backend', x: 665, y: 150, band: 3,
       description: 'Design APIs, databases and distributed services that remain reliable as systems and teams grow.',
       skills: ['API design', 'Databases', 'Distributed systems'],
-      curve: [[506, 548], [546, 472], [595, 310], [638, 208]],
-      width: 15,
-      twigs: [[0.29, 1, 88], [0.48, -1, 72], [0.68, 1, 66], [0.82, -1, 50]]
+      curve: [[500, 410], [542, 355], [595, 250], [650, 175]],
+      twigs: [[0.38, 590, 210], [0.63, 700, 245], [0.79, 680, 115]]
     },
     {
-      id: 'web', title: 'Web & Product', x: 776, y: 322, band: 2,
+      id: 'web', title: 'Web & Product', x: 810, y: 318, band: 2,
       description: 'Create accessible product interfaces, stateful applications and fast experiences for the web.',
       skills: ['Frontend systems', 'Accessibility', 'Performance'],
-      curve: [[511, 622], [594, 584], [696, 462], [768, 340]],
-      width: 17,
-      twigs: [[0.30, 1, 96], [0.48, -1, 76], [0.66, 1, 76], [0.82, -1, 58]]
+      curve: [[500, 530], [580, 520], [700, 425], [790, 340]],
+      twigs: [[0.40, 670, 350], [0.64, 820, 410], [0.78, 755, 285]]
     },
     {
-      id: 'mobile', title: 'Mobile', x: 855, y: 558, band: 2,
+      id: 'mobile', title: 'Mobile', x: 880, y: 558, band: 2,
       description: 'Ship native and cross-platform applications with resilient state, platform integration and polished interaction.',
       skills: ['Platform APIs', 'Offline state', 'Mobile delivery'],
-      curve: [[514, 704], [590, 696], [730, 646], [840, 574]],
-      width: 19,
-      twigs: [[0.36, 1, 102], [0.55, -1, 82], [0.72, 1, 70], [0.84, -1, 58]]
+      curve: [[500, 650], [580, 650], [740, 620], [860, 575]],
+      twigs: [[0.42, 700, 530], [0.67, 815, 520], [0.78, 870, 635]]
     },
     {
-      id: 'game', title: 'Games & Graphics', x: 770, y: 750, band: 3,
+      id: 'game', title: 'Games & Graphics', x: 790, y: 770, band: 3,
       description: 'Build interactive simulations, rendering systems and real-time experiences under strict performance constraints.',
       skills: ['Game loops', 'Rendering', 'Real-time systems'],
-      curve: [[515, 770], [602, 742], [704, 758], [824, 790]],
-      width: 18,
-      twigs: [[0.34, -1, 88], [0.57, -1, 72], [0.76, 1, 60]]
+      curve: [[500, 740], [610, 700], [705, 720], [825, 780]],
+      twigs: [[0.35, 650, 650], [0.58, 760, 660], [0.76, 850, 720]]
     }
   ];
 
@@ -90,6 +82,8 @@
     renderTree();
     bindControls();
     updateTree();
+    centerTreeViewport();
+    window.addEventListener('resize', centerTreeViewport);
   }
 
   function renderTree() {
@@ -102,22 +96,16 @@
 
     var structure = svgEl('g', { class: 'life-tree-structure', 'data-strength': '0', 'aria-hidden': 'true' });
     [
-      [[[500, 836], [442, 814], [350, 818], [216, 868]], 22],
-      [[[500, 836], [558, 814], [650, 818], [784, 868]], 22],
-      [[[500, 840], [452, 850], [392, 880], [328, 924]], 18],
-      [[[500, 840], [548, 850], [608, 880], [672, 924]], 18],
-      [[[494, 842], [462, 876], [446, 910], [438, 948]], 15],
-      [[[506, 842], [538, 876], [554, 910], [562, 948]], 15]
-    ].forEach(function (root) {
-      structure.appendChild(svgEl('path', {
-        class: 'life-tree-root life-tree-wood-shape',
-        d: taperedPath(root[0], root[1], 1.2, 22)
-      }));
+      [[500, 850], [420, 835], [315, 855], [205, 900]],
+      [[500, 850], [580, 835], [685, 855], [795, 900]]
+    ].forEach(function (rootCurve) {
+      structure.appendChild(svgEl('path', { class: 'life-tree-root', d: centerlinePath(rootCurve) }));
     });
     structure.appendChild(svgEl('path', {
-      class: 'life-tree-trunk life-tree-wood-shape',
-      d: taperedPath([[500, 848], [476, 742], [502, 560], [500, 408]], 34, 8, 34)
+      class: 'life-tree-trunk',
+      d: 'M500 852 C500 720 500 530 500 360'
     }));
+    svg.appendChild(structure);
     domains.forEach(function (domain, index) {
       var group = svgEl('g', {
         class: 'life-tree-domain' + (domain.id === selectedId ? ' is-selected' : ''),
@@ -130,19 +118,13 @@
         'aria-label': domain.title + ' branch'
       });
       group.appendChild(svgEl('path', { class: 'life-tree-hit', d: centerlinePath(domain.curve) }));
-      group.appendChild(svgEl('path', {
-        class: 'life-tree-branch-shape life-tree-wood-shape',
-        d: taperedPath(domain.curve, domain.width, 1.7, 32)
-      }));
+      group.appendChild(svgEl('path', { class: 'life-tree-branch-line', d: centerlinePath(domain.curve) }));
       domain.twigs.forEach(function (twig, twigIndex) {
-        var twigCurve = makeTwigCurve(domain.curve, twig[0], twig[1], twig[2], twigIndex);
-        group.appendChild(svgEl('path', {
-          class: 'life-tree-twig-shape life-tree-wood-shape',
-          d: taperedPath(twigCurve, Math.max(5, domain.width * 0.36), 0.8, 20)
-        }));
-        group.appendChild(leaf(twigCurve[3][0], twigCurve[3][1], twigCurve));
+        var twigCurve = makeTwigCurve(domain.curve, twig[0], [twig[1], twig[2]], twigIndex);
+        group.appendChild(svgEl('path', { class: 'life-tree-twig', d: centerlinePath(twigCurve) }));
+        group.appendChild(node(twig[1], twig[2], false));
       });
-      group.appendChild(leaf(domain.curve[3][0], domain.curve[3][1], domain.curve));
+      group.appendChild(node(domain.curve[3][0], domain.curve[3][1], true));
       var label = svgEl('text', { class: 'life-tree-domain-label', x: domain.x, y: domain.y });
       label.textContent = domain.title;
       group.appendChild(label);
@@ -158,17 +140,22 @@
       });
       svg.appendChild(group);
     });
-    svg.appendChild(structure);
   }
 
-  function leaf(x, y, curve) {
-    var tangent = cubicDerivative(curve, 1);
-    var angle = Math.atan2(tangent.y, tangent.x) * 180 / Math.PI;
-    return svgEl('path', {
-      class: 'life-tree-leaf',
-      d: 'M' + (x - 2) + ' ' + y + ' C' + (x + 7) + ' ' + (y - 12) + ' ' + (x + 18) + ' ' + (y - 10) + ' ' + (x + 22) + ' ' + y + ' C' + (x + 14) + ' ' + (y + 10) + ' ' + (x + 5) + ' ' + (y + 9) + ' ' + (x - 2) + ' ' + y + 'Z',
-      transform: 'rotate(' + angle + ' ' + x + ' ' + y + ')'
+  function node(x, y, isPrimary) {
+    return svgEl('circle', {
+      class: 'life-tree-node' + (isPrimary ? ' is-primary' : ''),
+      cx: x,
+      cy: y,
+      r: isPrimary ? 8 : 6
     });
+  }
+
+  function centerTreeViewport() {
+    if (!svg || window.innerWidth > 760) return;
+    var stage = svg.parentElement;
+    if (!stage) return;
+    stage.scrollLeft = Math.max(0, (svg.scrollWidth - stage.clientWidth) / 2);
   }
 
   function centerlinePath(curve) {
@@ -194,40 +181,23 @@
     };
   }
 
-  function taperedPath(curve, startWidth, endWidth, steps) {
-    var left = [];
-    var right = [];
-    for (var i = 0; i <= steps; i++) {
-      var t = i / steps;
-      var point = cubicPoint(curve, t);
-      var tangent = cubicDerivative(curve, t);
-      var length = Math.sqrt(tangent.x * tangent.x + tangent.y * tangent.y) || 1;
-      var width = (startWidth * Math.pow(1 - t, 1.2) + endWidth * t) / 2;
-      var nx = -tangent.y / length;
-      var ny = tangent.x / length;
-      left.push([point.x + nx * width, point.y + ny * width]);
-      right.push([point.x - nx * width, point.y - ny * width]);
-    }
-    var path = 'M' + left[0][0].toFixed(2) + ' ' + left[0][1].toFixed(2);
-    for (var j = 1; j < left.length; j++) path += ' L' + left[j][0].toFixed(2) + ' ' + left[j][1].toFixed(2);
-    for (var k = right.length - 1; k >= 0; k--) path += ' L' + right[k][0].toFixed(2) + ' ' + right[k][1].toFixed(2);
-    return path + ' Z';
-  }
-
-  function makeTwigCurve(parentCurve, t, side, length, index) {
+  function makeTwigCurve(parentCurve, t, end, index) {
     var start = cubicPoint(parentCurve, t);
     var tangent = cubicDerivative(parentCurve, t);
     var magnitude = Math.sqrt(tangent.x * tangent.x + tangent.y * tangent.y) || 1;
     var tx = tangent.x / magnitude;
     var ty = tangent.y / magnitude;
-    var nx = -ty * side;
-    var ny = tx * side;
-    var sweep = length * (0.72 + index * 0.025);
+    var dx = end[0] - start.x;
+    var dy = end[1] - start.y;
+    var distance = Math.sqrt(dx * dx + dy * dy) || 1;
+    var approachX = dx / distance;
+    var approachY = dy / distance;
+    var lead = Math.min(64, distance * (0.28 + index * 0.015));
     return [
       [start.x, start.y],
-      [start.x + tx * length * 0.28 + nx * length * 0.04, start.y + ty * length * 0.28 + ny * length * 0.04],
-      [start.x + tx * length * 0.52 + nx * length * 0.48, start.y + ty * length * 0.52 + ny * length * 0.48],
-      [start.x + tx * length * 0.58 + nx * sweep, start.y + ty * length * 0.58 + ny * sweep]
+      [start.x + tx * lead, start.y + ty * lead],
+      [end[0] - approachX * lead, end[1] - approachY * lead],
+      [end[0], end[1]]
     ];
   }
 

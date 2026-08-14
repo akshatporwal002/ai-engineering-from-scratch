@@ -195,17 +195,19 @@
 
 .life-tree-root,
 .life-tree-trunk,
-.life-tree-branch-shape,
-.life-tree-twig-shape,
-.life-tree-leaf {
+.life-tree-branch-line,
+.life-tree-twig,
+.life-tree-node {
   vector-effect: non-scaling-stroke;
   transition: stroke 280ms ease, opacity 280ms ease, filter 280ms ease, fill 280ms ease;
 }
 
-.life-tree-wood-shape {
-  fill: #030303;
+.life-tree-root,
+.life-tree-trunk,
+.life-tree-branch-line,
+.life-tree-twig {
+  fill: none;
   stroke: #343434;
-  stroke-width: 1.35;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -214,14 +216,24 @@
   pointer-events: none;
 }
 
-.life-tree-twig-shape {
-  stroke-width: 1.05;
+.life-tree-root,
+.life-tree-trunk,
+.life-tree-branch-line {
+  stroke-width: 1.55;
 }
 
-.life-tree-leaf {
-  fill: #080808;
+.life-tree-twig {
+  stroke-width: 1.25;
+}
+
+.life-tree-node {
+  fill: #000;
   stroke: #3c3c3c;
-  stroke-width: 1.45;
+  stroke-width: 1.5;
+}
+
+.life-tree-node.is-primary {
+  stroke-width: 1.8;
 }
 
 .life-tree-domain {
@@ -257,59 +269,55 @@
   stroke: rgba(255, 107, 44, 0.08);
 }
 
-.life-tree-domain[data-strength="1"] .life-tree-branch-shape,
-.life-tree-domain[data-strength="1"] .life-tree-twig-shape,
+.life-tree-domain[data-strength="1"] .life-tree-branch-line,
+.life-tree-domain[data-strength="1"] .life-tree-twig,
 .life-tree-structure[data-strength="1"] .life-tree-root,
 .life-tree-structure[data-strength="1"] .life-tree-trunk {
   stroke: #88401f;
-  fill: #080402;
 }
 
-.life-tree-domain[data-strength="1"] .life-tree-leaf {
+.life-tree-domain[data-strength="1"] .life-tree-node {
   stroke: #88401f;
 }
 
-.life-tree-domain[data-strength="2"] .life-tree-branch-shape,
-.life-tree-domain[data-strength="2"] .life-tree-twig-shape,
+.life-tree-domain[data-strength="2"] .life-tree-branch-line,
+.life-tree-domain[data-strength="2"] .life-tree-twig,
 .life-tree-structure[data-strength="2"] .life-tree-root,
 .life-tree-structure[data-strength="2"] .life-tree-trunk {
   stroke: #d84b12;
-  fill: rgba(216, 75, 18, 0.055);
   filter: drop-shadow(0 0 3px rgba(216, 75, 18, 0.48));
 }
 
-.life-tree-domain[data-strength="2"] .life-tree-leaf {
+.life-tree-domain[data-strength="2"] .life-tree-node {
   stroke: #d84b12;
   fill: rgba(216, 75, 18, 0.08);
 }
 
-.life-tree-domain[data-strength="3"] .life-tree-branch-shape,
-.life-tree-domain[data-strength="3"] .life-tree-twig-shape,
+.life-tree-domain[data-strength="3"] .life-tree-branch-line,
+.life-tree-domain[data-strength="3"] .life-tree-twig,
 .life-tree-structure[data-strength="3"] .life-tree-root,
 .life-tree-structure[data-strength="3"] .life-tree-trunk {
   stroke: #ff6b2c;
-  fill: rgba(255, 107, 44, 0.075);
   filter: drop-shadow(0 0 5px rgba(255, 107, 44, 0.72));
 }
 
-.life-tree-domain[data-strength="3"] .life-tree-leaf {
+.life-tree-domain[data-strength="3"] .life-tree-node {
   stroke: #ff6b2c;
-  fill: rgba(255, 107, 44, 0.14);
+  fill: #ff6b2c;
   filter: drop-shadow(0 0 4px rgba(255, 107, 44, 0.6));
 }
 
-.life-tree-domain[data-strength="4"] .life-tree-branch-shape,
-.life-tree-domain[data-strength="4"] .life-tree-twig-shape,
+.life-tree-domain[data-strength="4"] .life-tree-branch-line,
+.life-tree-domain[data-strength="4"] .life-tree-twig,
 .life-tree-structure[data-strength="4"] .life-tree-root,
 .life-tree-structure[data-strength="4"] .life-tree-trunk {
   stroke: #fff1e9;
-  fill: rgba(255, 107, 44, 0.12);
   filter: drop-shadow(0 0 5px #ff6b2c) drop-shadow(0 0 11px rgba(255, 107, 44, 0.82));
 }
 
-.life-tree-domain[data-strength="4"] .life-tree-leaf {
+.life-tree-domain[data-strength="4"] .life-tree-node {
   stroke: #fff;
-  fill: #ff6b2c;
+  fill: #fff1e9;
   filter: drop-shadow(0 0 6px #ff6b2c) drop-shadow(0 0 14px rgba(255, 107, 44, 0.8));
 }
 
@@ -486,7 +494,6 @@
     width: 720px;
     max-width: none;
     height: 720px;
-    transform: translateX(-175px);
   }
 
   .life-tree-axis {
@@ -507,9 +514,9 @@
 @media (prefers-reduced-motion: reduce) {
   .life-tree-root,
   .life-tree-trunk,
-  .life-tree-branch-shape,
-  .life-tree-twig-shape,
-  .life-tree-leaf,
+  .life-tree-branch-line,
+  .life-tree-twig,
+  .life-tree-node,
   .life-tree-domain-label {
     transition: none;
   }
