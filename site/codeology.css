@@ -894,9 +894,14 @@ html[data-product="codeology"] .glossary-details {
 }
 
 .codeology-auth-dialog {
+  position: fixed;
+  inset: 0;
   width: min(520px, calc(100% - 32px));
   max-width: none;
+  max-height: calc(100dvh - 32px);
+  margin: auto;
   padding: 0;
+  overflow-y: auto;
   border: 1px solid var(--rule-soft);
   border-radius: var(--codeology-radius-lg);
   background: var(--codeology-canvas);

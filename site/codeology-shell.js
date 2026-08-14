@@ -2,8 +2,8 @@
 (function () {
   'use strict';
 
-  var VERSION = '20260813a';
-  var AUTH_VERSION = '20260813a';
+  var VERSION = '20260814a';
+  var AUTH_VERSION = '20260814a';
   var CONFIG_URL = 'codeology-config.json?v=' + VERSION;
   var STYLE_URL = 'codeology.css?v=' + VERSION;
 
