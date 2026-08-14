@@ -18,6 +18,7 @@
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20260809a">
   <link rel="stylesheet" href="roadmap.css?v=20260808e">
+  <link rel="stylesheet" href="skill-tree-prototype.css?v=20260814a">
   <link rel="stylesheet" href="codeology.css?v=20260814b" data-codeology-style="20260814b">
 </head>
 <body>
@@ -121,6 +122,69 @@
 
       <aside class="roadmap-inspector" id="roadmapInspector" aria-label="Selected phase details" aria-live="polite"></aside>
     </section>
+
+    <section class="life-tree-experiment roadmap-container" id="skillTreePrototype" aria-labelledby="skillTreeTitle">
+      <header class="life-tree-intro">
+        <div>
+          <span class="life-tree-kicker">Experimental direction · Codeology-wide skill map</span>
+          <h2 id="skillTreeTitle">Grow a body of engineering skill.</h2>
+        </div>
+        <p>Roots hold shared foundations. The trunk builds independent engineering practice. Domain branches extend toward senior-scope work, while direct progress and supporting strength illuminate separately.</p>
+      </header>
+
+      <div class="life-tree-assurance" role="note">
+        <span>Concept preview</span>
+        <p>The lighting below uses illustrative sample data. Glow communicates learning strength—not assessed, demonstrated, or verified professional seniority.</p>
+      </div>
+
+      <div class="life-tree-controls" aria-label="Tree lighting preview">
+        <div class="life-tree-control-copy">
+          <strong>Preview growth</strong>
+          <span>Change the sample learning state</span>
+        </div>
+        <div class="life-tree-levels" role="group" aria-label="Sample progression level">
+          <button type="button" data-tree-level="0">Dormant</button>
+          <button type="button" data-tree-level="1">Started</button>
+          <button type="button" data-tree-level="2" aria-pressed="true">Growing</button>
+          <button type="button" data-tree-level="3">Strong</button>
+        </div>
+      </div>
+
+      <div class="life-tree-workspace">
+        <div class="life-tree-stage">
+          <svg class="life-tree-svg" id="lifeTreeGraph" viewBox="0 0 1000 1000" role="group" aria-labelledby="lifeTreeSvgTitle lifeTreeSvgDescription">
+            <title id="lifeTreeSvgTitle">Circular software engineering skill tree</title>
+            <desc id="lifeTreeSvgDescription">An interactive tree with foundations in its roots, shared engineering skills in its trunk, and eight software engineering disciplines across its canopy.</desc>
+          </svg>
+          <div class="life-tree-axis" aria-hidden="true">
+            <span>Lead scope</span><span>Senior scope</span><span>Junior ready</span><span>Intern ready</span><span>Foundations</span>
+          </div>
+        </div>
+
+        <aside class="life-tree-inspector" id="lifeTreeInspector" aria-live="polite" aria-label="Selected skill branch details">
+          <span class="life-tree-inspector-kicker">Selected branch</span>
+          <h3>Data &amp; AI</h3>
+          <p>Build data systems, production machine-learning workflows, and AI-enabled products on top of shared software engineering foundations.</p>
+          <dl>
+            <div><dt>Direct light</dt><dd>Level 3 · Growing</dd></div>
+            <div><dt>Ambient strength</dt><dd>Supported by backend, data and cloud foundations</dd></div>
+            <div><dt>Current band</dt><dd>Junior-ready scope</dd></div>
+          </dl>
+          <div class="life-tree-inspector-skills" aria-label="Example skills">
+            <span>Python systems</span><span>Data pipelines</span><span>Model delivery</span>
+          </div>
+          <p class="life-tree-inspector-note">Select another branch to inspect how the same tree can hold every Codeology pathway.</p>
+        </aside>
+      </div>
+
+      <div class="life-tree-legend" aria-label="Illustrative lighting legend">
+        <span><i data-legend-level="0"></i>Dormant</span>
+        <span><i data-legend-level="1"></i>Started</span>
+        <span><i data-legend-level="2"></i>Learning complete</span>
+        <span><i data-legend-level="3"></i>Applied strength</span>
+        <span><i data-legend-level="4"></i>Evidence proven</span>
+      </div>
+    </section>
   </main>
 
   <footer class="site-footer">
@@ -141,5 +205,6 @@
   <script src="header.js?v=20260814b" defer></script>
   <script src="cmdpalette.js?v=20260808h" defer></script>
   <script src="roadmap.js?v=20260812a" defer></script>
+  <script src="skill-tree-prototype.js?v=20260814a" defer></script>
 </body>
 </html>

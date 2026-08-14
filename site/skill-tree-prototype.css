@@ -1,0 +1,519 @@
+.life-tree-experiment {
+  margin-top: clamp(72px, 10vw, 140px);
+  padding-top: clamp(56px, 8vw, 96px);
+  border-top: 1px solid var(--rule-soft);
+}
+
+.life-tree-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  gap: clamp(32px, 7vw, 96px);
+  align-items: end;
+  margin-bottom: 28px;
+}
+
+.life-tree-kicker,
+.life-tree-control-copy strong,
+.life-tree-control-copy span,
+.life-tree-assurance span,
+.life-tree-inspector-kicker,
+.life-tree-inspector dt,
+.life-tree-legend,
+.life-tree-axis {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+}
+
+.life-tree-kicker {
+  display: block;
+  margin-bottom: 16px;
+  color: var(--blueprint);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.life-tree-intro h2 {
+  max-width: 760px;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 6vw, 5.7rem);
+  font-weight: 400;
+  line-height: 0.9;
+  text-wrap: balance;
+}
+
+.life-tree-intro > p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+}
+
+.life-tree-assurance,
+.life-tree-controls,
+.life-tree-inspector,
+.life-tree-legend {
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--codeology-radius-md);
+  background: var(--codeology-surface);
+}
+
+.life-tree-assurance {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 18px;
+  padding: 16px 20px;
+}
+
+.life-tree-assurance span {
+  color: var(--blueprint);
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.life-tree-assurance p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+
+.life-tree-controls {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 18px;
+  padding: 14px 16px 14px 20px;
+}
+
+.life-tree-control-copy {
+  display: grid;
+  gap: 3px;
+}
+
+.life-tree-control-copy strong {
+  color: var(--ink);
+  font-size: 0.72rem;
+}
+
+.life-tree-control-copy span {
+  color: var(--ink-mute);
+  font-size: 0.58rem;
+}
+
+.life-tree-levels {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.life-tree-levels button {
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--codeology-radius-pill);
+  background: var(--bg);
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.life-tree-levels button:hover,
+.life-tree-levels button[aria-pressed="true"] {
+  border-color: var(--blueprint);
+  background: var(--blueprint);
+  color: #fff;
+}
+
+.life-tree-levels button:focus-visible,
+.life-tree-domain:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--blueprint) 55%, transparent);
+  outline-offset: 3px;
+}
+
+.life-tree-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  gap: 18px;
+  align-items: start;
+}
+
+.life-tree-stage {
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+  aspect-ratio: 1;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: clamp(24px, 4vw, 44px);
+  background:
+    radial-gradient(circle at 50% 62%, rgba(255, 92, 27, 0.06), transparent 38%),
+    #000;
+  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.22);
+}
+
+.life-tree-stage::after {
+  content: "TREE 01";
+  position: absolute;
+  right: 24px;
+  bottom: 18px;
+  color: rgba(255, 255, 255, 0.35);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  pointer-events: none;
+}
+
+.life-tree-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.life-tree-boundary,
+.life-tree-ring {
+  fill: none;
+  pointer-events: none;
+}
+
+.life-tree-boundary {
+  stroke: rgba(255, 255, 255, 0.22);
+  stroke-width: 1.5;
+}
+
+.life-tree-ring {
+  stroke: rgba(255, 255, 255, 0.075);
+  stroke-width: 1;
+  stroke-dasharray: 2 10;
+}
+
+.life-tree-root,
+.life-tree-trunk,
+.life-tree-branch-line,
+.life-tree-twig,
+.life-tree-leaf {
+  vector-effect: non-scaling-stroke;
+  transition: stroke 280ms ease, opacity 280ms ease, filter 280ms ease, fill 280ms ease;
+}
+
+.life-tree-root,
+.life-tree-trunk,
+.life-tree-branch-line,
+.life-tree-twig {
+  fill: none;
+  stroke: #343434;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.life-tree-root,
+.life-tree-branch-line {
+  stroke-width: 2.1;
+}
+
+.life-tree-trunk {
+  stroke-width: 2.6;
+}
+
+.life-tree-twig {
+  stroke-width: 1.45;
+}
+
+.life-tree-leaf {
+  fill: #080808;
+  stroke: #3c3c3c;
+  stroke-width: 1.45;
+}
+
+.life-tree-domain {
+  cursor: pointer;
+  outline: none;
+}
+
+.life-tree-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 30;
+  pointer-events: stroke;
+}
+
+.life-tree-domain-label {
+  fill: rgba(255, 255, 255, 0.58);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-anchor: middle;
+  text-transform: uppercase;
+  transition: fill 220ms ease;
+  pointer-events: none;
+}
+
+.life-tree-domain:hover .life-tree-domain-label,
+.life-tree-domain.is-selected .life-tree-domain-label {
+  fill: #fff;
+}
+
+.life-tree-domain.is-selected .life-tree-hit {
+  stroke: rgba(255, 107, 44, 0.08);
+}
+
+.life-tree-domain[data-strength="1"] .life-tree-branch-line,
+.life-tree-domain[data-strength="1"] .life-tree-twig,
+.life-tree-structure[data-strength="1"] .life-tree-root,
+.life-tree-structure[data-strength="1"] .life-tree-trunk {
+  stroke: #88401f;
+}
+
+.life-tree-domain[data-strength="1"] .life-tree-leaf {
+  stroke: #88401f;
+}
+
+.life-tree-domain[data-strength="2"] .life-tree-branch-line,
+.life-tree-domain[data-strength="2"] .life-tree-twig,
+.life-tree-structure[data-strength="2"] .life-tree-root,
+.life-tree-structure[data-strength="2"] .life-tree-trunk {
+  stroke: #d84b12;
+  filter: drop-shadow(0 0 3px rgba(216, 75, 18, 0.48));
+}
+
+.life-tree-domain[data-strength="2"] .life-tree-leaf {
+  stroke: #d84b12;
+  fill: rgba(216, 75, 18, 0.08);
+}
+
+.life-tree-domain[data-strength="3"] .life-tree-branch-line,
+.life-tree-domain[data-strength="3"] .life-tree-twig,
+.life-tree-structure[data-strength="3"] .life-tree-root,
+.life-tree-structure[data-strength="3"] .life-tree-trunk {
+  stroke: #ff6b2c;
+  filter: drop-shadow(0 0 5px rgba(255, 107, 44, 0.72));
+}
+
+.life-tree-domain[data-strength="3"] .life-tree-leaf {
+  stroke: #ff6b2c;
+  fill: rgba(255, 107, 44, 0.14);
+  filter: drop-shadow(0 0 4px rgba(255, 107, 44, 0.6));
+}
+
+.life-tree-domain[data-strength="4"] .life-tree-branch-line,
+.life-tree-domain[data-strength="4"] .life-tree-twig,
+.life-tree-structure[data-strength="4"] .life-tree-root,
+.life-tree-structure[data-strength="4"] .life-tree-trunk {
+  stroke: #fff1e9;
+  filter: drop-shadow(0 0 5px #ff6b2c) drop-shadow(0 0 11px rgba(255, 107, 44, 0.82));
+}
+
+.life-tree-domain[data-strength="4"] .life-tree-leaf {
+  stroke: #fff;
+  fill: #ff6b2c;
+  filter: drop-shadow(0 0 6px #ff6b2c) drop-shadow(0 0 14px rgba(255, 107, 44, 0.8));
+}
+
+.life-tree-axis {
+  position: absolute;
+  inset: 8% auto 8% 2.2%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: rgba(255, 255, 255, 0.34);
+  font-size: clamp(0.42rem, 0.75vw, 0.58rem);
+  pointer-events: none;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+.life-tree-inspector {
+  position: sticky;
+  top: calc(var(--header-offset) + 18px);
+  padding: clamp(24px, 4vw, 34px);
+}
+
+.life-tree-inspector-kicker {
+  display: block;
+  color: var(--blueprint);
+  font-size: 0.64rem;
+  font-weight: 700;
+}
+
+.life-tree-inspector h3 {
+  margin: 12px 0 14px;
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 4vw, 3.5rem);
+  font-weight: 400;
+  line-height: 0.92;
+}
+
+.life-tree-inspector > p {
+  color: var(--ink-soft);
+}
+
+.life-tree-inspector dl {
+  display: grid;
+  margin: 26px 0;
+  border-top: 1px solid var(--rule-soft);
+}
+
+.life-tree-inspector dl div {
+  display: grid;
+  gap: 5px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.life-tree-inspector dt {
+  color: var(--ink-mute);
+  font-size: 0.58rem;
+}
+
+.life-tree-inspector dd {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.life-tree-inspector-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.life-tree-inspector-skills span {
+  padding: 7px 10px;
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--codeology-radius-pill);
+  background: var(--bg);
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+}
+
+.life-tree-inspector-note {
+  margin: 24px 0 0;
+  font-size: 0.85rem;
+}
+
+.life-tree-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 26px;
+  margin-top: 18px;
+  padding: 16px 20px;
+  color: var(--ink-mute);
+  font-size: 0.58rem;
+}
+
+.life-tree-legend span {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.life-tree-legend i {
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: #444;
+}
+
+.life-tree-legend i[data-legend-level="1"] { background: #88401f; }
+.life-tree-legend i[data-legend-level="2"] { background: #d84b12; box-shadow: 0 0 3px rgba(216, 75, 18, 0.5); }
+.life-tree-legend i[data-legend-level="3"] { background: #ff6b2c; box-shadow: 0 0 5px rgba(255, 107, 44, 0.75); }
+.life-tree-legend i[data-legend-level="4"] { background: #fff1e9; box-shadow: 0 0 5px #ff6b2c; }
+
+@media (max-width: 1040px) {
+  .life-tree-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .life-tree-inspector {
+    position: static;
+  }
+}
+
+@media (max-width: 760px) {
+  .life-tree-experiment {
+    margin-top: 72px;
+    padding-top: 52px;
+  }
+
+  .life-tree-intro {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .life-tree-intro h2 {
+    font-size: clamp(2.9rem, 15vw, 4.4rem);
+  }
+
+  .life-tree-assurance,
+  .life-tree-controls {
+    align-items: flex-start;
+  }
+
+  .life-tree-assurance {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .life-tree-controls {
+    flex-direction: column;
+  }
+
+  .life-tree-levels {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .life-tree-levels button {
+    width: 100%;
+    padding-inline: 10px;
+  }
+
+  .life-tree-stage {
+    overflow-x: auto;
+    aspect-ratio: auto;
+    min-height: 520px;
+    border-radius: 24px;
+  }
+
+  .life-tree-svg {
+    width: 720px;
+    max-width: none;
+    height: 720px;
+    transform: translateX(-175px);
+  }
+
+  .life-tree-axis {
+    display: none;
+  }
+
+  .life-tree-domain-label {
+    font-size: 15px;
+  }
+
+  .life-tree-legend {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .life-tree-root,
+  .life-tree-trunk,
+  .life-tree-branch-line,
+  .life-tree-twig,
+  .life-tree-leaf,
+  .life-tree-domain-label {
+    transition: none;
+  }
+}

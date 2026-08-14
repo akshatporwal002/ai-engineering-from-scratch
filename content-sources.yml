@@ -110,7 +110,9 @@
         "site/codeology.css",
         "site/auth.js",
         "site/assurance.html",
-        "site/credits.html"
+        "site/credits.html",
+        "site/skill-tree-prototype.css",
+        "site/skill-tree-prototype.js"
       ]
     }
   ]
