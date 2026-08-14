@@ -64,6 +64,16 @@ class CodeologySkillMapTest(unittest.TestCase):
         errors = self.audit(tree_css=broken)
         self.assertTrue(any("reduced-motion" in error for error in errors), errors)
 
+    def test_ai_tree_must_remain_data_driven_and_circle_bounded(self) -> None:
+        broken = self.tree_script.replace("capToCircle(", "allowOverflow(")
+        errors = self.audit(tree_script=broken)
+        self.assertTrue(any("prototype contract" in error for error in errors), errors)
+
+    def test_ai_phase_nodes_must_keep_distinct_visual_contract(self) -> None:
+        broken = self.tree_css.replace(".life-tree-ai-phase-node", ".removed-ai-phase-node")
+        errors = self.audit(tree_css=broken)
+        self.assertTrue(any("visual contract" in error for error in errors), errors)
+
 
 if __name__ == "__main__":
     unittest.main()

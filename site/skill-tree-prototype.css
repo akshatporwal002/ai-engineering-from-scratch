@@ -260,6 +260,79 @@
   pointer-events: none;
 }
 
+.life-tree-domain-count {
+  fill: rgba(255, 255, 255, 0.34);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-anchor: middle;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.life-tree-ai-roadmap {
+  cursor: default;
+}
+
+.life-tree-ai-edge {
+  fill: none;
+  stroke: #383838;
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  transition: stroke 280ms ease, opacity 280ms ease, filter 280ms ease;
+}
+
+.life-tree-ai-phase {
+  cursor: pointer;
+  outline: none;
+}
+
+.life-tree-ai-phase-hit {
+  fill: transparent;
+  stroke: transparent;
+  pointer-events: all;
+}
+
+.life-tree-ai-phase-node {
+  fill: #000;
+  stroke: #454545;
+  stroke-width: 1.45;
+  vector-effect: non-scaling-stroke;
+  transition: stroke 220ms ease, fill 220ms ease, filter 220ms ease;
+}
+
+.life-tree-ai-phase-node.is-terminal {
+  stroke-width: 1.8;
+}
+
+.life-tree-ai-phase-code {
+  fill: rgba(255, 255, 255, 0.48);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.life-tree-ai-phase:hover .life-tree-ai-phase-node,
+.life-tree-ai-phase:focus-visible .life-tree-ai-phase-node,
+.life-tree-ai-phase.is-selected .life-tree-ai-phase-node {
+  stroke: #fff;
+  stroke-width: 2.2;
+}
+
+.life-tree-ai-phase:focus-visible .life-tree-ai-phase-node {
+  filter: drop-shadow(0 0 5px rgba(255, 107, 44, 0.9));
+}
+
+.life-tree-ai-phase.is-selected .life-tree-ai-phase-code {
+  fill: #fff;
+}
+
 .life-tree-domain:hover .life-tree-domain-label,
 .life-tree-domain.is-selected .life-tree-domain-label {
   fill: #fff;
@@ -280,6 +353,11 @@
   stroke: #88401f;
 }
 
+.life-tree-ai-roadmap[data-strength="1"] .life-tree-ai-edge,
+.life-tree-ai-roadmap[data-strength="1"] .life-tree-ai-phase-node {
+  stroke: #88401f;
+}
+
 .life-tree-domain[data-strength="2"] .life-tree-branch-line,
 .life-tree-domain[data-strength="2"] .life-tree-twig,
 .life-tree-structure[data-strength="2"] .life-tree-root,
@@ -291,6 +369,12 @@
 .life-tree-domain[data-strength="2"] .life-tree-node {
   stroke: #d84b12;
   fill: rgba(216, 75, 18, 0.08);
+}
+
+.life-tree-ai-roadmap[data-strength="2"] .life-tree-ai-edge,
+.life-tree-ai-roadmap[data-strength="2"] .life-tree-ai-phase-node {
+  stroke: #d84b12;
+  filter: drop-shadow(0 0 2px rgba(216, 75, 18, 0.42));
 }
 
 .life-tree-domain[data-strength="3"] .life-tree-branch-line,
@@ -307,6 +391,17 @@
   filter: drop-shadow(0 0 4px rgba(255, 107, 44, 0.6));
 }
 
+.life-tree-ai-roadmap[data-strength="3"] .life-tree-ai-edge {
+  stroke: #ff6b2c;
+  filter: drop-shadow(0 0 3px rgba(255, 107, 44, 0.62));
+}
+
+.life-tree-ai-roadmap[data-strength="3"] .life-tree-ai-phase-node {
+  stroke: #ff6b2c;
+  fill: #ff6b2c;
+  filter: drop-shadow(0 0 4px rgba(255, 107, 44, 0.65));
+}
+
 .life-tree-domain[data-strength="4"] .life-tree-branch-line,
 .life-tree-domain[data-strength="4"] .life-tree-twig,
 .life-tree-structure[data-strength="4"] .life-tree-root,
@@ -319,6 +414,17 @@
   stroke: #fff;
   fill: #fff1e9;
   filter: drop-shadow(0 0 6px #ff6b2c) drop-shadow(0 0 14px rgba(255, 107, 44, 0.8));
+}
+
+.life-tree-ai-roadmap[data-strength="4"] .life-tree-ai-edge {
+  stroke: #fff1e9;
+  filter: drop-shadow(0 0 4px #ff6b2c);
+}
+
+.life-tree-ai-roadmap[data-strength="4"] .life-tree-ai-phase-node {
+  stroke: #fff;
+  fill: #fff1e9;
+  filter: drop-shadow(0 0 6px #ff6b2c) drop-shadow(0 0 12px rgba(255, 107, 44, 0.72));
 }
 
 .life-tree-axis {
@@ -403,6 +509,17 @@
 .life-tree-inspector-note {
   margin: 24px 0 0;
   font-size: 0.85rem;
+}
+
+.life-tree-inspector-link {
+  display: inline-flex;
+  margin-top: 18px;
+  color: var(--blueprint);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .life-tree-legend {
@@ -517,6 +634,8 @@
   .life-tree-branch-line,
   .life-tree-twig,
   .life-tree-node,
+  .life-tree-ai-edge,
+  .life-tree-ai-phase-node,
   .life-tree-domain-label {
     transition: none;
   }

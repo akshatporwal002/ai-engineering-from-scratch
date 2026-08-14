@@ -26,11 +26,11 @@
       twigs: [[0.38, 410, 210], [0.63, 300, 245], [0.79, 320, 115]]
     },
     {
-      id: 'ai', title: 'Data & AI', x: 500, y: 68, band: 3,
+      id: 'ai', title: 'Data & AI', x: 500, y: 30, band: 3,
       description: 'Build data systems, production machine-learning workflows, and AI-enabled products on shared engineering foundations.',
       skills: ['Python systems', 'Data pipelines', 'Model delivery'],
-      curve: [[500, 360], [500, 290], [500, 175], [500, 95]],
-      twigs: [[0.38, 440, 205], [0.58, 560, 175], [0.76, 448, 125]]
+      curve: [[500, 410], [500, 402], [500, 394], [500, 386]],
+      twigs: []
     },
     {
       id: 'backend', title: 'Backend', x: 665, y: 150, band: 3,
@@ -64,7 +64,11 @@
 
   var svg;
   var inspector;
+  var aiRoadmap = [];
+  var aiLayout = {};
+  var aiPhaseLayer;
   var selectedId = 'ai';
+  var selectedAiPhaseId = null;
   var previewLevel = 2;
 
   document.addEventListener('DOMContentLoaded', init);
@@ -79,6 +83,7 @@
     svg = document.getElementById('lifeTreeGraph');
     inspector = document.getElementById('lifeTreeInspector');
     if (!svg || !inspector) return;
+    prepareAiRoadmap();
     renderTree();
     bindControls();
     updateTree();
@@ -124,10 +129,15 @@
         group.appendChild(svgEl('path', { class: 'life-tree-twig', d: centerlinePath(twigCurve) }));
         group.appendChild(node(twig[1], twig[2], false));
       });
-      group.appendChild(node(domain.curve[3][0], domain.curve[3][1], true));
+      if (domain.id !== 'ai') group.appendChild(node(domain.curve[3][0], domain.curve[3][1], true));
       var label = svgEl('text', { class: 'life-tree-domain-label', x: domain.x, y: domain.y });
       label.textContent = domain.title;
       group.appendChild(label);
+      if (domain.id === 'ai' && aiRoadmap.length) {
+        var countLabel = svgEl('text', { class: 'life-tree-domain-count', x: domain.x, y: domain.y + 20 });
+        countLabel.textContent = aiRoadmap.length + ' phases · ' + aiLessonCount() + ' lessons';
+        group.appendChild(countLabel);
+      }
       group.addEventListener('click', function () { selectDomain(domain.id, true); });
       group.addEventListener('keydown', function (event) {
         if (event.key === 'Enter' || event.key === ' ') {
@@ -140,6 +150,7 @@
       });
       svg.appendChild(group);
     });
+    renderAiRoadmap();
   }
 
   function node(x, y, isPrimary) {
@@ -149,6 +160,210 @@
       cy: y,
       r: isPrimary ? 8 : 6
     });
+  }
+
+  function prepareAiRoadmap() {
+    aiRoadmap = typeof PHASES !== 'undefined' && Array.isArray(PHASES)
+      ? PHASES.slice().sort(function (a, b) { return a.id - b.id; })
+      : [];
+    aiLayout = buildAiLayout(aiRoadmap);
+  }
+
+  function aiLessonCount() {
+    return aiRoadmap.reduce(function (total, phase) {
+      return total + (Array.isArray(phase.lessons) ? phase.lessons.length : 0);
+    }, 0);
+  }
+
+  function buildAiLayout(phases) {
+    var layout = {};
+    if (!phases.length) return layout;
+    var phaseById = {};
+    var children = {};
+    var parentById = {};
+    phases.forEach(function (phase) {
+      phaseById[phase.id] = phase;
+      children[phase.id] = [];
+    });
+    phases.forEach(function (phase) {
+      var prereqs = typeof ROADMAP_PREREQS !== 'undefined' && ROADMAP_PREREQS[phase.id]
+        ? ROADMAP_PREREQS[phase.id]
+        : [];
+      var primaryParent = prereqs.find(function (id) { return phaseById[id]; });
+      if (primaryParent !== undefined) {
+        parentById[phase.id] = primaryParent;
+        children[primaryParent].push(phase.id);
+      }
+    });
+    Object.keys(children).forEach(function (id) {
+      children[id].sort(function (a, b) { return a - b; });
+    });
+
+    var roots = phases.filter(function (phase) { return parentById[phase.id] === undefined; }).map(function (phase) { return phase.id; });
+    var depthById = {};
+    var maxDepth = 0;
+    function setDepth(id, depth) {
+      depthById[id] = depth;
+      maxDepth = Math.max(maxDepth, depth);
+      children[id].forEach(function (childId) { setDepth(childId, depth + 1); });
+    }
+    roots.forEach(function (id) { setDepth(id, 0); });
+
+    var leaves = [];
+    function collectLeaves(id) {
+      if (!children[id].length) {
+        leaves.push(id);
+        return;
+      }
+      children[id].forEach(collectLeaves);
+    }
+    roots.forEach(collectLeaves);
+    var minAngle = -116;
+    var maxAngle = -64;
+    var angleById = {};
+    leaves.forEach(function (id, index) {
+      angleById[id] = leaves.length === 1
+        ? -90
+        : minAngle + (maxAngle - minAngle) * index / (leaves.length - 1);
+    });
+    function assignInternalAngle(id) {
+      if (angleById[id] !== undefined) return angleById[id];
+      var childAngles = children[id].map(assignInternalAngle);
+      angleById[id] = childAngles.reduce(function (sum, angle) { return sum + angle; }, 0) / childAngles.length;
+      return angleById[id];
+    }
+    roots.forEach(assignInternalAngle);
+
+    var anchor = { x: 500, y: 410 };
+    phases.forEach(function (phase) {
+      var angle = angleById[phase.id] === undefined ? -90 : angleById[phase.id];
+      var radians = angle * Math.PI / 180;
+      var direction = { x: Math.cos(radians), y: Math.sin(radians) };
+      var boundary = distanceToCircleEdge(anchor, direction, 441);
+      var isLeaf = children[phase.id].length === 0;
+      var depthRatio = depthById[phase.id] / Math.max(1, maxDepth);
+      var densityRadius = isLeaf ? 0.985 : 0.08 + 0.69 * Math.pow(depthRatio, 0.72);
+      var distance = Math.max(24, boundary * densityRadius);
+      var point = capToCircle({
+        x: anchor.x + direction.x * distance,
+        y: anchor.y + direction.y * distance
+      }, 441);
+      layout[phase.id] = {
+        angle: angle,
+        children: children[phase.id],
+        depth: depthById[phase.id],
+        parentId: parentById[phase.id],
+        point: point,
+        isLeaf: isLeaf
+      };
+    });
+    layout.anchor = anchor;
+    layout.maxDepth = maxDepth;
+    return layout;
+  }
+
+  function distanceToCircleEdge(origin, direction, radius) {
+    var cx = origin.x - 500;
+    var cy = origin.y - 500;
+    var projection = cx * direction.x + cy * direction.y;
+    var discriminant = projection * projection - (cx * cx + cy * cy - radius * radius);
+    return -projection + Math.sqrt(Math.max(0, discriminant));
+  }
+
+  function capToCircle(point, radius) {
+    var dx = point.x - 500;
+    var dy = point.y - 500;
+    var distance = Math.sqrt(dx * dx + dy * dy) || 1;
+    if (distance <= radius) return point;
+    return { x: 500 + dx / distance * radius, y: 500 + dy / distance * radius };
+  }
+
+  function renderAiRoadmap() {
+    if (!aiRoadmap.length || !aiLayout.anchor) return;
+    aiPhaseLayer = svgEl('g', {
+      class: 'life-tree-ai-roadmap',
+      'data-strength': '0',
+      role: 'group',
+      'aria-label': 'AI and machine learning pathway with ' + aiRoadmap.length + ' phases and ' + aiLessonCount() + ' lessons'
+    });
+    var edges = svgEl('g', { class: 'life-tree-ai-edges', 'aria-hidden': 'true' });
+    aiRoadmap.forEach(function (phase) {
+      var item = aiLayout[phase.id];
+      var parent = item.parentId === undefined ? aiLayout.anchor : aiLayout[item.parentId].point;
+      var parentAngle = item.parentId === undefined ? item.angle : aiLayout[item.parentId].angle;
+      edges.appendChild(svgEl('path', {
+        class: 'life-tree-ai-edge',
+        d: centerlinePath(aiEdgeCurve(parent, item.point, parentAngle, item.angle))
+      }));
+    });
+    aiPhaseLayer.appendChild(edges);
+
+    aiRoadmap.forEach(function (phase, index) {
+      var item = aiLayout[phase.id];
+      var lessonCount = Array.isArray(phase.lessons) ? phase.lessons.length : 0;
+      var group = svgEl('g', {
+        class: 'life-tree-ai-phase',
+        'data-phase-id': phase.id,
+        tabindex: phase.id === selectedAiPhaseId ? '0' : '-1',
+        role: 'button',
+        'aria-pressed': phase.id === selectedAiPhaseId ? 'true' : 'false',
+        'aria-label': 'Phase ' + padPhase(phase.id) + ': ' + phase.name + '. ' + lessonCount + ' lessons.'
+      });
+      var title = svgEl('title');
+      title.textContent = 'Phase ' + padPhase(phase.id) + ' · ' + phase.name + ' · ' + lessonCount + ' lessons';
+      group.appendChild(title);
+      group.appendChild(svgEl('circle', {
+        class: 'life-tree-ai-phase-hit',
+        cx: item.point.x,
+        cy: item.point.y,
+        r: 15
+      }));
+      group.appendChild(svgEl('circle', {
+        class: 'life-tree-ai-phase-node' + (item.isLeaf ? ' is-terminal' : ''),
+        cx: item.point.x,
+        cy: item.point.y,
+        r: Math.min(7.5, 4.2 + Math.sqrt(lessonCount) * 0.32)
+      }));
+      var code = svgEl('text', {
+        class: 'life-tree-ai-phase-code',
+        x: item.point.x,
+        y: item.point.y - 10
+      });
+      code.textContent = padPhase(phase.id);
+      group.appendChild(code);
+      group.addEventListener('click', function (event) {
+        event.stopPropagation();
+        selectAiPhase(phase.id, true);
+      });
+      group.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          selectAiPhase(phase.id, true);
+          return;
+        }
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') moveAiPhaseFocus(index, -1);
+        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') moveAiPhaseFocus(index, 1);
+      });
+      aiPhaseLayer.appendChild(group);
+    });
+    svg.appendChild(aiPhaseLayer);
+  }
+
+  function aiEdgeCurve(start, end, startAngle, endAngle) {
+    var distance = Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2));
+    var lead = Math.min(52, distance * 0.34);
+    var startRadians = startAngle * Math.PI / 180;
+    var endRadians = endAngle * Math.PI / 180;
+    return [
+      [start.x, start.y],
+      [start.x + Math.cos(startRadians) * lead, start.y + Math.sin(startRadians) * lead],
+      [end.x - Math.cos(endRadians) * lead, end.y - Math.sin(endRadians) * lead],
+      [end.x, end.y]
+    ];
+  }
+
+  function padPhase(id) {
+    return String(id).padStart(2, '0');
   }
 
   function centerTreeViewport() {
@@ -214,8 +429,9 @@
     }
   }
 
-  function selectDomain(id, shouldFocus) {
+  function selectDomain(id, shouldFocus, preserveAiPhase) {
     selectedId = id;
+    if (!preserveAiPhase) selectedAiPhaseId = null;
     var groups = svg.querySelectorAll('.life-tree-domain');
     for (var i = 0; i < groups.length; i++) {
       var selected = groups[i].getAttribute('data-domain') === id;
@@ -224,12 +440,36 @@
       groups[i].setAttribute('tabindex', selected ? '0' : '-1');
       if (selected && shouldFocus) groups[i].focus();
     }
+    updateAiPhaseSelection(false);
     updateTree();
   }
 
   function moveFocus(index, direction) {
     var next = (index + direction + domains.length) % domains.length;
     selectDomain(domains[next].id, true);
+  }
+
+  function selectAiPhase(id, shouldFocus) {
+    selectedAiPhaseId = id;
+    selectDomain('ai', false, true);
+    updateAiPhaseSelection(shouldFocus);
+  }
+
+  function moveAiPhaseFocus(index, direction) {
+    var next = (index + direction + aiRoadmap.length) % aiRoadmap.length;
+    selectAiPhase(aiRoadmap[next].id, true);
+  }
+
+  function updateAiPhaseSelection(shouldFocus) {
+    if (!aiPhaseLayer) return;
+    var phaseGroups = aiPhaseLayer.querySelectorAll('.life-tree-ai-phase');
+    for (var i = 0; i < phaseGroups.length; i++) {
+      var selected = Number(phaseGroups[i].getAttribute('data-phase-id')) === selectedAiPhaseId;
+      phaseGroups[i].classList.toggle('is-selected', selected);
+      phaseGroups[i].setAttribute('aria-pressed', selected ? 'true' : 'false');
+      phaseGroups[i].setAttribute('tabindex', selected ? '0' : '-1');
+      if (selected && shouldFocus) phaseGroups[i].focus();
+    }
   }
 
   function strengthFor(index, selectedIndex) {
@@ -246,9 +486,47 @@
     for (var i = 0; i < groups.length; i++) {
       groups[i].setAttribute('data-strength', String(strengthFor(i, selectedIndex)));
     }
+    var aiIndex = domains.findIndex(function (domain) { return domain.id === 'ai'; });
+    if (aiPhaseLayer) aiPhaseLayer.setAttribute('data-strength', String(strengthFor(aiIndex, selectedIndex)));
+    updateAiPhaseSelection(false);
     var structure = svg.querySelector('.life-tree-structure');
     if (structure) structure.setAttribute('data-strength', String(previewLevel === 0 ? 0 : Math.min(4, previewLevel + 1)));
-    renderInspector(domains[selectedIndex], strengthFor(selectedIndex, selectedIndex));
+    if (selectedId === 'ai' && selectedAiPhaseId !== null) {
+      renderAiPhaseInspector(selectedAiPhaseId, strengthFor(selectedIndex, selectedIndex));
+    } else {
+      renderInspector(domains[selectedIndex], strengthFor(selectedIndex, selectedIndex));
+    }
+  }
+
+  function renderAiPhaseInspector(phaseId, strength) {
+    var phase = aiRoadmap.find(function (item) { return item.id === phaseId; });
+    if (!phase) return;
+    var prereqIds = typeof ROADMAP_PREREQS !== 'undefined' && ROADMAP_PREREQS[phaseId] ? ROADMAP_PREREQS[phaseId] : [];
+    var prereqNames = prereqIds.map(function (id) {
+      var prereq = aiRoadmap.find(function (item) { return item.id === id; });
+      return prereq ? prereq.name : 'Phase ' + padPhase(id);
+    });
+    var lessons = Array.isArray(phase.lessons) ? phase.lessons : [];
+    var firstLessonPath = lessons.length ? localLessonPath(lessons[0].url) : '';
+    inspector.innerHTML =
+      '<span class="life-tree-inspector-kicker">AI / ML pathway · Phase ' + padPhase(phase.id) + '</span>' +
+      '<h3>' + escapeHtml(phase.name) + '</h3>' +
+      '<p>' + escapeHtml(phase.desc || 'A phase in the imported AI Engineering from Scratch pathway.') + '</p>' +
+      '<dl>' +
+        '<div><dt>Learning density</dt><dd>' + lessons.length + ' lessons in this branch</dd></div>' +
+        '<div><dt>Prerequisites</dt><dd>' + (prereqNames.length ? escapeHtml(prereqNames.join(', ')) : 'Starting phase') + '</dd></div>' +
+        '<div><dt>Preview light</dt><dd>Level ' + strength + ' · ' + LEVEL_LABELS[strength] + '</dd></div>' +
+      '</dl>' +
+      '<div class="life-tree-inspector-skills" aria-label="Example lessons">' +
+        lessons.slice(0, 3).map(function (lesson) { return '<span>' + escapeHtml(lesson.name) + '</span>'; }).join('') +
+      '</div>' +
+      (firstLessonPath ? '<a class="life-tree-inspector-link" href="lesson.html?path=' + encodeURIComponent(firstLessonPath) + '">Open first lesson</a>' : '') +
+      '<p class="life-tree-inspector-note">All ' + aiRoadmap.length + ' original phases are mapped here. New phases are placed automatically and make this canopy denser without crossing the circle boundary.</p>';
+  }
+
+  function localLessonPath(url) {
+    var match = String(url || '').match(/\/phases\/([^?#]+?)\/?$/);
+    return match ? 'phases/' + match[1] : '';
   }
 
   function renderInspector(domain, strength) {
