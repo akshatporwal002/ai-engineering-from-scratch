@@ -190,10 +190,10 @@
     });
     var edgeLayer = svgEl('g', { class: 'life-tree-dag-edges', 'aria-hidden': 'true' });
     layout.graph.edges.forEach(function (edge) {
-      var parentList = layout.parents[String(edge.to)] || [];
-      var secondary = parentList.indexOf(String(edge.from)) > 0;
+      var secondary = layout.primaryParents[String(edge.to)] !== String(edge.from);
+      var spineEdge = layout.centralSpine[String(edge.from)] && layout.centralSpine[String(edge.to)];
       edgeLayer.appendChild(svgEl('path', {
-        class: 'life-tree-branch-line life-tree-ai-edge' + (secondary ? ' is-secondary' : ''),
+        class: 'life-tree-branch-line life-tree-ai-edge' + (secondary ? ' is-secondary' : '') + (spineEdge ? ' is-spine' : ''),
         d: window.CodeologySkillTreeEngine.edgePath(layout, edge),
         'data-from': edge.from,
         'data-to': edge.to
@@ -212,12 +212,12 @@
         'aria-pressed': 'false',
         'aria-label': domainItem.title + ': ' + node.title
       });
-      button.appendChild(svgEl('circle', { class: 'life-tree-ai-phase-hit', cx: position.x, cy: position.y, r: 15 }));
+      button.appendChild(svgEl('circle', { class: 'life-tree-ai-phase-hit', cx: position.x, cy: position.y, r: 12 }));
       button.appendChild(svgEl('circle', {
         class: 'life-tree-node life-tree-ai-phase-node' + (position.terminal ? ' is-terminal' : ''),
         cx: position.x,
         cy: position.y,
-        r: node.phase ? Math.min(7.5, 4.2 + Math.sqrt((node.phase.lessons || []).length) * 0.32) : 5.5
+        r: node.phase ? Math.min(4.1, 2.2 + Math.sqrt((node.phase.lessons || []).length) * 0.15) : 3.2
       }));
       var code = svgEl('text', { class: 'life-tree-ai-phase-code life-tree-skill-code', x: position.x, y: position.y - 10 });
       code.textContent = node.code || node.title;

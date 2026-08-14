@@ -96,6 +96,94 @@
     return tiers;
   }
 
+  function rankContinuation(depth, lookups) {
+    var ids = Object.keys(depth).sort(function (left, right) {
+      return depth[right] - depth[left] || compareIds(left, right);
+    });
+    var remainingDepth = {};
+    var mainChild = {};
+    ids.forEach(function (id) {
+      var rankedChildren = lookups.children[id].slice().sort(function (left, right) {
+        return (remainingDepth[right] || 0) - (remainingDepth[left] || 0) || compareIds(left, right);
+      });
+      mainChild[id] = rankedChildren.length ? rankedChildren[0] : null;
+      remainingDepth[id] = rankedChildren.length ? 1 + (remainingDepth[rankedChildren[0]] || 0) : 0;
+    });
+    return { remainingDepth: remainingDepth, mainChild: mainChild };
+  }
+
+  function buildCentralSpine(roots, continuation) {
+    var rankedRoots = roots.slice().sort(function (left, right) {
+      return continuation.remainingDepth[right] - continuation.remainingDepth[left] || compareIds(left, right);
+    });
+    var spine = {};
+    var current = rankedRoots[0];
+    while (current !== undefined && current !== null && !spine[current]) {
+      spine[current] = true;
+      current = continuation.mainChild[current];
+    }
+    return spine;
+  }
+
+  function sideOffset(index) {
+    var distance = Math.floor(index / 2) + 1;
+    return index % 2 === 0 ? -distance : distance;
+  }
+
+  function nearestFreeLane(desired, occupied) {
+    if (!occupied[desired]) return desired;
+    for (var distance = 1; distance < 24; distance++) {
+      if (!occupied[desired - distance]) return desired - distance;
+      if (!occupied[desired + distance]) return desired + distance;
+    }
+    return desired;
+  }
+
+  function assignLanes(tiers, lookups, continuation, centralSpine) {
+    var lanes = {};
+    var primaryParents = {};
+    tiers.forEach(function (tier, tierIndex) {
+      var occupied = {};
+      var ordered = tier.slice().sort(function (left, right) {
+        if (Boolean(centralSpine[left]) !== Boolean(centralSpine[right])) return centralSpine[left] ? -1 : 1;
+        return continuation.remainingDepth[right] - continuation.remainingDepth[left] || compareIds(left, right);
+      });
+      ordered.forEach(function (id, itemIndex) {
+        if (centralSpine[id]) {
+          lanes[id] = 0;
+          occupied[0] = true;
+          var spineParents = lookups.parents[id].filter(function (parentId) { return centralSpine[parentId]; });
+          if (spineParents.length) primaryParents[id] = spineParents[0];
+          return;
+        }
+
+        var availableParents = lookups.parents[id].filter(function (parentId) { return lanes[parentId] !== undefined; });
+        availableParents.sort(function (left, right) {
+          var leftContinues = continuation.mainChild[left] === id ? 0 : 1;
+          var rightContinues = continuation.mainChild[right] === id ? 0 : 1;
+          return leftContinues - rightContinues || Math.abs(lanes[left]) - Math.abs(lanes[right]) || compareIds(left, right);
+        });
+        var parentId = availableParents[0];
+        primaryParents[id] = parentId;
+        var desired = 0;
+        if (parentId !== undefined) {
+          desired = lanes[parentId];
+          if (continuation.mainChild[parentId] !== id) {
+            var sideChildren = lookups.children[parentId].filter(function (childId) {
+              return continuation.mainChild[parentId] !== childId;
+            });
+            desired += sideOffset(Math.max(0, sideChildren.indexOf(id)));
+          }
+        } else {
+          desired = sideOffset(itemIndex);
+        }
+        lanes[id] = nearestFreeLane(desired, occupied);
+        occupied[lanes[id]] = true;
+      });
+    });
+    return { lanes: lanes, primaryParents: primaryParents };
+  }
+
   function polarPoint(center, radius, angle) {
     var radians = angle * Math.PI / 180;
     return {
@@ -133,25 +221,21 @@
     Object.keys(depth).forEach(function (id) { tiers[depth[id]].push(id); });
     orderTiers(tiers, lookups);
 
+    var continuation = rankContinuation(depth, lookups);
+    var centralSpine = buildCentralSpine(tiers[0], continuation);
+    var laneLayout = assignLanes(tiers, lookups, continuation, centralSpine);
+    var centerAngle = (startAngle + endAngle) / 2;
+    var halfWidth = Math.abs(endAngle - startAngle) / 2;
+    var laneGap = settings.laneGap || 31;
+
     var positions = {};
     tiers.forEach(function (tier, index) {
       var ratio = maxDepth ? index / maxDepth : 0;
       var radius = innerRadius + (outerRadius - innerRadius) * ratio;
-      var usableStart = startAngle;
-      var usableEnd = endAngle;
-      if (tier.length === 1) {
-        usableStart = (startAngle + endAngle) / 2;
-        usableEnd = usableStart;
-      } else if (index < maxDepth) {
-        var taper = 0.32 * (1 - ratio);
-        var inset = (endAngle - startAngle) * taper;
-        usableStart += inset;
-        usableEnd -= inset;
-      }
       tier.forEach(function (id, itemIndex) {
-        var angle = tier.length === 1
-          ? usableStart
-          : usableStart + (usableEnd - usableStart) * itemIndex / (tier.length - 1);
+        var lane = laneLayout.lanes[id] || 0;
+        var angleOffset = Math.atan2(lane * laneGap, radius) * 180 / Math.PI;
+        var angle = centerAngle + Math.max(-halfWidth, Math.min(halfWidth, angleOffset));
         var point = capToCircle(polarPoint(center, radius, angle), center, circleRadius);
         positions[id] = {
           x: point.x,
@@ -160,6 +244,8 @@
           depth: index,
           tierIndex: itemIndex,
           tierSize: tier.length,
+          lane: lane,
+          onSpine: Boolean(centralSpine[id]),
           terminal: lookups.children[id].length === 0
         };
       });
@@ -170,6 +256,8 @@
       positions: positions,
       parents: lookups.parents,
       children: lookups.children,
+      primaryParents: laneLayout.primaryParents,
+      centralSpine: centralSpine,
       tiers: tiers,
       maxDepth: maxDepth,
       center: center,
@@ -212,6 +300,7 @@
     edgePath: edgePath,
     capToCircle: capToCircle,
     validateGraph: validateGraph,
+    buildCentralSpine: buildCentralSpine,
     countApproximateOverlaps: countApproximateOverlaps
   };
 })();

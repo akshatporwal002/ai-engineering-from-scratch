@@ -28,6 +28,23 @@ const second = engine.layoutGraph(graph, options);
 assert.deepEqual(first.positions, second.positions, 'layout should be deterministic');
 assert.equal(first.maxDepth, 4, 'longest prerequisite route should define graph depth');
 assert.equal(engine.countApproximateOverlaps(first, 18), 0, 'representative branch should not collide');
+assert.deepEqual(
+  Object.entries(first.positions).filter(([, point]) => point.onSpine).map(([id]) => id),
+  ['0', '1', '4', '8', '11'],
+  'the longest route should remain on the central spine'
+);
+for (const [id, point] of Object.entries(first.positions)) {
+  if (point.onSpine) assert.equal(point.lane, 0, `spine node ${id} should stay centred`);
+}
+assert.equal(first.positions['2'].lane, -1, 'a short branch should leave through the nearest side lane');
+assert.ok(
+  Math.abs(first.positions['2'].angle - first.positions['0'].angle) < 15,
+  'side leaves should remain near their branch point instead of filling the sector'
+);
+assert.ok(
+  Math.hypot(first.positions['2'].x - first.positions['0'].x, first.positions['2'].y - first.positions['0'].y) < 90,
+  'a side node should remain physically close to where it branches'
+);
 for (const point of Object.values(first.positions)) {
   assert.ok(Math.hypot(point.x - 500, point.y - 500) <= 442.001, 'nodes must stay inside the circle');
 }

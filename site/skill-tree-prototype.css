@@ -717,18 +717,22 @@
 .life-tree-dag .life-tree-branch-line {
   fill: none;
   stroke: #393939;
-  stroke-width: 1.15;
+  stroke-width: 0.72;
   stroke-linecap: round;
   vector-effect: non-scaling-stroke;
 }
 
+.life-tree-dag .life-tree-branch-line.is-spine {
+  stroke-width: 1.08;
+}
+
 .life-tree-dag .life-tree-branch-line.is-secondary {
-  opacity: 0.16;
+  opacity: 0;
   stroke-dasharray: 2 5;
 }
 
 .life-tree-dag.is-selected .life-tree-branch-line.is-secondary {
-  opacity: 0.5;
+  opacity: 0.18;
 }
 
 .life-tree-skill-node {
@@ -742,12 +746,12 @@
 .life-tree-skill-node .life-tree-node {
   fill: #050505;
   stroke: #4b4b4b;
-  stroke-width: 1.25;
+  stroke-width: 0.9;
   vector-effect: non-scaling-stroke;
 }
 
 .life-tree-skill-node.is-terminal .life-tree-node {
-  stroke-width: 1.6;
+  stroke-width: 1.1;
 }
 
 .life-tree-skill-node:hover .life-tree-node,
