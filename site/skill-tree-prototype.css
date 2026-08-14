@@ -836,28 +836,24 @@
   pointer-events: none;
 }
 
-.life-tree-svg.is-compact-card-view .life-tree-domain.is-selected .life-tree-compact-card {
+.life-tree-svg.is-compact-card-view:not(.is-full-card-view) .life-tree-domain.is-selected .life-tree-compact-card {
   opacity: 1;
   pointer-events: visiblePainted;
 }
 
-.life-tree-svg.is-compact-card-view .life-tree-domain.is-selected .life-tree-skill-code {
+.life-tree-svg.is-compact-card-view:not(.is-full-card-view) .life-tree-domain.is-selected .life-tree-skill-code {
   opacity: 0;
 }
 
 .life-tree-svg.is-full-card-view .life-tree-domain.is-selected:not(.has-node-selection) .life-tree-skill-node.is-domain-root .life-tree-full-card,
-.life-tree-svg.is-full-card-view .life-tree-domain.is-selected .life-tree-skill-node.is-selected .life-tree-full-card,
-.life-tree-svg.is-full-card-view .life-tree-domain.is-selected .life-tree-skill-node:hover .life-tree-full-card,
-.life-tree-svg.is-full-card-view .life-tree-domain.is-selected .life-tree-skill-node:focus-visible .life-tree-full-card {
+.life-tree-svg.is-full-card-view .life-tree-domain.is-selected .life-tree-skill-node.is-selected .life-tree-full-card {
   opacity: 1;
   pointer-events: visiblePainted;
 }
 
-.life-tree-svg.is-full-card-view .life-tree-domain.is-selected:not(.has-node-selection) .life-tree-skill-node.is-domain-root .life-tree-compact-card,
-.life-tree-svg.is-full-card-view .life-tree-domain.is-selected .life-tree-skill-node.is-selected .life-tree-compact-card,
-.life-tree-svg.is-full-card-view .life-tree-domain.is-selected .life-tree-skill-node:hover .life-tree-compact-card,
-.life-tree-svg.is-full-card-view .life-tree-domain.is-selected .life-tree-skill-node:focus-visible .life-tree-compact-card {
+.life-tree-svg.is-full-card-view .life-tree-domain.is-selected .life-tree-compact-card {
   opacity: 0;
+  pointer-events: none;
 }
 
 .life-tree-compact-card-surface {
@@ -880,13 +876,13 @@
 
 .life-tree-compact-card-code {
   fill: #ff6b2c;
-  font-size: 4.2px;
+  font-size: 3.2px;
   font-weight: 800;
 }
 
 .life-tree-compact-card-title {
   fill: #d5cec9;
-  font-size: 4px;
+  font-size: 3.05px;
   font-weight: 700;
   letter-spacing: 0.02em;
 }
@@ -911,7 +907,7 @@
 
 .life-tree-full-card-code,
 .life-tree-full-card-state {
-  font-size: 4.2px;
+  font-size: 3.35px;
   font-weight: 800;
   letter-spacing: 0.05em;
 }
@@ -927,13 +923,13 @@
 }
 
 .life-tree-full-card-title {
-  font-size: 6.2px;
+  font-size: 5px;
   font-weight: 900;
   letter-spacing: 0.025em;
 }
 
 .life-tree-full-card-meta {
-  font-size: 3.9px;
+  font-size: 3.15px;
   font-weight: 700;
   letter-spacing: 0.04em;
 }

@@ -283,26 +283,29 @@
 
   function appendSemanticCards(button, node, position) {
     var progress = nodeProgress(node);
-    var compactOffset = position.lane < 0 ? -13 : (position.lane > 0 ? 13 : 0);
-    var compactX = position.x - 27 + compactOffset;
-    var compactY = position.y - 7;
+    var compactWidth = 42;
+    var compactHeight = 10;
+    var compactOffset = position.lane < 0 ? -10 : (position.lane > 0 ? 10 : 0);
+    var compactX = position.x - compactWidth / 2 + compactOffset;
+    var compactY = position.y - compactHeight / 2;
     var compact = svgEl('g', { class: 'life-tree-compact-card', 'aria-hidden': 'true' });
     compact.appendChild(svgEl('rect', {
-      class: 'life-tree-compact-card-surface', x: compactX, y: compactY, width: 54, height: 14, rx: 4
+      class: 'life-tree-compact-card-surface', x: compactX, y: compactY,
+      width: compactWidth, height: compactHeight, rx: 3
     }));
-    var compactCode = svgEl('text', { class: 'life-tree-compact-card-code', x: compactX + 4, y: compactY + 9 });
+    var compactCode = svgEl('text', { class: 'life-tree-compact-card-code', x: compactX + 3, y: compactY + 6.7 });
     compactCode.textContent = node.code || 'SK';
     compact.appendChild(compactCode);
-    var compactTitle = svgEl('text', { class: 'life-tree-compact-card-title', x: compactX + 15, y: compactY + 9 });
-    compactTitle.textContent = truncateLabel(node.title, 12);
+    var compactTitle = svgEl('text', { class: 'life-tree-compact-card-title', x: compactX + 11, y: compactY + 6.7 });
+    compactTitle.textContent = truncateLabel(node.title, 11);
     compact.appendChild(compactTitle);
     button.appendChild(compact);
 
-    var cardWidth = 104;
-    var cardHeight = 42;
+    var cardWidth = 82;
+    var cardHeight = 34;
     var cardX = position.lane < 0
-      ? position.x - cardWidth - 10
-      : (position.lane > 0 ? position.x + 10 : position.x - cardWidth / 2);
+      ? position.x - cardWidth - 8
+      : (position.lane > 0 ? position.x + 8 : position.x - cardWidth / 2);
     var cardY = position.y - cardHeight / 2;
     var full = svgEl('g', { class: 'life-tree-full-card', 'aria-hidden': 'true' });
     if (position.lane !== 0) {
@@ -315,38 +318,41 @@
       }));
     }
     full.appendChild(svgEl('rect', {
-      class: 'life-tree-full-card-shadow', x: cardX + 2, y: cardY + 2, width: cardWidth, height: cardHeight, rx: 6
+      class: 'life-tree-full-card-shadow', x: cardX + 1.5, y: cardY + 1.5,
+      width: cardWidth, height: cardHeight, rx: 5
     }));
     full.appendChild(svgEl('rect', {
-      class: 'life-tree-full-card-surface', x: cardX, y: cardY, width: cardWidth, height: cardHeight, rx: 6
+      class: 'life-tree-full-card-surface', x: cardX, y: cardY, width: cardWidth, height: cardHeight, rx: 5
     }));
-    var phaseCode = svgEl('text', { class: 'life-tree-full-card-code', x: cardX + 7, y: cardY + 9 });
+    var phaseCode = svgEl('text', { class: 'life-tree-full-card-code', x: cardX + 5.5, y: cardY + 7.5 });
     phaseCode.textContent = node.code ? 'PHASE ' + node.code : 'SKILL';
     full.appendChild(phaseCode);
     var state = svgEl('text', {
-      class: 'life-tree-full-card-state', x: cardX + cardWidth - 7, y: cardY + 9, 'text-anchor': 'end'
+      class: 'life-tree-full-card-state', x: cardX + cardWidth - 5.5, y: cardY + 7.5, 'text-anchor': 'end'
     });
     state.textContent = progress.state;
     full.appendChild(state);
     var titleLines = splitCardTitle(node.title);
     titleLines.forEach(function (line, index) {
       var title = svgEl('text', {
-        class: 'life-tree-full-card-title', x: cardX + 7, y: cardY + (titleLines.length === 1 ? 24 : 20 + index * 7)
+        class: 'life-tree-full-card-title', x: cardX + 5.5,
+        y: cardY + (titleLines.length === 1 ? 19.5 : 16.5 + index * 5.5)
       });
       title.textContent = line;
       full.appendChild(title);
     });
     var meta = svgEl('text', {
-      class: 'life-tree-full-card-meta', x: cardX + cardWidth - 7, y: cardY + 35, 'text-anchor': 'end'
+      class: 'life-tree-full-card-meta', x: cardX + cardWidth - 5.5, y: cardY + 28, 'text-anchor': 'end'
     });
     meta.textContent = progress.meta;
     full.appendChild(meta);
     full.appendChild(svgEl('rect', {
-      class: 'life-tree-full-card-progress-track', x: cardX + 7, y: cardY + 37, width: cardWidth - 14, height: 2
+      class: 'life-tree-full-card-progress-track', x: cardX + 5.5, y: cardY + 30,
+      width: cardWidth - 11, height: 1.5
     }));
     full.appendChild(svgEl('rect', {
-      class: 'life-tree-full-card-progress-fill', x: cardX + 7, y: cardY + 37,
-      width: (cardWidth - 14) * progress.percent / 100, height: 2
+      class: 'life-tree-full-card-progress-fill', x: cardX + 5.5, y: cardY + 30,
+      width: (cardWidth - 11) * progress.percent / 100, height: 1.5
     }));
     button.appendChild(full);
   }
