@@ -195,34 +195,27 @@
 
 .life-tree-root,
 .life-tree-trunk,
-.life-tree-branch-line,
-.life-tree-twig,
+.life-tree-branch-shape,
+.life-tree-twig-shape,
 .life-tree-leaf {
   vector-effect: non-scaling-stroke;
   transition: stroke 280ms ease, opacity 280ms ease, filter 280ms ease, fill 280ms ease;
 }
 
-.life-tree-root,
-.life-tree-trunk,
-.life-tree-branch-line,
-.life-tree-twig {
-  fill: none;
+.life-tree-wood-shape {
+  fill: #030303;
   stroke: #343434;
+  stroke-width: 1.35;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-.life-tree-root,
-.life-tree-branch-line {
-  stroke-width: 2.1;
+.life-tree-structure {
+  pointer-events: none;
 }
 
-.life-tree-trunk {
-  stroke-width: 2.6;
-}
-
-.life-tree-twig {
-  stroke-width: 1.45;
+.life-tree-twig-shape {
+  stroke-width: 1.05;
 }
 
 .life-tree-leaf {
@@ -264,22 +257,24 @@
   stroke: rgba(255, 107, 44, 0.08);
 }
 
-.life-tree-domain[data-strength="1"] .life-tree-branch-line,
-.life-tree-domain[data-strength="1"] .life-tree-twig,
+.life-tree-domain[data-strength="1"] .life-tree-branch-shape,
+.life-tree-domain[data-strength="1"] .life-tree-twig-shape,
 .life-tree-structure[data-strength="1"] .life-tree-root,
 .life-tree-structure[data-strength="1"] .life-tree-trunk {
   stroke: #88401f;
+  fill: #080402;
 }
 
 .life-tree-domain[data-strength="1"] .life-tree-leaf {
   stroke: #88401f;
 }
 
-.life-tree-domain[data-strength="2"] .life-tree-branch-line,
-.life-tree-domain[data-strength="2"] .life-tree-twig,
+.life-tree-domain[data-strength="2"] .life-tree-branch-shape,
+.life-tree-domain[data-strength="2"] .life-tree-twig-shape,
 .life-tree-structure[data-strength="2"] .life-tree-root,
 .life-tree-structure[data-strength="2"] .life-tree-trunk {
   stroke: #d84b12;
+  fill: rgba(216, 75, 18, 0.055);
   filter: drop-shadow(0 0 3px rgba(216, 75, 18, 0.48));
 }
 
@@ -288,11 +283,12 @@
   fill: rgba(216, 75, 18, 0.08);
 }
 
-.life-tree-domain[data-strength="3"] .life-tree-branch-line,
-.life-tree-domain[data-strength="3"] .life-tree-twig,
+.life-tree-domain[data-strength="3"] .life-tree-branch-shape,
+.life-tree-domain[data-strength="3"] .life-tree-twig-shape,
 .life-tree-structure[data-strength="3"] .life-tree-root,
 .life-tree-structure[data-strength="3"] .life-tree-trunk {
   stroke: #ff6b2c;
+  fill: rgba(255, 107, 44, 0.075);
   filter: drop-shadow(0 0 5px rgba(255, 107, 44, 0.72));
 }
 
@@ -302,11 +298,12 @@
   filter: drop-shadow(0 0 4px rgba(255, 107, 44, 0.6));
 }
 
-.life-tree-domain[data-strength="4"] .life-tree-branch-line,
-.life-tree-domain[data-strength="4"] .life-tree-twig,
+.life-tree-domain[data-strength="4"] .life-tree-branch-shape,
+.life-tree-domain[data-strength="4"] .life-tree-twig-shape,
 .life-tree-structure[data-strength="4"] .life-tree-root,
 .life-tree-structure[data-strength="4"] .life-tree-trunk {
   stroke: #fff1e9;
+  fill: rgba(255, 107, 44, 0.12);
   filter: drop-shadow(0 0 5px #ff6b2c) drop-shadow(0 0 11px rgba(255, 107, 44, 0.82));
 }
 
@@ -510,8 +507,8 @@
 @media (prefers-reduced-motion: reduce) {
   .life-tree-root,
   .life-tree-trunk,
-  .life-tree-branch-line,
-  .life-tree-twig,
+  .life-tree-branch-shape,
+  .life-tree-twig-shape,
   .life-tree-leaf,
   .life-tree-domain-label {
     transition: none;
