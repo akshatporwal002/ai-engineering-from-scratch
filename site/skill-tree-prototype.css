@@ -830,6 +830,122 @@
   stroke: #ff6b2c;
 }
 
+.life-tree-compact-card,
+.life-tree-full-card {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.life-tree-svg.is-compact-card-view .life-tree-domain.is-selected .life-tree-compact-card {
+  opacity: 1;
+  pointer-events: visiblePainted;
+}
+
+.life-tree-svg.is-compact-card-view .life-tree-domain.is-selected .life-tree-skill-code {
+  opacity: 0;
+}
+
+.life-tree-svg.is-full-card-view .life-tree-domain.is-selected:not(.has-node-selection) .life-tree-skill-node.is-domain-root .life-tree-full-card,
+.life-tree-svg.is-full-card-view .life-tree-domain.is-selected .life-tree-skill-node.is-selected .life-tree-full-card,
+.life-tree-svg.is-full-card-view .life-tree-domain.is-selected .life-tree-skill-node:hover .life-tree-full-card,
+.life-tree-svg.is-full-card-view .life-tree-domain.is-selected .life-tree-skill-node:focus-visible .life-tree-full-card {
+  opacity: 1;
+  pointer-events: visiblePainted;
+}
+
+.life-tree-svg.is-full-card-view .life-tree-domain.is-selected:not(.has-node-selection) .life-tree-skill-node.is-domain-root .life-tree-compact-card,
+.life-tree-svg.is-full-card-view .life-tree-domain.is-selected .life-tree-skill-node.is-selected .life-tree-compact-card,
+.life-tree-svg.is-full-card-view .life-tree-domain.is-selected .life-tree-skill-node:hover .life-tree-compact-card,
+.life-tree-svg.is-full-card-view .life-tree-domain.is-selected .life-tree-skill-node:focus-visible .life-tree-compact-card {
+  opacity: 0;
+}
+
+.life-tree-compact-card-surface {
+  fill: rgba(24, 20, 18, 0.96);
+  stroke: #6b4b3d;
+  stroke-width: 0.65;
+  vector-effect: non-scaling-stroke;
+}
+
+.life-tree-compact-card-code,
+.life-tree-compact-card-title,
+.life-tree-full-card-code,
+.life-tree-full-card-state,
+.life-tree-full-card-title,
+.life-tree-full-card-meta {
+  font-family: var(--codeology-font-mono, monospace);
+  text-transform: uppercase;
+  dominant-baseline: auto;
+}
+
+.life-tree-compact-card-code {
+  fill: #ff6b2c;
+  font-size: 4.2px;
+  font-weight: 800;
+}
+
+.life-tree-compact-card-title {
+  fill: #d5cec9;
+  font-size: 4px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.life-tree-full-card-connector {
+  stroke: #ff6b2c;
+  stroke-width: 0.7;
+  vector-effect: non-scaling-stroke;
+}
+
+.life-tree-full-card-shadow {
+  fill: #0a0807;
+  opacity: 0.85;
+}
+
+.life-tree-full-card-surface {
+  fill: rgba(72, 51, 42, 0.98);
+  stroke: #ff6b2c;
+  stroke-width: 0.9;
+  vector-effect: non-scaling-stroke;
+}
+
+.life-tree-full-card-code,
+.life-tree-full-card-state {
+  font-size: 4.2px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.life-tree-full-card-code,
+.life-tree-full-card-title {
+  fill: #ff6b2c;
+}
+
+.life-tree-full-card-state,
+.life-tree-full-card-meta {
+  fill: #d7cec9;
+}
+
+.life-tree-full-card-title {
+  font-size: 6.2px;
+  font-weight: 900;
+  letter-spacing: 0.025em;
+}
+
+.life-tree-full-card-meta {
+  font-size: 3.9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.life-tree-full-card-progress-track {
+  fill: #74645d;
+}
+
+.life-tree-full-card-progress-fill {
+  fill: #ff6b2c;
+}
+
 @media (max-width: 760px) {
   .life-tree-viewport-controls {
     width: 100%;

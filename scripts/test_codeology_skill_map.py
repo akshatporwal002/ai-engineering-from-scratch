@@ -63,7 +63,7 @@ class CodeologySkillMapTest(unittest.TestCase):
         self.assertTrue(any("prototype contract" in error for error in errors), errors)
 
     def test_missing_reduced_motion_contract_is_rejected(self) -> None:
-        broken = self.tree_css.replace("@media (prefers-reduced-motion: reduce)", "@media (min-width: 9999px)", 1)
+        broken = self.tree_css.replace("@media (prefers-reduced-motion: reduce)", "@media (min-width: 9999px)")
         errors = self.audit(tree_css=broken)
         self.assertTrue(any("reduced-motion" in error for error in errors), errors)
 
@@ -84,6 +84,11 @@ class CodeologySkillMapTest(unittest.TestCase):
 
     def test_all_subsystem_fixtures_are_required(self) -> None:
         broken = self.tree_script.replace("domain('systems'", "domain('removed-systems'", 1)
+        errors = self.audit(tree_script=broken)
+        self.assertTrue(any("prototype contract" in error for error in errors), errors)
+
+    def test_semantic_zoom_cards_are_required(self) -> None:
+        broken = self.tree_script.replace("is-full-card-view", "removed-full-card-view")
         errors = self.audit(tree_script=broken)
         self.assertTrue(any("prototype contract" in error for error in errors), errors)
 

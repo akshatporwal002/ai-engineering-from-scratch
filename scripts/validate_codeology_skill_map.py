@@ -203,6 +203,11 @@ def audit(html: str, script: str, css: str, tree_script: str, tree_css: str,
         "setZoom(",
         "startPan(",
         "countApproximateOverlaps",
+        "appendSemanticCards(",
+        "nodeProgress(",
+        "is-compact-card-view",
+        "is-full-card-view",
+        "centerSkillInView(",
     ):
         if contract not in tree_script:
             errors.append(f"site/skill-tree-prototype.js: missing prototype contract {contract!r}")
@@ -217,6 +222,9 @@ def audit(html: str, script: str, css: str, tree_script: str, tree_css: str,
         ".life-tree-domain[data-strength=\"4\"]",
         ".life-tree-ai-roadmap[data-strength=\"4\"]",
         ".life-tree-ai-phase-node",
+        ".life-tree-compact-card",
+        ".life-tree-full-card-surface",
+        ".is-full-card-view",
         "@media (max-width: 760px)",
         "@media (prefers-reduced-motion: reduce)",
     ):
