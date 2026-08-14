@@ -125,9 +125,10 @@
     return spine;
   }
 
-  function sideOffset(index) {
+  function sideOffset(index, tierIndex) {
     var distance = Math.floor(index / 2) + 1;
-    return index % 2 === 0 ? -distance : distance;
+    var firstDirection = tierIndex % 2 === 0 ? -1 : 1;
+    return (index % 2 === 0 ? firstDirection : -firstDirection) * distance;
   }
 
   function nearestFreeLane(desired, occupied) {
@@ -172,10 +173,10 @@
             var sideChildren = lookups.children[parentId].filter(function (childId) {
               return continuation.mainChild[parentId] !== childId;
             });
-            desired += sideOffset(Math.max(0, sideChildren.indexOf(id)));
+            desired += sideOffset(Math.max(0, sideChildren.indexOf(id)), tierIndex);
           }
         } else {
-          desired = sideOffset(itemIndex);
+          desired = sideOffset(itemIndex, tierIndex);
         }
         lanes[id] = nearestFreeLane(desired, occupied);
         occupied[lanes[id]] = true;
@@ -227,6 +228,7 @@
     var centerAngle = (startAngle + endAngle) / 2;
     var halfWidth = Math.abs(endAngle - startAngle) / 2;
     var laneGap = settings.laneGap || 31;
+    var spineSway = settings.spineSway === undefined ? 4.5 : settings.spineSway;
 
     var positions = {};
     tiers.forEach(function (tier, index) {
@@ -234,7 +236,8 @@
       var radius = innerRadius + (outerRadius - innerRadius) * ratio;
       tier.forEach(function (id, itemIndex) {
         var lane = laneLayout.lanes[id] || 0;
-        var angleOffset = Math.atan2(lane * laneGap, radius) * 180 / Math.PI;
+        var sway = centralSpine[id] ? Math.sin(index * 1.37) * spineSway : 0;
+        var angleOffset = Math.atan2(lane * laneGap + sway, radius) * 180 / Math.PI;
         var angle = centerAngle + Math.max(-halfWidth, Math.min(halfWidth, angleOffset));
         var point = capToCircle(polarPoint(center, radius, angle), center, circleRadius);
         positions[id] = {
@@ -245,6 +248,7 @@
           tierIndex: itemIndex,
           tierSize: tier.length,
           lane: lane,
+          sway: sway,
           onSpine: Boolean(centralSpine[id]),
           terminal: lookups.children[id].length === 0
         };

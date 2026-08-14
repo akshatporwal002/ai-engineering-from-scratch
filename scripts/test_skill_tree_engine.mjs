@@ -36,7 +36,7 @@ assert.deepEqual(
 for (const [id, point] of Object.entries(first.positions)) {
   if (point.onSpine) assert.equal(point.lane, 0, `spine node ${id} should stay centred`);
 }
-assert.equal(first.positions['2'].lane, -1, 'a short branch should leave through the nearest side lane');
+assert.equal(first.positions['2'].lane, 1, 'a short branch should leave through the nearest side lane');
 assert.ok(
   Math.abs(first.positions['2'].angle - first.positions['0'].angle) < 15,
   'side leaves should remain near their branch point instead of filling the sector'
@@ -44,6 +44,23 @@ assert.ok(
 assert.ok(
   Math.hypot(first.positions['2'].x - first.positions['0'].x, first.positions['2'].y - first.positions['0'].y) < 90,
   'a side node should remain physically close to where it branches'
+);
+const spineSways = Object.values(first.positions).filter(point => point.onSpine).map(point => point.sway);
+assert.ok(Math.max(...spineSways.map(Math.abs)) <= 4.501, 'central sway should remain deliberately subtle');
+assert.ok(new Set(spineSways.map(value => value.toFixed(2))).size > 2, 'the spine should not render as a rigid ruler');
+
+const alternatingGraph = {
+  nodes: [0, 1, 2, 3, 4, 'a', 'b', 'c'].map(id => ({ id })),
+  edges: [
+    { from: 0, to: 1 }, { from: 1, to: 2 }, { from: 2, to: 3 }, { from: 3, to: 4 },
+    { from: 1, to: 'a' }, { from: 2, to: 'b' }, { from: 3, to: 'c' }
+  ]
+};
+const alternating = engine.layoutGraph(alternatingGraph, options);
+assert.deepEqual(
+  [alternating.positions.a.lane, alternating.positions.b.lane, alternating.positions.c.lane],
+  [-1, 1, -1],
+  'single side branches should alternate around the central spine by depth'
 );
 for (const point of Object.values(first.positions)) {
   assert.ok(Math.hypot(point.x - 500, point.y - 500) <= 442.001, 'nodes must stay inside the circle');

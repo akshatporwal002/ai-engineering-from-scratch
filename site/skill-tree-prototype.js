@@ -170,7 +170,7 @@
     viewport.appendChild(rings);
 
     var structure = svgEl('g', { class: 'life-tree-structure', 'data-strength': '0', 'aria-hidden': 'true' });
-    structure.appendChild(svgEl('circle', { class: 'life-tree-trunk', cx: 500, cy: 500, r: 17 }));
+    structure.appendChild(svgEl('circle', { class: 'life-tree-trunk', cx: 500, cy: 500, r: 8.5 }));
     viewport.appendChild(structure);
 
     domains.concat([foundation]).forEach(renderDomainGraph);
@@ -242,7 +242,14 @@
       group.appendChild(button);
     });
 
-    var labelPoint = polarPoint(98, domainItem.angle);
+    var labelRadius = domainItem.id === 'ai' ? 98 : (domainItem.id === 'foundation' ? 170 : 185);
+    var labelPoint = polarPoint(labelRadius, domainItem.angle);
+    if (domainItem.id !== 'ai' && domainItem.id !== 'foundation') {
+      var labelRadians = domainItem.angle * Math.PI / 180;
+      var tangentShift = domainIndex % 2 === 0 ? 11 : -11;
+      labelPoint.x += -Math.sin(labelRadians) * tangentShift;
+      labelPoint.y += Math.cos(labelRadians) * tangentShift;
+    }
     var label = svgEl('text', {
       class: 'life-tree-domain-label',
       x: labelPoint.x,

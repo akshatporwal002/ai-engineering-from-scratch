@@ -236,6 +236,8 @@ def audit(html: str, script: str, css: str, tree_script: str, tree_css: str,
         "buildCentralSpine(",
         "assignLanes(",
         "onSpine:",
+        "spineSway",
+        "sideOffset(index, tierIndex)",
         "capToCircle(",
         "Skill graph must be acyclic",
     ):
