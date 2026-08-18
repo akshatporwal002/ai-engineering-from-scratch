@@ -13,39 +13,24 @@ class CodeologySkillMapTest(unittest.TestCase):
         self.html = validator.PAGE.read_text(encoding="utf-8")
         self.script = validator.SCRIPT.read_text(encoding="utf-8")
         self.css = validator.CSS.read_text(encoding="utf-8")
-        self.tree_script = validator.TREE_SCRIPT.read_text(encoding="utf-8")
-        self.tree_css = validator.TREE_CSS.read_text(encoding="utf-8")
-        self.tree_engine = validator.TREE_ENGINE.read_text(encoding="utf-8")
-
-    def audit(self, html: str | None = None, script: str | None = None, css: str | None = None,
-              tree_script: str | None = None, tree_css: str | None = None,
-              tree_engine: str | None = None) -> list[str]:
-        return validator.audit(
-            self.html if html is None else html,
-            self.script if script is None else script,
-            self.css if css is None else css,
-            self.tree_script if tree_script is None else tree_script,
-            self.tree_css if tree_css is None else tree_css,
-            self.tree_engine if tree_engine is None else tree_engine,
-        )
 
     def test_repository_learning_map_passes(self) -> None:
-        self.assertEqual(self.audit(), [])
+        self.assertEqual(validator.audit(self.html, self.script, self.css), [])
         self.assertEqual(validator.audit_baselines(validator.BASELINES), [])
 
     def test_missing_assurance_note_is_rejected(self) -> None:
         broken = self.html.replace('aria-label="Learning progress assurance"', 'aria-label="Progress"', 1)
-        errors = self.audit(html=broken)
+        errors = validator.audit(broken, self.script, self.css)
         self.assertTrue(any("assurance note" in error for error in errors), errors)
 
     def test_verified_local_state_is_rejected(self) -> None:
         broken = self.script.replace("label: 'Lessons complete'", "label: 'Verified'", 1)
-        errors = self.audit(script=broken)
+        errors = validator.audit(self.html, broken, self.css)
         self.assertTrue(any("verified skill" in error for error in errors), errors)
 
     def test_graph_phase_loss_is_rejected(self) -> None:
         broken = self.script.replace("[16, 18]", "[16]", 1)
-        errors = self.audit(script=broken)
+        errors = validator.audit(self.html, broken, self.css)
         self.assertTrue(any("phases 0 through 19" in error for error in errors), errors)
 
     def test_missing_header_clearance_is_rejected(self) -> None:
@@ -54,43 +39,8 @@ class CodeologySkillMapTest(unittest.TestCase):
             'html[data-product="codeology"] .roadmap-page {\n  padding-block-start: 80px;',
             1,
         )
-        errors = self.audit(css=broken)
+        errors = validator.audit(self.html, self.script, broken)
         self.assertTrue(any("header-offset" in error for error in errors), errors)
-
-    def test_missing_tree_domain_is_rejected(self) -> None:
-        broken = self.tree_script.replace("domain('game'", "domain('interactive-media'", 1)
-        errors = self.audit(tree_script=broken)
-        self.assertTrue(any("prototype contract" in error for error in errors), errors)
-
-    def test_missing_reduced_motion_contract_is_rejected(self) -> None:
-        broken = self.tree_css.replace("@media (prefers-reduced-motion: reduce)", "@media (min-width: 9999px)")
-        errors = self.audit(tree_css=broken)
-        self.assertTrue(any("reduced-motion" in error for error in errors), errors)
-
-    def test_ai_tree_must_remain_data_driven_and_circle_bounded(self) -> None:
-        broken = self.tree_script.replace("capToCircle(", "allowOverflow(")
-        errors = self.audit(tree_script=broken)
-        self.assertTrue(any("prototype contract" in error for error in errors), errors)
-
-    def test_ai_phase_nodes_must_keep_distinct_visual_contract(self) -> None:
-        broken = self.tree_css.replace(".life-tree-ai-phase-node", ".removed-ai-phase-node")
-        errors = self.audit(tree_css=broken)
-        self.assertTrue(any("visual contract" in error for error in errors), errors)
-
-    def test_reusable_tree_engine_is_required(self) -> None:
-        broken = self.tree_engine.replace("orderTiers(", "skipOrdering(")
-        errors = self.audit(tree_engine=broken)
-        self.assertTrue(any("reusable graph contract" in error for error in errors), errors)
-
-    def test_all_subsystem_fixtures_are_required(self) -> None:
-        broken = self.tree_script.replace("domain('systems'", "domain('removed-systems'", 1)
-        errors = self.audit(tree_script=broken)
-        self.assertTrue(any("prototype contract" in error for error in errors), errors)
-
-    def test_semantic_zoom_cards_are_required(self) -> None:
-        broken = self.tree_script.replace("is-full-card-view", "removed-full-card-view")
-        errors = self.audit(tree_script=broken)
-        self.assertTrue(any("prototype contract" in error for error in errors), errors)
 
 
 if __name__ == "__main__":

@@ -16,9 +16,6 @@ ROOT = Path(__file__).resolve().parent.parent
 PAGE = ROOT / "site" / "prereqs.html"
 SCRIPT = ROOT / "site" / "roadmap.js"
 CSS = ROOT / "site" / "codeology.css"
-TREE_SCRIPT = ROOT / "site" / "skill-tree-prototype.js"
-TREE_CSS = ROOT / "site" / "skill-tree-prototype.css"
-TREE_ENGINE = ROOT / "site" / "skill-tree-engine.js"
 BASELINES = {
     ROOT / "docs" / "visual-baselines" / "skill-map-desktop-light.jpg": (1430, 993),
     ROOT / "docs" / "visual-baselines" / "skill-map-mobile-dark.jpg": (380, 822),
@@ -44,7 +41,7 @@ class SkillMapParser(HTMLParser):
         element_id = values.get("id")
         if element_id:
             self.ids[element_id] += 1
-        if tag == "title" and not self.title:
+        if tag == "title":
             self._in_title = True
         elif tag == "h1":
             self._in_h1 = True
@@ -76,12 +73,11 @@ def normalized(parts: list[str]) -> str:
     return " ".join("".join(parts).split())
 
 
-def audit(html: str, script: str, css: str, tree_script: str, tree_css: str,
-          tree_engine: str | None = None) -> list[str]:
+def audit(html: str, script: str, css: str) -> list[str]:
     parser = SkillMapParser()
     parser.feed(html)
     errors: list[str] = []
-    if normalized(parser.title) != "AI Engineering Learning Map \u00b7 Codeology":
+    if normalized(parser.title) != "AI Engineering Learning Map · Codeology":
         errors.append("site/prereqs.html: title must identify the Codeology learning map")
     if normalized(parser.h1) != "Map your route through AI engineering.":
         errors.append("site/prereqs.html: learning-map proposition changed unexpectedly")
@@ -93,21 +89,7 @@ def audit(html: str, script: str, css: str, tree_script: str, tree_css: str,
         errors.append("site/prereqs.html: exactly one main landmark is required")
     if parser.assurance_notes != 1:
         errors.append("site/prereqs.html: exactly one learning-progress assurance note is required")
-    for element_id in (
-        "roadmapTitle",
-        "learningMapTitle",
-        "roadmapGraph",
-        "roadmapInspector",
-        "roadmapGraphStatus",
-        "skillTreePrototype",
-        "skillTreeTitle",
-        "lifeTreeGraph",
-        "lifeTreeInspector",
-        "lifeTreeZoomOut",
-        "lifeTreeZoomIn",
-        "lifeTreeReset",
-        "lifeTreeZoomValue",
-    ):
+    for element_id in ("roadmapTitle", "learningMapTitle", "roadmapGraph", "roadmapInspector", "roadmapGraphStatus"):
         if parser.ids[element_id] != 1:
             errors.append(f"site/prereqs.html: requires one #{element_id}")
     for element_id, count in parser.ids.items():
@@ -119,14 +101,11 @@ def audit(html: str, script: str, css: str, tree_script: str, tree_css: str,
         if forbidden in html:
             errors.append(f"site/prereqs.html: inherited metadata or analytics remains active: {forbidden!r}")
     for contract in (
-        "Imported pathway \u00b7 AI Engineering Foundations",
+        "Imported pathway · AI Engineering Foundations",
         "Learning progress only",
         "not assessed, demonstrated, or verified skill evidence",
         "Local completions",
         "Interactive pathway map",
-        "Experimental direction \u00b7 Codeology-wide skill map",
-        "Concept preview",
-        "illustrative sample data",
     ):
         if contract not in html:
             errors.append(f"site/prereqs.html: missing learning-map contract {contract!r}")
@@ -176,83 +155,6 @@ def audit(html: str, script: str, css: str, tree_script: str, tree_css: str,
     ):
         if contract not in css:
             errors.append(f"site/codeology.css: missing learning-map design contract {contract!r}")
-
-    for contract in (
-        "var domains = [",
-        "domain('systems'",
-        "domain('cyber'",
-        "domain('cloud'",
-        "id: 'ai'",
-        "domain('backend'",
-        "domain('web'",
-        "domain('mobile'",
-        "domain('game'",
-        "domain('foundation'",
-        "data-strength",
-        "strengthFor(",
-        "prepareAiRoadmap()",
-        "typeof PHASES !== 'undefined'",
-        "typeof ROADMAP_PREREQS !== 'undefined'",
-        "buildAiLayout(",
-        "capToCircle(",
-        "life-tree-ai-phase",
-        "localLessonPath(",
-        "ArrowLeft",
-        "ArrowRight",
-        "escapeHtml(domainItem.title)",
-        "setZoom(",
-        "startPan(",
-        "countApproximateOverlaps",
-        "appendSemanticCards(",
-        "nodeProgress(",
-        "is-compact-card-view",
-        "is-full-card-view",
-        "centerSkillInView(",
-    ):
-        if contract not in tree_script:
-            errors.append(f"site/skill-tree-prototype.js: missing prototype contract {contract!r}")
-    if re.search(r"(?:verified|demonstrated)\s+skill", tree_script, re.IGNORECASE):
-        errors.append("site/skill-tree-prototype.js: sample progress must not claim verified skill")
-
-    for contract in (
-        ".life-tree-experiment",
-        ".life-tree-stage",
-        "#000",
-        "vector-effect: non-scaling-stroke",
-        ".life-tree-domain[data-strength=\"4\"]",
-        ".life-tree-ai-roadmap[data-strength=\"4\"]",
-        ".life-tree-ai-phase-node",
-        ".life-tree-compact-card",
-        ".life-tree-full-card-surface",
-        ".is-full-card-view",
-        "@media (max-width: 760px)",
-        "@media (prefers-reduced-motion: reduce)",
-    ):
-        if contract not in tree_css:
-            errors.append(f"site/skill-tree-prototype.css: missing visual contract {contract!r}")
-
-    if tree_engine is None:
-        tree_engine = TREE_ENGINE.read_text(encoding="utf-8")
-    for contract in (
-        "window.CodeologySkillTreeEngine",
-        "layoutGraph:",
-        "edgePath:",
-        "validateGraph:",
-        "countApproximateOverlaps:",
-        "assignDepths(",
-        "orderTiers(",
-        "buildCentralSpine(",
-        "assignLanes(",
-        "onSpine:",
-        "spineSway",
-        "sideOffset(index, tierIndex)",
-        "capToCircle(",
-        "Skill graph must be acyclic",
-    ):
-        if contract not in tree_engine:
-            errors.append(f"site/skill-tree-engine.js: missing reusable graph contract {contract!r}")
-    if 'src="skill-tree-engine.js?' not in html:
-        errors.append("site/prereqs.html: reusable skill-tree engine must load before the prototype")
     return errors
 
 
@@ -261,9 +163,6 @@ def main() -> int:
         PAGE.read_text(encoding="utf-8"),
         SCRIPT.read_text(encoding="utf-8"),
         CSS.read_text(encoding="utf-8"),
-        TREE_SCRIPT.read_text(encoding="utf-8"),
-        TREE_CSS.read_text(encoding="utf-8"),
-        TREE_ENGINE.read_text(encoding="utf-8"),
     ) + audit_baselines(BASELINES)
     if errors:
         for error in errors:
