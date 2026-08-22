@@ -152,6 +152,7 @@ def audit(
         "currentLessonPath()",
         "pinnedSourceUrl(source, path)",
         "addLessonSourceBadge(config)",
+        "codeology-content-source__summary",
     ):
         if contract not in shell:
             errors.append(f"site/codeology-shell.js: missing lesson-source integration {contract!r}")

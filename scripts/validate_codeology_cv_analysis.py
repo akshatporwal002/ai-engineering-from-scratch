@@ -15,6 +15,7 @@ PAGE = ROOT / "site" / "cv-analysis.html"
 UI = ROOT / "site" / "cv-analysis.js"
 EXPORT = ROOT / "site" / "cv-export.js"
 CSS = ROOT / "site" / "codeology.css"
+UI_CONTROLS = ROOT / "site" / "ui-controls.js"
 CONFIG = ROOT / "site" / "codeology-config.json"
 DOC = ROOT / "docs" / "CODEOLOGY_CV_ANALYSIS_MIGRATION.md"
 EDGE = ROOT / "supabase" / "functions" / "cv-api" / "index.ts"
@@ -65,7 +66,7 @@ def normalized(values: list[str]) -> str:
     return " ".join("".join(values).split())
 
 
-def audit(page: str, ui: str, export: str, css: str, config: dict[str, Any], documentation: str,
+def audit(page: str, ui: str, export: str, css: str, ui_controls: str, config: dict[str, Any], documentation: str,
           edge: str, docx: str, contract: str, migration: str) -> list[str]:
     parser = CVParser()
     parser.feed(page)
@@ -82,7 +83,7 @@ def audit(page: str, ui: str, export: str, css: str, config: dict[str, Any], doc
     for marker in (".pdf", ".docx", ".txt", ".md"):
         if marker not in accepted: errors.append(f"CV input must accept {marker}")
     if parser.controls.get("cvProviderConsent", {}).get("type") != "checkbox" or "required" not in parser.controls.get("cvProviderConsent", {}): errors.append("provider consent must be a required checkbox")
-    for script in ("data.js", "cv-analysis-engine.js", "cv-export.js", "cv-analysis.js", "header.js"):
+    for script in ("data.js", "cv-analysis-engine.js", "cv-export.js", "cv-analysis.js", "ui-controls.js", "header.js"):
         if script not in parser.scripts: errors.append(f"missing script {script!r}")
     page_text = normalized(parser.text).lower()
     for phrase in ("private to your account", "encrypted server-side", "pdf · docx · txt · md", "delete a cv at any time", "formative guidance, not a hiring prediction", "does not establish identity, authorship, competence, employability"):
@@ -111,16 +112,18 @@ def audit(page: str, ui: str, export: str, css: str, config: dict[str, Any], doc
     navigation = config.get("product", {}).get("navigation", [])
     matches = [item for item in navigation if isinstance(item, dict) and item.get("href") == "cv-analysis.html"]
     if matches != [{"label": "CV Analysis", "href": "cv-analysis.html"}]: errors.append("navigation requires one CV Analysis route")
-    for selector in (".cv-auth-gate", ".cv-provider-panel", ".cv-upload-grid", ".cv-readiness-hero", ".cv-enhancement-studio", ".cv-preview"):
+    for selector in (".cv-auth-gate", ".cv-provider-panel", ".cv-upload-grid", ".cv-readiness-hero", ".cv-enhancement-studio", ".cv-preview", ".cv-file-action", ".cv-consent-box"):
         if selector not in css: errors.append(f"missing CV selector {selector!r}")
+    for contract in ("role', 'listbox", "aria-haspopup", "ArrowDown", "Escape"):
+        if contract not in ui_controls: errors.append(f"site/ui-controls.js missing accessible select contract {contract!r}")
     if "@media print" not in css or "@media (max-width: 700px)" not in css: errors.append("mobile and printable CV layouts are required")
     for phrase in ("d1aecc127b2a16567b1fe78461f81a50f8b04202", "No explicit licence file was found", "does not copy source code or visual assets", "Supabase Vault", "CODEOLOGY_ALLOWED_ORIGINS", "Rollback", "Deferred platform-wide work"):
         if phrase not in documentation: errors.append(f"migration documentation missing {phrase!r}")
     return errors
 
 
-def inputs() -> tuple[str, str, str, str, dict[str, Any], str, str, str, str, str]:
-    return (PAGE.read_text(), UI.read_text(), EXPORT.read_text(), CSS.read_text(), json.loads(CONFIG.read_text()), DOC.read_text(), EDGE.read_text(), DOCX.read_text(), CONTRACT.read_text(), MIGRATION.read_text())
+def inputs() -> tuple[str, str, str, str, str, dict[str, Any], str, str, str, str, str]:
+    return (PAGE.read_text(), UI.read_text(), EXPORT.read_text(), CSS.read_text(), UI_CONTROLS.read_text(), json.loads(CONFIG.read_text()), DOC.read_text(), EDGE.read_text(), DOCX.read_text(), CONTRACT.read_text(), MIGRATION.read_text())
 
 
 def main() -> int:

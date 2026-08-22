@@ -8,6 +8,8 @@
   var currentUser = null;
   var activeSessionUserId = '';
   var dialog = null;
+  var accountMenu = null;
+  var accountMenuTrigger = null;
   var syncTimer = null;
   var syncing = false;
   var OWNER_KEY = 'codeology:progress-owner:v1';
@@ -44,9 +46,15 @@
         button.appendChild(avatar);
         button.appendChild(label);
         button.setAttribute('aria-label', 'Open Codeology account for ' + displayName(currentUser));
+        button.setAttribute('aria-haspopup', 'menu');
+        button.setAttribute('aria-controls', 'codeologyAccountMenu');
+        button.setAttribute('aria-expanded', accountMenu && !accountMenu.hidden && button === accountMenuTrigger ? 'true' : 'false');
       } else {
         button.textContent = 'Log in';
         button.setAttribute('aria-label', 'Log in to Codeology');
+        button.removeAttribute('aria-haspopup');
+        button.removeAttribute('aria-controls');
+        button.removeAttribute('aria-expanded');
       }
     }
   }
@@ -82,9 +90,104 @@
   }
 
   function openDialog() {
+    closeAccountMenu(false);
     renderDialog();
     if (typeof dialog.showModal === 'function') dialog.showModal();
     else dialog.setAttribute('open', '');
+  }
+
+  function accountMenuItems() {
+    if (!accountMenu) return [];
+    return Array.prototype.slice.call(accountMenu.querySelectorAll('[role="menuitem"]:not([disabled])'));
+  }
+
+  function positionAccountMenu() {
+    if (!accountMenu || !accountMenuTrigger || accountMenu.hidden) return;
+    var rect = accountMenuTrigger.getBoundingClientRect();
+    var width = Math.min(320, window.innerWidth - 24);
+    var left = Math.max(12, Math.min(window.innerWidth - width - 12, rect.right - width));
+    accountMenu.style.width = width + 'px';
+    accountMenu.style.left = left + 'px';
+    accountMenu.style.top = Math.min(window.innerHeight - 16, rect.bottom + 8) + 'px';
+  }
+
+  function closeAccountMenu(restoreFocus) {
+    if (!accountMenu || accountMenu.hidden) return;
+    accountMenu.hidden = true;
+    if (accountMenuTrigger) {
+      accountMenuTrigger.setAttribute('aria-expanded', 'false');
+      if (restoreFocus) accountMenuTrigger.focus({ preventScroll: true });
+    }
+    accountMenuTrigger = null;
+  }
+
+  function openAccountMenu(trigger, focusFirst) {
+    if (!currentUser || !accountMenu) return;
+    accountMenuTrigger = trigger;
+    accountMenu.querySelector('[data-account-name]').textContent = displayName(currentUser);
+    accountMenu.querySelector('[data-account-email]').textContent = currentUser.email || 'Signed in';
+    accountMenu.hidden = false;
+    trigger.setAttribute('aria-expanded', 'true');
+    positionAccountMenu();
+    if (focusFirst) {
+      var items = accountMenuItems();
+      if (items[0]) items[0].focus({ preventScroll: true });
+    }
+  }
+
+  function toggleAccountMenu(trigger) {
+    if (!accountMenu.hidden && accountMenuTrigger === trigger) closeAccountMenu(true);
+    else openAccountMenu(trigger, false);
+  }
+
+  function buildAccountMenu() {
+    if (accountMenu) return;
+    accountMenu = document.createElement('div');
+    accountMenu.id = 'codeologyAccountMenu';
+    accountMenu.className = 'codeology-account-menu';
+    accountMenu.setAttribute('role', 'menu');
+    accountMenu.setAttribute('aria-label', 'Codeology account');
+    accountMenu.hidden = true;
+    accountMenu.innerHTML = ''
+      + '<div class="codeology-account-menu__profile">'
+      + '<span class="codeology-auth-eyebrow">SIGNED IN</span>'
+      + '<strong data-account-name></strong><span data-account-email></span>'
+      + '</div>'
+      + '<div class="codeology-account-menu__group">'
+      + '<a href="cv-analysis.html" role="menuitem">CV analysis <span aria-hidden="true">→</span></a>'
+      + '<a href="cv-analysis.html#ai-provider-settings" role="menuitem">AI provider &amp; CV settings <span aria-hidden="true">→</span></a>'
+      + '</div>'
+      + '<div class="codeology-account-menu__group">'
+      + '<button type="button" role="menuitem" data-account-signout>Log out</button>'
+      + '</div>';
+    document.body.appendChild(accountMenu);
+    accountMenu.querySelector('[data-account-signout]').addEventListener('click', function () {
+      closeAccountMenu(false);
+      signOut();
+    });
+    accountMenu.addEventListener('keydown', function (event) {
+      var items = accountMenuItems();
+      var index = items.indexOf(document.activeElement);
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeAccountMenu(true);
+      } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        items[(index + 1 + items.length) % items.length].focus();
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        items[(index - 1 + items.length) % items.length].focus();
+      } else if (event.key === 'Home' && items.length) {
+        event.preventDefault(); items[0].focus();
+      } else if (event.key === 'End' && items.length) {
+        event.preventDefault(); items[items.length - 1].focus();
+      } else if (event.key === 'Tab') closeAccountMenu(false);
+    });
+    document.addEventListener('pointerdown', function (event) {
+      if (!accountMenu.hidden && !accountMenu.contains(event.target) && event.target !== accountMenuTrigger && !event.target.closest('[data-codeology-auth-trigger]')) closeAccountMenu(false);
+    });
+    window.addEventListener('resize', positionAccountMenu);
+    window.addEventListener('scroll', positionAccountMenu, true);
   }
 
   function buildDialog() {
@@ -133,7 +236,15 @@
     for (var i = 0; i < buttons.length; i++) {
       if (buttons[i].getAttribute('data-auth-bound') === 'true') continue;
       buttons[i].setAttribute('data-auth-bound', 'true');
-      buttons[i].addEventListener('click', openDialog);
+      buttons[i].addEventListener('click', function (event) {
+        if (currentUser) toggleAccountMenu(event.currentTarget);
+        else openDialog();
+      });
+      buttons[i].addEventListener('keydown', function (event) {
+        if (!currentUser || (event.key !== 'ArrowDown' && event.key !== 'ArrowUp')) return;
+        event.preventDefault();
+        openAccountMenu(event.currentTarget, true);
+      });
     }
     paintAccount();
   }
@@ -274,6 +385,7 @@
     var previousUserId = activeSessionUserId;
     currentUser = session && session.user ? session.user : null;
     activeSessionUserId = currentUser ? currentUser.id : '';
+    if (!currentUser) closeAccountMenu(false);
     paintAccount();
     renderDialog();
     document.dispatchEvent(new CustomEvent('codeology:auth-changed', { detail: { user: currentUser } }));
@@ -293,6 +405,7 @@
 
   function init() {
     buildDialog();
+    buildAccountMenu();
     bindTriggers();
     document.addEventListener('codeology:ready', bindTriggers);
     if (window.AIFSProgress) window.AIFSProgress.onChange(scheduleProgressSync);

@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parent.parent
 PAGE = ROOT / "site" / "prereqs.html"
 SCRIPT = ROOT / "site" / "roadmap.js"
 CSS = ROOT / "site" / "codeology.css"
+UI_CONTROLS = ROOT / "site" / "ui-controls.js"
 BASELINES = {
     ROOT / "docs" / "visual-baselines" / "skill-map-desktop-light.jpg": (1430, 993),
     ROOT / "docs" / "visual-baselines" / "skill-map-mobile-dark.jpg": (380, 822),
@@ -73,7 +74,7 @@ def normalized(parts: list[str]) -> str:
     return " ".join("".join(parts).split())
 
 
-def audit(html: str, script: str, css: str) -> list[str]:
+def audit(html: str, script: str, css: str, ui_controls: str) -> list[str]:
     parser = SkillMapParser()
     parser.feed(html)
     errors: list[str] = []
@@ -106,6 +107,8 @@ def audit(html: str, script: str, css: str) -> list[str]:
         "not assessed, demonstrated, or verified skill evidence",
         "Local completions",
         "Interactive pathway map",
+        "ui-controls.js",
+        'data-codeology-select',
     ):
         if contract not in html:
             errors.append(f"site/prereqs.html: missing learning-map contract {contract!r}")
@@ -155,6 +158,9 @@ def audit(html: str, script: str, css: str) -> list[str]:
     ):
         if contract not in css:
             errors.append(f"site/codeology.css: missing learning-map design contract {contract!r}")
+    for contract in ("role', 'listbox", "aria-haspopup", "ArrowDown", "Escape"):
+        if contract not in ui_controls:
+            errors.append(f"site/ui-controls.js: missing accessible select contract {contract!r}")
     return errors
 
 
@@ -163,6 +169,7 @@ def main() -> int:
         PAGE.read_text(encoding="utf-8"),
         SCRIPT.read_text(encoding="utf-8"),
         CSS.read_text(encoding="utf-8"),
+        UI_CONTROLS.read_text(encoding="utf-8"),
     ) + audit_baselines(BASELINES)
     if errors:
         for error in errors:

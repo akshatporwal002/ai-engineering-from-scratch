@@ -41,6 +41,10 @@ def audit(
         "codeology:progress-owner:v1",
         "Your account stores learning progress and any account features you choose to use",
         "getClient: function () { return client; }",
+        "setAttribute('role', 'menu')",
+        "aria-haspopup",
+        "codeology-account-menu",
+        "event.key === 'Escape'",
     )
     for contract in required_auth:
         if contract not in auth:
@@ -65,7 +69,7 @@ def audit(
     if "sourceLink('GitHub', config.product.repositoryUrl)" in shell:
         errors.append("site/codeology-shell.js: GitHub nav action must be replaced by login")
 
-    for selector in (".codeology-login-button", ".codeology-auth-dialog", ".codeology-auth-providers"):
+    for selector in (".codeology-login-button", ".codeology-auth-dialog", ".codeology-auth-providers", ".codeology-account-menu"):
         if selector not in css:
             errors.append(f"site/codeology.css: missing auth UI selector {selector!r}")
 

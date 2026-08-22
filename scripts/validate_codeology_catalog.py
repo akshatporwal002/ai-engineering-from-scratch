@@ -15,6 +15,7 @@ from validate_codeology_home import audit_baselines
 ROOT = Path(__file__).resolve().parent.parent
 CATALOG = ROOT / "site" / "catalog.html"
 CSS = ROOT / "site" / "codeology.css"
+UI_CONTROLS = ROOT / "site" / "ui-controls.js"
 BASELINES = {
     ROOT / "docs" / "visual-baselines" / "catalog-desktop-light.jpg": (1430, 993),
     ROOT / "docs" / "visual-baselines" / "catalog-mobile-dark.jpg": (380, 822),
@@ -73,7 +74,7 @@ def normalized(parts: list[str]) -> str:
     return " ".join("".join(parts).split())
 
 
-def audit(html: str, css: str) -> list[str]:
+def audit(html: str, css: str, ui_controls: str) -> list[str]:
     parser = CatalogParser()
     parser.feed(html)
     errors: list[str] = []
@@ -108,6 +109,8 @@ def audit(html: str, css: str) -> list[str]:
         "escapeHtml(r.name)",
         "header.js",
         "cmdpalette.js",
+        "ui-controls.js",
+        'data-codeology-select',
     ):
         if contract not in html:
             errors.append(f"site/catalog.html: missing catalog contract {contract!r}")
@@ -125,6 +128,9 @@ def audit(html: str, css: str) -> list[str]:
     ):
         if contract not in css:
             errors.append(f"site/codeology.css: missing catalog design contract {contract!r}")
+    for contract in ("role', 'listbox", "aria-haspopup", "ArrowDown", "Escape", "MutationObserver"):
+        if contract not in ui_controls:
+            errors.append(f"site/ui-controls.js: missing accessible select contract {contract!r}")
     return errors
 
 
@@ -132,6 +138,7 @@ def main() -> int:
     errors = audit(
         CATALOG.read_text(encoding="utf-8"),
         CSS.read_text(encoding="utf-8"),
+        UI_CONTROLS.read_text(encoding="utf-8"),
     ) + audit_baselines(BASELINES)
     if errors:
         for error in errors:

@@ -14,6 +14,7 @@
   var providerForm = document.getElementById('cvProviderForm');
   var analysisForm = document.getElementById('cvAnalysisForm');
   var fileInput = document.getElementById('cvFile');
+  var fileName = document.getElementById('cvFileName');
   var textInput = document.getElementById('cvText');
   var results = document.getElementById('cvResults');
   var MAX_BYTES = 10 * 1024 * 1024;
@@ -265,9 +266,16 @@
   providerForm.addEventListener('submit', async function (event) { event.preventDefault(); var key = document.getElementById('cvProviderKey').value.trim(); if (key.length < 20) { status('cvProviderStatus', 'Enter a valid Gemini API key.', 'error'); return; } setBusy(providerForm, true); status('cvProviderStatus', 'Verifying with Gemini…', 'neutral'); try { var result = await api('save-provider', { apiKey: key, model: 'gemini-3.6-flash' }); provider = result.connection; providerForm.reset(); renderProvider(); status('cvProviderStatus', 'Gemini key verified and encrypted for your account.', 'success'); } catch (error) { status('cvProviderStatus', message(error), 'error'); } finally { setBusy(providerForm, false); } });
   document.getElementById('cvProviderDelete').addEventListener('click', async function () { if (!provider || !window.confirm('Disconnect and permanently delete this provider key? Saved CV analyses will remain.')) return; try { await api('delete-provider', { connectionId: provider.id }); provider = null; renderProvider(); status('cvProviderStatus', 'Provider key deleted.', 'success'); } catch (error) { status('cvProviderStatus', message(error), 'error'); } });
   analysisForm.addEventListener('submit', uploadAndAnalyze);
-  document.getElementById('cvClearButton').addEventListener('click', function () { analysisForm.reset(); textInput.value = ''; document.getElementById('cvCharacterCount').textContent = '0 / 100,000'; status('cvFormStatus', 'Form cleared. Saved account CVs were not deleted.', 'success'); });
+  document.getElementById('cvClearButton').addEventListener('click', function () { analysisForm.reset(); textInput.value = ''; fileName.textContent = 'No file selected'; document.getElementById('cvCharacterCount').textContent = '0 / 100,000'; status('cvFormStatus', 'Form cleared. Saved account CVs were not deleted.', 'success'); });
   textInput.addEventListener('input', function () { document.getElementById('cvCharacterCount').textContent = textInput.value.length.toLocaleString() + ' / 100,000'; });
-  fileInput.addEventListener('change', function () { if (fileInput.files && fileInput.files[0]) textInput.value = ''; });
+  fileInput.addEventListener('change', function () {
+    var file = fileInput.files && fileInput.files[0];
+    fileName.textContent = file ? file.name : 'No file selected';
+    if (file) {
+      textInput.value = '';
+      document.getElementById('cvCharacterCount').textContent = '0 / 100,000';
+    }
+  });
   document.getElementById('cvTemplate').addEventListener('change', function (event) { document.getElementById('cvPreview').setAttribute('data-template', event.target.value); });
   document.getElementById('cvExportPdf').addEventListener('click', function () { if (!activeAnalysis) return; document.body.classList.add('cv-printing'); window.print(); setTimeout(function () { document.body.classList.remove('cv-printing'); }, 0); });
   document.getElementById('cvExportDocx').addEventListener('click', function () { if (editableCv && window.CodeologyCVExport) window.CodeologyCVExport.exportDocx(editableCv, editableCv.name || 'codeology-cv'); });

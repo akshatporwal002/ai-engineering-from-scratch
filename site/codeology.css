@@ -12,6 +12,8 @@
   --codeology-radius-lg: 24px;
   --codeology-radius-pill: 999px;
   --codeology-shadow-soft: 0 14px 40px rgba(17, 17, 17, 0.08);
+  --codeology-line: rgba(17, 17, 17, 0.16);
+  --codeology-muted: #707070;
   --roadmap-glow: rgba(196, 59, 0, 0.24);
 
   --bg: var(--codeology-canvas);
@@ -46,6 +48,8 @@
   --codeology-surface-strong: rgba(255, 255, 255, 0.12);
   --codeology-glass: rgba(0, 0, 0, 0.86);
   --codeology-shadow-soft: 0 16px 48px rgba(0, 0, 0, 0.42);
+  --codeology-line: rgba(247, 247, 245, 0.2);
+  --codeology-muted: #92928e;
   --roadmap-glow: rgba(255, 107, 44, 0.42);
 
   --ink-soft: #c8c8c4;
@@ -1037,6 +1041,80 @@ html[data-product="codeology"] .glossary-details {
   margin-top: 14px;
 }
 
+.codeology-account-menu {
+  position: fixed;
+  z-index: 1200;
+  overflow: hidden;
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--codeology-radius-md);
+  background: color-mix(in srgb, var(--codeology-canvas) 94%, transparent);
+  color: var(--ink);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(18px);
+}
+
+.codeology-account-menu[hidden] { display: none; }
+
+.codeology-account-menu__profile {
+  display: grid;
+  gap: 4px;
+  padding: 18px;
+  background: var(--codeology-surface);
+}
+
+.codeology-account-menu__profile strong {
+  margin-top: 5px;
+  overflow: hidden;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.codeology-account-menu__profile > span:last-child {
+  overflow: hidden;
+  color: var(--ink-mute);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.codeology-account-menu__group {
+  display: grid;
+  gap: 3px;
+  padding: 6px;
+  border-top: 1px solid var(--rule-soft);
+}
+
+.codeology-account-menu [role="menuitem"] {
+  display: flex;
+  width: 100%;
+  min-height: 42px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 9px 11px;
+  border: 0;
+  border-radius: var(--codeology-radius-sm);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.035em;
+  text-align: left;
+  text-decoration: none;
+}
+
+.codeology-account-menu [role="menuitem"]:hover,
+.codeology-account-menu [role="menuitem"]:focus-visible {
+  outline: 0;
+  background: var(--blueprint-tint);
+  color: var(--blueprint);
+}
+
 .codeology-home-hero .manual-title {
   max-width: 820px;
   color: var(--codeology-display-accent);
@@ -1095,9 +1173,9 @@ html[data-product="codeology"] .glossary-details {
 }
 
 .codeology-content-source {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  flex-wrap: wrap;
   gap: 7px;
   margin: 0 0 28px;
   padding: 11px 14px;
@@ -1106,9 +1184,17 @@ html[data-product="codeology"] .glossary-details {
   background: var(--codeology-surface);
   color: var(--ink-soft);
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.6rem;
   letter-spacing: 0.035em;
   line-height: 1.45;
+}
+
+.codeology-content-source__summary {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
 }
 
 .codeology-content-source__kind {
@@ -1126,7 +1212,6 @@ html[data-product="codeology"] .glossary-details {
 }
 
 .codeology-content-source__pinned {
-  margin-left: auto;
   white-space: nowrap;
 }
 
@@ -1645,14 +1730,20 @@ html[data-product="codeology"] .glossary-details {
   }
 
   .codeology-content-source {
+    grid-template-columns: 1fr;
     align-items: flex-start;
     margin-bottom: 22px;
     padding: 10px 12px;
   }
 
+  .codeology-content-source__summary {
+    display: flex;
+    flex-wrap: wrap;
+    white-space: normal;
+  }
+
   .codeology-content-source__pinned {
     width: 100%;
-    margin-left: 0;
   }
 
   .header-mobile-tools .header-actions {
@@ -2229,6 +2320,379 @@ html[data-product="codeology"] .glossary-details {
     min-height: 0;
     padding: 28px 20px;
   }
+}
+
+/* Shared modern controls for static Codeology routes. */
+.codeology-select {
+  position: relative;
+  min-width: 180px;
+  color: var(--ink);
+  font-family: var(--font-mono);
+}
+
+.codeology-select__native {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+}
+
+.codeology-select__trigger {
+  display: flex;
+  width: 100%;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 0 13px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  background: var(--codeology-canvas);
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.7rem;
+  letter-spacing: 0.015em;
+  text-align: left;
+  box-shadow: 0 5px 18px rgba(17, 17, 17, 0.045);
+  transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+}
+
+.codeology-select__trigger:hover {
+  border-color: color-mix(in srgb, var(--blueprint) 56%, var(--rule-soft));
+  background: color-mix(in srgb, var(--codeology-canvas) 96%, var(--blueprint));
+}
+
+.codeology-select__trigger:focus-visible,
+.codeology-select.is-open .codeology-select__trigger {
+  outline: 0;
+  border-color: var(--blueprint);
+  box-shadow: 0 0 0 3px var(--blueprint-tint-strong);
+}
+
+.codeology-select__trigger[aria-invalid="true"] {
+  border-color: var(--blueprint);
+}
+
+.codeology-select__value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.codeology-select__chevron {
+  color: var(--blueprint);
+  font-size: 1rem;
+  line-height: 1;
+  transition: transform 150ms ease;
+}
+
+.codeology-select.is-open .codeology-select__chevron { transform: rotate(180deg); }
+
+.codeology-select__content {
+  position: absolute;
+  z-index: 90;
+  top: calc(100% + 7px);
+  right: 0;
+  left: 0;
+  max-height: min(360px, 55vh);
+  padding: 6px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--rule-soft);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--codeology-canvas) 96%, transparent);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(18px);
+}
+
+.codeology-select__content[hidden] { display: none; }
+
+.codeology-select__option {
+  display: flex;
+  width: 100%;
+  min-height: 38px;
+  align-items: center;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.7rem;
+  line-height: 1.35;
+  text-align: left;
+}
+
+.codeology-select__option:hover,
+.codeology-select__option:focus-visible {
+  outline: 0;
+  background: var(--codeology-surface);
+}
+
+.codeology-select__option.is-selected {
+  background: var(--blueprint-tint);
+  color: var(--blueprint);
+  font-weight: 700;
+}
+
+.codeology-select__option.is-selected::before {
+  content: "✓";
+  width: 18px;
+  flex: 0 0 auto;
+}
+
+.roadmap-jump-field .codeology-select { width: 220px; }
+
+html[data-product="codeology"] .catalog-controls {
+  align-items: stretch;
+  gap: 10px;
+}
+
+html[data-product="codeology"] .catalog-search,
+.cv-field input:not([type="file"]):not([type="checkbox"]),
+.cv-field textarea,
+html[data-product="codeology"] .glossary-search {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  outline: 0;
+  background: var(--codeology-canvas);
+  color: var(--ink);
+  box-shadow: 0 5px 18px rgba(17, 17, 17, 0.035);
+  transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+}
+
+html[data-product="codeology"] .catalog-search,
+.cv-field input:not([type="file"]):not([type="checkbox"]),
+html[data-product="codeology"] .glossary-search {
+  padding: 0 15px;
+}
+
+html[data-product="codeology"] .catalog-search:hover,
+.cv-field input:not([type="file"]):not([type="checkbox"]):hover,
+.cv-field textarea:hover,
+html[data-product="codeology"] .glossary-search:hover {
+  border-color: color-mix(in srgb, var(--blueprint) 45%, var(--rule-soft));
+}
+
+html[data-product="codeology"] .catalog-search:focus-visible,
+.cv-field input:not([type="file"]):not([type="checkbox"]):focus-visible,
+.cv-field textarea:focus-visible,
+html[data-product="codeology"] .glossary-search:focus-visible {
+  border-color: var(--blueprint);
+  outline: 0;
+  box-shadow: 0 0 0 3px var(--blueprint-tint-strong);
+}
+
+.roadmap-zoom {
+  min-height: 44px;
+  overflow: hidden;
+  border: 1px solid var(--rule-soft);
+  border-radius: 12px;
+  background: var(--codeology-canvas);
+  box-shadow: 0 5px 18px rgba(17, 17, 17, 0.035);
+}
+
+html[data-product="codeology"] .roadmap-zoom-button {
+  min-width: 40px;
+  min-height: 42px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+html[data-product="codeology"] .roadmap-zoom-button:hover {
+  background: var(--blueprint-tint);
+  color: var(--blueprint);
+}
+
+.roadmap-zoom-value {
+  min-width: 58px;
+  border-inline: 1px solid var(--rule-soft);
+  line-height: 42px;
+  text-align: center;
+}
+
+.cv-analysis-form {
+  display: grid;
+  gap: 18px;
+}
+
+.cv-analysis-form .cv-text-field { margin-top: 0; }
+.cv-field textarea { min-height: 184px; padding: 15px; }
+.cv-role-context .cv-field textarea { min-height: 150px; }
+
+.cv-role-context {
+  overflow: hidden;
+  box-shadow: 0 5px 18px rgba(17, 17, 17, 0.035);
+}
+
+.cv-role-context summary:hover { background: var(--codeology-surface); }
+
+.cv-file-drop {
+  align-content: center;
+  min-height: 230px;
+  border-width: 1px;
+  border-radius: var(--codeology-radius-md);
+}
+
+.cv-file-action {
+  justify-self: center;
+  border-color: var(--blueprint);
+  background: var(--blueprint);
+  color: #fff;
+}
+
+.cv-file-action:hover {
+  border-color: var(--accent-hover);
+  background: var(--accent-hover);
+}
+
+.cv-file-name {
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.cv-consent {
+  position: relative;
+  align-items: flex-start;
+  padding: 16px 18px;
+  border: 1px solid color-mix(in srgb, var(--blueprint) 32%, var(--rule-soft));
+  border-left-width: 3px;
+  border-radius: 0 var(--codeology-radius-md) var(--codeology-radius-md) 0;
+  background: var(--blueprint-tint);
+  cursor: pointer;
+}
+
+.cv-consent input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+}
+
+.cv-consent-box {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  border: 1px solid var(--ink-mute);
+  border-radius: 6px;
+  background: var(--codeology-canvas);
+}
+
+.cv-consent input:focus-visible + .cv-consent-box {
+  outline: 3px solid var(--blueprint-tint-strong);
+  border-color: var(--blueprint);
+}
+
+.cv-consent input:checked + .cv-consent-box {
+  border-color: var(--blueprint);
+  background: var(--blueprint);
+}
+
+.cv-consent input:checked + .cv-consent-box::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 6px;
+  height: 11px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+html[data-product="codeology"] .cp-panel {
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--codeology-radius-lg);
+  background: color-mix(in srgb, var(--codeology-canvas) 95%, transparent);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(20px);
+}
+
+html[data-product="codeology"] .cp-search-row { padding: 16px 18px; }
+html[data-product="codeology"] .cp-kbd-esc,
+html[data-product="codeology"] .cp-footer kbd { border-radius: 7px; }
+html[data-product="codeology"] .cp-item { margin: 3px 6px; border-radius: 10px; border-top: 0; }
+html[data-product="codeology"] .cp-item + .cp-item { border-top: 0; }
+
+html[data-product="codeology"] .glossary-search-control {
+  border-radius: var(--codeology-radius-md);
+}
+
+html[data-product="codeology"] .glossary-filter {
+  border-color: var(--rule-soft);
+  background: var(--codeology-canvas);
+}
+
+html[data-product="codeology"] .glossary-filter:hover {
+  border-color: color-mix(in srgb, var(--blueprint) 50%, var(--rule-soft));
+}
+
+html[data-product="codeology"] .cert-question,
+html[data-product="codeology"] .cert-option,
+html[data-product="codeology"] .quiz-option {
+  border-radius: var(--codeology-radius-md);
+}
+
+html[data-product="codeology"] .cert-question {
+  box-shadow: 0 10px 32px rgba(17, 17, 17, 0.05);
+}
+
+html[data-product="codeology"] .cert-option {
+  grid-template-columns: 24px minmax(0, 1fr);
+  padding: 15px 16px;
+}
+
+html[data-product="codeology"] .cert-option input {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin: 1px 0 0;
+  border: 1px solid var(--ink-mute);
+  background: var(--codeology-canvas);
+}
+
+html[data-product="codeology"] .cert-option input[type="radio"] { border-radius: 50%; }
+html[data-product="codeology"] .cert-option input[type="checkbox"] { border-radius: 5px; }
+html[data-product="codeology"] .cert-option input[type="radio"]:checked {
+  border: 5px solid var(--blueprint);
+}
+
+html[data-product="codeology"] .cert-option input[type="checkbox"]:checked {
+  border-color: var(--blueprint);
+  background-color: var(--blueprint);
+  background-image: linear-gradient(45deg, transparent 45%, #fff 45% 55%, transparent 55%), linear-gradient(-45deg, transparent 35%, #fff 35% 45%, transparent 45%);
+}
+
+html[data-product="codeology"] .cert-option input:focus-visible {
+  outline: 3px solid var(--blueprint-tint-strong);
+  outline-offset: 2px;
+}
+
+@media (max-width: 700px) {
+  .codeology-select { width: 100%; min-width: 0; }
+  .roadmap-jump-field .codeology-select { width: 100%; }
+  .codeology-select__trigger { min-height: 46px; }
+  html[data-product="codeology"] .glossary-filter-list,
+  html[data-product="codeology"] .glossary-letter-list { padding-bottom: 8px; }
+  .cv-file-drop { min-height: 190px; }
+  .cv-consent { padding: 15px; }
+  html[data-product="codeology"] .cp-panel { border-radius: 0 0 var(--codeology-radius-lg) var(--codeology-radius-lg); }
 }
 
 @media print {

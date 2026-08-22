@@ -12,19 +12,20 @@ class CodeologyCatalogTest(unittest.TestCase):
     def setUp(self) -> None:
         self.html = validator.CATALOG.read_text(encoding="utf-8")
         self.css = validator.CSS.read_text(encoding="utf-8")
+        self.ui_controls = validator.UI_CONTROLS.read_text(encoding="utf-8")
 
     def test_repository_catalog_passes(self) -> None:
-        self.assertEqual(validator.audit(self.html, self.css), [])
+        self.assertEqual(validator.audit(self.html, self.css, self.ui_controls), [])
         self.assertEqual(validator.audit_baselines(validator.BASELINES), [])
 
     def test_upstream_canonical_is_rejected(self) -> None:
         broken = self.html.replace('href="catalog.html"', 'href="https://aiengineeringfromscratch.com/catalog.html"', 1)
-        errors = validator.audit(broken, self.css)
+        errors = validator.audit(broken, self.css, self.ui_controls)
         self.assertTrue(any("canonical" in error for error in errors), errors)
 
     def test_non_keyboard_sort_header_is_rejected(self) -> None:
         broken = self.html.replace('data-sort="phase" tabindex="0"', 'data-sort="phase"', 1)
-        errors = validator.audit(broken, self.css)
+        errors = validator.audit(broken, self.css, self.ui_controls)
         self.assertTrue(any("keyboard-sortable" in error for error in errors), errors)
 
     def test_missing_header_clearance_is_rejected(self) -> None:
@@ -33,7 +34,7 @@ class CodeologyCatalogTest(unittest.TestCase):
             'html[data-product="codeology"] .catalog-page {\n  padding-block-start: 80px;',
             1,
         )
-        errors = validator.audit(self.html, broken)
+        errors = validator.audit(self.html, broken, self.ui_controls)
         self.assertTrue(any("header-offset" in error for error in errors), errors)
 
 
