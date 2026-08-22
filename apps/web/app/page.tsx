@@ -1,7 +1,8 @@
-import { loadPhases } from "../lib/content/public-content";
+import { loadAcademyProvenance, loadPhases } from "../lib/content/public-content";
 
 export default function HomePage() {
   const phases = loadPhases();
+  const provenance = loadAcademyProvenance();
   const lessons = phases.reduce((count, phase) => count + phase.lessons.length, 0);
   return (
     <main id="main-content" className="academy-page">
@@ -24,7 +25,7 @@ export default function HomePage() {
         <h2 id="phase-title">Build every layer from scratch</h2>
         <div>{phases.map((phase) => <a key={phase.id} href={`/roadmap#phase-${phase.id}`}><span>{String(phase.id).padStart(2, "0")}</span><strong>{phase.name}</strong><small>{phase.lessons.length} lessons</small></a>)}</div>
       </section>
-      <aside className="source-attribution"><strong>Imported academy</strong><p>Curriculum content derives from AI Engineering from Scratch by Rohit Ghumare and contributors under the MIT licence. Codeology is an independent adaptation.</p><a href="/credits">Credits and immutable provenance</a></aside>
+      <aside className="source-attribution"><strong>Imported academy</strong><p>Curriculum content derives from {provenance.attribution} under the {provenance.license} licence. Codeology is an independent adaptation.</p><a href="/credits">Credits and immutable provenance</a></aside>
     </main>
   );
 }

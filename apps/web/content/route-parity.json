@@ -1,0 +1,98 @@
+[
+  {
+    "legacyUrl": "/index.html",
+    "nextUrl": "/",
+    "kind": "academy",
+    "status": "complete",
+    "fixture": "site/index.html",
+    "requiredTests": ["public-routes:academy", "public-routes:paired-evidence"]
+  },
+  {
+    "legacyUrl": "/about.html",
+    "nextUrl": "/about",
+    "kind": "editorial",
+    "status": "complete",
+    "fixture": "site/about.html",
+    "requiredTests": ["public-routes:about", "public-content:editorial-source"]
+  },
+  {
+    "legacyUrl": "/assessment.html",
+    "nextUrl": "/assessments/[assessment]",
+    "kind": "assessment",
+    "status": "planned",
+    "fixture": "site/assessment.html",
+    "requiredTests": ["mock-product:assessment"]
+  },
+  {
+    "legacyUrl": "/assurance.html",
+    "nextUrl": "/assurance",
+    "kind": "editorial",
+    "status": "complete",
+    "fixture": "site/assurance.html",
+    "requiredTests": ["public-routes:assurance", "public-content:editorial-source"]
+  },
+  {
+    "legacyUrl": "/catalog.html",
+    "nextUrl": "/catalog",
+    "kind": "catalog",
+    "status": "complete",
+    "fixture": "site/catalog.html",
+    "requiredTests": ["public-routes:catalog", "public-content:lesson-search"]
+  },
+  {
+    "legacyUrl": "/certification.html?id=claude-ccao-f",
+    "nextUrl": "/certifications/[track]",
+    "kind": "certification-track",
+    "status": "complete",
+    "fixture": "site/certification.html",
+    "requiredTests": ["public-routes:certification-track", "public-content:certification-validation"]
+  },
+  {
+    "legacyUrl": "/certifications.html",
+    "nextUrl": "/certifications",
+    "kind": "certification-program",
+    "status": "complete",
+    "fixture": "site/certifications.html",
+    "requiredTests": ["public-routes:certifications", "public-content:certification-validation"]
+  },
+  {
+    "legacyUrl": "/credits.html",
+    "nextUrl": "/credits",
+    "kind": "editorial",
+    "status": "complete",
+    "fixture": "site/credits.html",
+    "requiredTests": ["public-routes:credits", "public-content:provenance"]
+  },
+  {
+    "legacyUrl": "/cv-analysis.html",
+    "nextUrl": "/cv-analysis",
+    "kind": "presentation-only",
+    "status": "complete",
+    "fixture": "site/cv-analysis.html",
+    "requiredTests": ["public-routes:cv-analysis", "public-content:presentation-boundary"]
+  },
+  {
+    "legacyUrl": "/glossary.html",
+    "nextUrl": "/glossary",
+    "kind": "glossary",
+    "status": "complete",
+    "fixture": "site/glossary.html",
+    "requiredTests": ["public-routes:glossary", "public-content:glossary-search"]
+  },
+  {
+    "legacyUrl": "/lesson.html",
+    "nextUrl": "/lessons/[...slug]",
+    "kind": "lesson",
+    "status": "planned",
+    "fixture": "site/lesson.html",
+    "requiredTests": ["reference-lesson:reader"]
+  },
+  {
+    "legacyUrl": "/prereqs.html",
+    "nextUrl": "/roadmap",
+    "kind": "roadmap",
+    "status": "complete",
+    "fixture": "site/prereqs.html",
+    "requiredTests": ["public-routes:roadmap", "public-content:prerequisites"]
+  }
+]

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { GlossaryEntry } from "../../lib/content/public-content";
+import { searchGlossary } from "../../lib/content/query";
 
 export function GlossaryExplorer({ entries }: { entries: GlossaryEntry[] }) {
   const [query, setQuery] = useState("");
@@ -9,10 +10,7 @@ export function GlossaryExplorer({ entries }: { entries: GlossaryEntry[] }) {
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => setHydrated(true), []);
   const categories = useMemo(() => [...new Set(entries.map((entry) => entry.category))].sort(), [entries]);
-  const results = entries.filter((entry) => {
-    const searchable = `${entry.term} ${entry.aliases.join(" ")} ${entry.means} ${entry.related.join(" ")}`.toLowerCase();
-    return searchable.includes(query.trim().toLowerCase()) && (category === "all" || entry.category === category);
-  });
+  const results = searchGlossary(entries, { query, category });
 
   return (
     <div className="public-explorer" data-hydrated={hydrated}>

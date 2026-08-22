@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { PhaseSummary } from "../../lib/content/public-content";
+import { allLessons, searchLessons } from "../../lib/content/query";
 
 export function CatalogExplorer({ phases, initialPhase = "all" }: { phases: PhaseSummary[]; initialPhase?: string }) {
   const [query, setQuery] = useState("");
@@ -9,12 +10,9 @@ export function CatalogExplorer({ phases, initialPhase = "all" }: { phases: Phas
   const [phaseId, setPhaseId] = useState(initialPhase);
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => setHydrated(true), []);
-  const lessons = useMemo(() => phases.flatMap((phase) => phase.lessons.map((lesson) => ({ ...lesson, phase }))), [phases]);
+  const lessons = useMemo(() => allLessons(phases), [phases]);
   const languages = [...new Set(lessons.flatMap((lesson) => lesson.lang.split(",").map((item) => item.trim())).filter(Boolean))].sort();
-  const results = lessons.filter((lesson) => {
-    const searchable = `${lesson.name} ${lesson.summary ?? ""} ${lesson.phase.name} ${lesson.lang}`.toLowerCase();
-    return searchable.includes(query.trim().toLowerCase()) && (language === "all" || lesson.lang.includes(language)) && (phaseId === "all" || String(lesson.phase.id) === phaseId);
-  });
+  const results = searchLessons(phases, { query, language, phaseId });
 
   return (
     <div className="public-explorer" data-hydrated={hydrated}>

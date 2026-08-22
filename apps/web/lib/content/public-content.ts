@@ -1,67 +1,41 @@
 import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
+import { z } from "zod";
+
+import {
+  assessmentSchema,
+  certificationProgramSchema,
+  certificationTrackSchema,
+  glossaryEntrySchema,
+  lessonQuizSchema,
+  phaseSchema,
+  routeMetadataSchema,
+  sourceProvenanceSchema,
+  type Assessment,
+  type CertificationProgram,
+  type CertificationTrack,
+  type GlossaryEntry,
+  type LessonQuiz,
+  type PhaseSummary,
+  type RouteMetadata,
+  type SourceProvenance,
+} from "./schemas";
+
+export type {
+  Assessment,
+  AssessmentQuestion,
+  CertificationProgram,
+  CertificationTrack,
+  GlossaryEntry,
+  LessonQuiz,
+  LessonSummary,
+  PhaseSummary,
+  RouteMetadata,
+  SourceProvenance,
+} from "./schemas";
 
 const repositoryRoot = path.resolve(process.cwd(), "../..");
-
-export type LessonSummary = {
-  name: string;
-  status: string;
-  type: string;
-  lang: string;
-  url: string;
-  summary?: string;
-};
-
-export type PhaseSummary = {
-  id: number;
-  name: string;
-  status: string;
-  desc: string;
-  lessons: LessonSummary[];
-};
-
-export type GlossaryEntry = {
-  term: string;
-  slug: string;
-  letter: string;
-  category: string;
-  says: string;
-  means: string;
-  whyItMatters: string;
-  example: string;
-  confusion: string;
-  related: string[];
-  aliases: string[];
-};
-
-export type CertificationProgram = {
-  id: string;
-  name: string;
-  provider: string;
-  publisher: string;
-  summary: string;
-  promise: string;
-  accessNotice: string;
-  disclaimer: string;
-  scoringNotice: string;
-  tracks: string[];
-};
-
-export type CertificationTrack = {
-  id: string;
-  slug: string;
-  examCode: string;
-  credential: string;
-  shortName: string;
-  level: string;
-  summary: string;
-  audience: string;
-  recommendedExperience: string[];
-  exam: { items: number; timeLimitMinutes: number; feeUsd: number; format: string; delivery: string };
-  domains: { id: string; name: string; weight: number; objectives: string[] }[];
-  lessons: { path: string; domains: string[]; role: string; required: boolean }[];
-  studyPlans: { id: string; label: string; durationDays: number; hoursPerWeek: number; milestones: string[] }[];
-};
+const zRecordOfNumberArrays = z.record(z.string(), z.array(z.number().int().nonnegative()));
 
 export type EditorialPage = {
   slug: "about" | "credits" | "assurance" | "cv-analysis";
@@ -71,7 +45,40 @@ export type EditorialPage = {
 };
 
 function readRepositoryFile(relativePath: string) {
-  return readFileSync(path.join(repositoryRoot, relativePath), "utf8");
+  const resolved = path.resolve(repositoryRoot, relativePath);
+  if (!resolved.startsWith(repositoryRoot + path.sep)) throw new ContentValidationError(relativePath, "path escapes repository root");
+  return readFileSync(resolved, "utf8");
+}
+
+export class ContentValidationError extends Error {
+  constructor(public readonly source: string, reason: string) {
+    super(`Invalid content at ${source}: ${reason}`);
+    this.name = "ContentValidationError";
+  }
+}
+
+function readRepositoryJson(relativePath: string): unknown {
+  try {
+    return JSON.parse(readRepositoryFile(relativePath));
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : "unknown JSON parse error";
+    throw new ContentValidationError(relativePath, reason);
+  }
+}
+
+export function validateContent<T>(schema: z.ZodType<T>, value: unknown, source: string): T {
+  const result = schema.safeParse(value);
+  if (result.success) return result.data;
+  const reason = result.error.issues
+    .map((issue) => `${issue.path.length ? issue.path.join(".") : "<root>"}: ${issue.message}`)
+    .join("; ");
+  throw new ContentValidationError(source, reason);
+}
+
+const cache = new Map<string, unknown>();
+function cached<T>(key: string, load: () => T): T {
+  if (!cache.has(key)) cache.set(key, load());
+  return cache.get(key) as T;
 }
 
 function extractJsonConstant<T>(source: string, name: string): T {
@@ -106,30 +113,67 @@ function generatedData() {
 }
 
 export function loadPhases(): PhaseSummary[] {
-  return extractJsonConstant<PhaseSummary[]>(generatedData(), "PHASES");
+  return cached("phases", () => validateContent(phaseSchema.array(), extractJsonConstant<unknown>(generatedData(), "PHASES"), "site/data.js#PHASES"));
 }
 
 export function loadRoadmapPrerequisites(): Record<string, number[]> {
-  return extractJsonConstant<Record<string, number[]>>(generatedData(), "ROADMAP_PREREQS");
+  return cached("roadmap-prerequisites", () => validateContent(
+    zRecordOfNumberArrays,
+    extractJsonConstant<unknown>(generatedData(), "ROADMAP_PREREQS"),
+    "site/data.js#ROADMAP_PREREQS",
+  ));
 }
 
 export function loadGlossary(): GlossaryEntry[] {
-  return extractJsonConstant<GlossaryEntry[]>(generatedData(), "GLOSSARY");
+  return cached("glossary", () => validateContent(glossaryEntrySchema.array(), extractJsonConstant<unknown>(generatedData(), "GLOSSARY"), "site/data.js#GLOSSARY"));
 }
 
 export function loadCertificationProgram(): CertificationProgram {
-  return JSON.parse(readRepositoryFile("certifications/claude/program.json")) as CertificationProgram;
+  const source = "certifications/claude/program.json";
+  return cached(source, () => validateContent(certificationProgramSchema, readRepositoryJson(source), source));
 }
 
 export function loadCertificationTracks(): CertificationTrack[] {
-  return readdirSync(path.join(repositoryRoot, "certifications/claude/tracks"))
+  return cached("certification-tracks", () => readdirSync(path.join(repositoryRoot, "certifications/claude/tracks"))
     .filter((name) => name.endsWith(".json"))
     .sort()
-    .map((name) => JSON.parse(readRepositoryFile(`certifications/claude/tracks/${name}`)) as CertificationTrack);
+    .map((name) => {
+      const source = `certifications/claude/tracks/${name}`;
+      return validateContent(certificationTrackSchema, readRepositoryJson(source), source);
+    }));
 }
 
 export function loadCertificationTrack(slug: string): CertificationTrack | undefined {
   return loadCertificationTracks().find((track) => track.slug === slug || track.id === slug);
+}
+
+export function loadAssessment(relativePath: string): Assessment {
+  return cached(relativePath, () => validateContent(assessmentSchema, readRepositoryJson(relativePath), relativePath));
+}
+
+export function loadLessonQuiz(relativePath: string): LessonQuiz {
+  return cached(relativePath, () => validateContent(lessonQuizSchema, readRepositoryJson(relativePath), relativePath));
+}
+
+export function publicRouteMetadata(input: RouteMetadata): RouteMetadata {
+  return validateContent(routeMetadataSchema, input, `route metadata ${input.canonical || "<unknown>"}`);
+}
+
+export function loadAcademyProvenance(): SourceProvenance {
+  return cached("academy-provenance", () => {
+    const source = "site/codeology-config.json";
+    const config = validateContent(z.object({ academySource: z.object({
+      name: z.string().min(1),
+      author: z.string().min(1),
+      license: z.string().min(1),
+    }) }), readRepositoryJson(source), source);
+    return validateContent(sourceProvenanceSchema, {
+      classification: "imported",
+      sourcePath: "site/data.js",
+      attribution: `${config.academySource.name} by ${config.academySource.author}`,
+      license: config.academySource.license,
+    }, `${source}#academySource`);
+  });
 }
 
 const linkRewrites: Record<string, string> = {
