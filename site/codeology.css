@@ -95,10 +95,10 @@ html[data-product="codeology"] .roadmap-page {
 .about-hero,
 .about-section,
 .about-principle {
-  border: 1px solid var(--rule-soft);
-  border-radius: var(--codeology-radius-lg);
-  background: var(--codeology-surface);
-  box-shadow: var(--codeology-shadow-soft);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .about-hero {
@@ -286,10 +286,10 @@ html[data-product="codeology"] .roadmap-page {
 
 .credits-hero,
 .credits-section {
-  border: 1px solid var(--rule-soft);
-  border-radius: var(--codeology-radius-lg);
-  background: var(--codeology-surface);
-  box-shadow: var(--codeology-shadow-soft);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .credits-hero {
@@ -1239,10 +1239,10 @@ html[data-product="codeology"] .glossary-details {
 .cv-analysis-results,
 .cv-result-section,
 .cv-result-boundary {
-  border: 1px solid var(--rule-soft);
-  border-radius: var(--codeology-radius-lg);
-  background: var(--codeology-surface);
-  box-shadow: var(--codeology-shadow-soft);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .cv-analysis-hero {
@@ -1782,7 +1782,7 @@ html[data-product="codeology"] .glossary-details {
   .about-hero,
   .about-principle,
   .about-section {
-    border-radius: var(--codeology-radius-md);
+    border-radius: 0;
   }
 
   .about-hero {
@@ -1817,7 +1817,7 @@ html[data-product="codeology"] .glossary-details {
 
   .credits-hero,
   .credits-section {
-    border-radius: var(--codeology-radius-md);
+    border-radius: 0;
   }
 
   .credits-hero {
@@ -1885,7 +1885,7 @@ html[data-product="codeology"] .glossary-details {
   .cv-analysis-results,
   .cv-result-section,
   .cv-result-boundary {
-    border-radius: var(--codeology-radius-md);
+    border-radius: 0;
   }
 
   .cv-analysis-hero,
@@ -1953,9 +1953,9 @@ html[data-product="codeology"] .glossary-details {
 .cv-enhancement-studio {
   margin-top: 24px;
   padding: clamp(24px, 4vw, 44px);
-  border: 1px solid var(--codeology-line);
-  border-radius: var(--codeology-radius-lg);
-  background: var(--codeology-surface);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 .cv-auth-gate {
@@ -2318,7 +2318,7 @@ html[data-product="codeology"] .glossary-details {
   .cv-history,
   .cv-enhancement-studio {
     padding: 24px 18px;
-    border-radius: var(--codeology-radius-md);
+    border-radius: 0;
   }
 
   .cv-provider-form,
