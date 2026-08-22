@@ -9,6 +9,7 @@
       { "label": "Academy", "href": "index.html" },
       { "label": "Catalog", "href": "catalog.html" },
       { "label": "Skill map", "href": "prereqs.html" },
+      { "label": "CV Analysis", "href": "cv-analysis.html" },
       { "label": "Glossary", "href": "glossary.html" },
       { "label": "About", "href": "about.html" },
       { "label": "Credits", "href": "credits.html" }
