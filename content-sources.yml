@@ -52,6 +52,7 @@
       "license": "MIT",
       "paths": [
         ".env.example",
+        "apps/**",
         ".agents/**",
         ".githooks/**",
         ".github/workflows/deploy.yml",
@@ -65,6 +66,7 @@
         "docs/CODEOLOGY_*.md",
         "docs/DEVELOPMENT_TOOLING_PROVENANCE.md",
         "docs/DESIGN_SYSTEM.md",
+        "docs/migration-evidence/**",
         "docs/visual-baselines/**",
         "docs/UPSTREAM_INTAKE.md",
         "docs/upstream-reports/**",

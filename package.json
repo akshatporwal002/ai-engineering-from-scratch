@@ -29,6 +29,13 @@
     "build": "node scripts/build-auth.mjs && node site/build.js",
     "ci": "npm test && npm run build",
     "ci:strict": "npm run ci && npm run check:legacy-quiz-order",
+    "dev:web": "npm --prefix apps/web run dev",
+    "dev:api": "python3 -m uvicorn app.main:app --app-dir apps/api --reload",
+    "test:web": "npm --prefix apps/web run test",
+    "test:api": "cd apps/api && python3 -m unittest discover -s tests -v",
+    "test:migration": "npm run test:api && npm run test:web",
+    "typecheck:migration": "npm --prefix apps/web run typecheck && python3 -m compileall -q apps/api/app",
+    "build:migration": "npm --prefix apps/web run build && python3 -m compileall -q apps/api/app",
     "deploy:preview": "npm run ci && npx --yes vercel@latest deploy",
     "deploy:production": "npm run ci && npx --yes vercel@latest deploy --prod"
   },

@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --canvas: #ffffff;
+  --ink: #111111;
+  --accent: #c43b00;
+  --surface: rgba(17, 17, 17, 0.045);
+  --line: rgba(17, 17, 17, 0.16);
+  --font-display: "VT323";
+  --font-body: "Source Serif 4";
+  --font-mono: "JetBrains Mono";
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--canvas); color: var(--ink); font-family: var(--font-body), Georgia, serif; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; } }
