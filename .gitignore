@@ -87,3 +87,5 @@ i18n/*/.translate-cache.json
 site/langs.js
 .env.local
 .gitnexus
+apps/web/test-results/
+apps/web/playwright-report/
