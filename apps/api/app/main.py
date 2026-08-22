@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api.v1.router import router
+from app.application import create_application
 from app.core.config import Settings, get_settings
 from app.core.errors import ApiError, safe_error
 from app.core.logging import log_event
@@ -20,6 +21,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app = FastAPI(title="Codeology API experiment", version=(settings or get_settings()).version)
     app.state.settings = settings or get_settings()
+    app.state.application = create_application()
 
     @app.middleware("http")
     async def request_context(request: Request, call_next: Any) -> Any:
