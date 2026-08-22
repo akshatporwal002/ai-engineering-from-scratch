@@ -44,6 +44,7 @@ function errorCode(error: unknown) {
     'authentication_required', 'invalid_request', 'document_not_found', 'provider_not_connected',
     'file_too_large', 'file_type_invalid', 'file_signature_invalid', 'not_enough_text',
     'analysis_rate_limited', 'provider_rejected', 'provider_schema_invalid', 'provider_unavailable',
+    'provider_request_invalid', 'provider_timeout', 'provider_service_error',
     'provider_storage_unavailable', 'provider_model_unavailable',
     'docx_invalid_zip', 'docx_invalid_directory', 'docx_encrypted', 'docx_too_large',
     'docx_invalid_entry', 'docx_unsupported_compression', 'docx_not_enough_text', 'docx_document_missing',
@@ -172,6 +173,9 @@ function providerFailure(result: Response): never {
   if (result.status === 401 || result.status === 403) throw new Error('provider_rejected');
   if (result.status === 404) throw new Error('provider_model_unavailable');
   if (result.status === 429) throw new Error('analysis_rate_limited');
+  if (result.status === 400 || result.status === 422) throw new Error('provider_request_invalid');
+  if (result.status === 408 || result.status === 504) throw new Error('provider_timeout');
+  if (result.status >= 500) throw new Error('provider_service_error');
   throw new Error('provider_unavailable');
 }
 
@@ -331,7 +335,7 @@ Deno.serve(async (req) => {
       await service.from('cv_documents').update({ status: 'failed', processing_error_code: code }).eq('id', clean(body.documentId, 64)).eq('user_id', userId);
     }
     console.error(JSON.stringify({ requestId, action, code }));
-    const status = code === 'authentication_required' ? 401 : code === 'analysis_rate_limited' ? 429 : code === 'provider_storage_unavailable' ? 503 : code === 'request_failed' || code === 'provider_unavailable' ? 502 : 400;
+    const status = code === 'authentication_required' ? 401 : code === 'analysis_rate_limited' ? 429 : code === 'provider_storage_unavailable' || code === 'provider_timeout' || code === 'provider_service_error' ? 503 : code === 'request_failed' || code === 'provider_unavailable' ? 502 : 400;
     return response(origin, status, { error: code, requestId });
   }
 });

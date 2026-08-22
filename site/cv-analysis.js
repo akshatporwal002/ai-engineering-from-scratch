@@ -32,7 +32,7 @@
   var ERROR_MESSAGES = {
     authentication_required: 'Please log in again.', invalid_request: 'Check the submitted fields and try again.',
     provider_not_connected: 'Connect an AI provider before running an analysis.', provider_rejected: 'The provider rejected that API key.', provider_model_unavailable: 'That model is not available to this provider account.',
-    provider_unavailable: 'The selected AI provider is temporarily unavailable. Your saved CV has not been lost.', analysis_rate_limited: 'You can run five analyses every ten minutes. Try again shortly.',
+    provider_request_invalid: 'The AI provider rejected this analysis request. Try Gemini 3.5 Flash or contact support if it persists.', provider_timeout: 'The AI provider took too long to respond. Your saved CV has not been lost.', provider_service_error: 'The AI provider reported a temporary server error. Your saved CV has not been lost.', provider_unavailable: 'The selected AI provider could not be reached. Your saved CV has not been lost.', analysis_rate_limited: 'You can run five analyses every ten minutes. Try again shortly.',
     file_too_large: 'The file exceeds the 10 MB limit.', file_type_invalid: 'Use PDF, DOCX, TXT, or Markdown.', file_signature_invalid: 'The file contents do not match its declared type.',
     not_enough_text: 'The CV needs at least 120 characters of readable text.', docx_not_enough_text: 'The DOCX needs at least 120 characters of readable text.',
     document_not_found: 'That saved CV could not be found.', provider_schema_invalid: 'The provider returned an incomplete result. Run the analysis again.', request_failed: 'The secure service could not complete the request. Try again or contact support.',
@@ -57,6 +57,22 @@
   function message(error) {
     var code = error && (error.code || error.message);
     return ERROR_MESSAGES[code] || 'Something went wrong. Try again.';
+  }
+
+  function historyStatus(documentRow) {
+    if (documentRow.status !== 'failed') return documentRow.status === 'complete' ? 'Analysis ready' : documentRow.status;
+    var labels = {
+      provider_request_invalid: 'Failed · provider rejected request format',
+      provider_timeout: 'Failed · provider timed out',
+      provider_service_error: 'Failed · provider service error',
+      provider_unavailable: 'Failed · provider could not be reached',
+      provider_rejected: 'Failed · provider key was rejected',
+      provider_model_unavailable: 'Failed · selected model unavailable',
+      provider_schema_invalid: 'Failed · provider response was incomplete',
+      analysis_rate_limited: 'Failed · analysis rate limit reached',
+      not_enough_text: 'Failed · not enough readable CV text',
+    };
+    return labels[documentRow.processing_error_code] || 'Failed · secure analysis could not complete';
   }
 
   function setBusy(form, busy) {
@@ -127,7 +143,7 @@
       var copy = element('div', '');
       copy.appendChild(element('strong', '', documentRow.original_filename));
       copy.appendChild(element('span', '', documentRow.target_role + ' · ' + new Date(documentRow.created_at).toLocaleDateString()));
-      copy.appendChild(element('small', '', documentRow.status === 'complete' ? 'Analysis ready' : documentRow.status));
+      copy.appendChild(element('small', '', historyStatus(documentRow)));
       var actions = element('div', 'cv-history-actions');
       var rows = analysisRows(documentRow);
       if (rows.length) {

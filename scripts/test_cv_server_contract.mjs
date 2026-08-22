@@ -43,6 +43,11 @@ assert.ok(edge.includes("api.anthropic.com/v1/messages"));
 assert.ok(edge.includes("gemini-3.5-flash"), 'Gemini 3.5 Flash must remain an allowlisted model');
 assert.ok(browser.includes("gemini-3.5-flash"), 'Gemini 3.5 Flash must remain selectable in the browser');
 assert.ok(!edge.includes("responseSchema: analysisSchema()"), 'Gemini requests must avoid the oversized strict schema and rely on server-side validation');
+for (const code of ['provider_request_invalid', 'provider_timeout', 'provider_service_error']) {
+  assert.ok(edge.includes(code), `Edge Function must retain the safe provider error ${code}`);
+  assert.ok(browser.includes(code), `Browser must explain the safe provider error ${code}`);
+}
+assert.ok(browser.includes('processing_error_code'), 'CV history must show the stored safe failure reason');
 assert.ok(edge.includes("body.connectionId"));
 assert.ok(!edge.includes("!/^[A-Za-z0-9_-]+$/.test(secret)"), 'provider keys must be validated by their provider, not a Gemini-only character regex');
 assert.ok(edge.includes("if (previous.data)"), 'a failed key replacement must preserve the previous provider connection');
