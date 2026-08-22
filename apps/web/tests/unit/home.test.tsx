@@ -4,9 +4,10 @@ import { describe, expect, it } from "vitest";
 import HomePage from "../../app/page";
 
 describe("HomePage", () => {
-  it("identifies the local-only migration boundary", () => {
+  it("renders the source-backed academy proposition and totals", () => {
     render(<HomePage />);
-    expect(screen.getByRole("heading", { name: "Codeology" })).toBeTruthy();
-    expect(screen.getByText(/legacy academy remains/i)).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Learn freely. Build for real." })).toBeTruthy();
+    expect(screen.getByLabelText("Academy summary").textContent).toContain("503");
+    expect(screen.getByText(/Rohit Ghumare and contributors/i)).toBeTruthy();
   });
 });
