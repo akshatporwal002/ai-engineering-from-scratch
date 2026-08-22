@@ -82,14 +82,14 @@ html[data-product="codeology"] .roadmap-page {
 }
 
 .about-page {
-  width: min(1180px, calc(100% - 48px));
+  width: min(1120px, calc(100% - 48px));
   margin-inline: auto;
-  padding: calc(var(--header-offset) + 16px) 0 96px;
+  padding: calc(var(--header-offset) + 16px) 0 112px;
 }
 
 .about-codeology {
   display: grid;
-  gap: 24px;
+  gap: 0;
 }
 
 .about-hero,
@@ -104,7 +104,8 @@ html[data-product="codeology"] .roadmap-page {
 .about-hero {
   position: relative;
   overflow: hidden;
-  padding: clamp(36px, 7vw, 82px);
+  padding: clamp(42px, 6vw, 72px) 0 clamp(36px, 5vw, 56px);
+  border-bottom: 1px solid var(--rule-soft);
 }
 
 .about-hero::after {
@@ -190,12 +191,25 @@ html[data-product="codeology"] .roadmap-page {
 .about-principles {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  border-bottom: 1px solid var(--rule-soft);
 }
 
 .about-principle,
 .about-section {
-  padding: clamp(24px, 4vw, 42px);
+  padding: clamp(32px, 4vw, 48px) 0;
+}
+
+.about-principle + .about-principle {
+  border-left: 1px solid var(--rule-soft);
+  padding-left: clamp(20px, 3vw, 36px);
+}
+
+.about-principle:not(:last-child) {
+  padding-right: clamp(20px, 3vw, 36px);
+}
+
+.about-section {
+  border-bottom: 1px solid var(--rule-soft);
 }
 
 .about-principle > span {
@@ -278,10 +292,10 @@ html[data-product="codeology"] .roadmap-page {
 
 .credits-page {
   display: grid;
-  width: min(1100px, calc(100% - 48px));
+  width: min(1120px, calc(100% - 48px));
   margin-inline: auto;
-  padding: calc(var(--header-offset) + 16px) 0 96px;
-  gap: 24px;
+  padding: calc(var(--header-offset) + 16px) 0 112px;
+  gap: 0;
 }
 
 .credits-hero,
@@ -295,7 +309,8 @@ html[data-product="codeology"] .roadmap-page {
 .credits-hero {
   position: relative;
   overflow: hidden;
-  padding: clamp(36px, 7vw, 78px);
+  padding: clamp(42px, 6vw, 72px) 0 clamp(36px, 5vw, 56px);
+  border-bottom: 1px solid var(--rule-soft);
 }
 
 .credits-hero::after {
@@ -344,7 +359,8 @@ html[data-product="codeology"] .roadmap-page {
 }
 
 .credits-section {
-  padding: clamp(26px, 5vw, 52px);
+  padding: clamp(36px, 5vw, 56px) 0;
+  border-bottom: 1px solid var(--rule-soft);
 }
 
 .credits-section-heading h2 {
@@ -1225,14 +1241,14 @@ html[data-product="codeology"] .glossary-details {
 
 /* CV Analysis: local, formative career-to-curriculum guidance. */
 .cv-analysis-page {
-  width: min(1180px, calc(100% - 48px));
+  width: min(1120px, calc(100% - 48px));
   margin-inline: auto;
-  padding: calc(var(--header-offset) + 16px) 0 96px;
+  padding: calc(var(--header-offset) + 28px) 0 112px;
 }
 
-.cv-analysis-page > * + * { margin-top: 24px; }
+.cv-analysis-page > * + * { margin-top: 0; }
 
-.cv-provider-panel + .cv-analysis-workspace { margin-top: 24px; }
+.cv-provider-panel + .cv-analysis-workspace { margin-top: 0; }
 
 .cv-analysis-hero,
 .cv-analysis-workspace,
@@ -1249,9 +1265,10 @@ html[data-product="codeology"] .glossary-details {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.7fr);
-  gap: clamp(28px, 6vw, 72px);
+  gap: clamp(28px, 5vw, 64px);
   overflow: hidden;
-  padding: clamp(36px, 7vw, 82px);
+  padding: clamp(42px, 6vw, 72px) 0 clamp(36px, 5vw, 56px);
+  border-bottom: 1px solid var(--rule-soft);
 }
 
 .cv-analysis-hero::after {
@@ -1284,7 +1301,7 @@ html[data-product="codeology"] .glossary-details {
   margin: 18px 0 22px;
   color: var(--codeology-display-accent);
   font-family: var(--font-display);
-  font-size: clamp(4rem, 9vw, 8.2rem);
+  font-size: clamp(3.8rem, 8vw, 7rem);
   font-weight: 400;
   letter-spacing: -0.025em;
   line-height: 0.82;
@@ -1342,7 +1359,10 @@ html[data-product="codeology"] .glossary-details {
 }
 
 .cv-analysis-workspace,
-.cv-analysis-results { padding: clamp(28px, 5vw, 56px); }
+.cv-analysis-results {
+  padding: clamp(36px, 5vw, 56px) 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
 
 .cv-analysis-heading h2 {
   margin: 10px 0;
@@ -1786,7 +1806,7 @@ html[data-product="codeology"] .glossary-details {
   }
 
   .about-hero {
-    padding: 30px 20px;
+    padding: 34px 0 30px;
   }
 
   .about-hero h1 {
@@ -1796,6 +1816,19 @@ html[data-product="codeology"] .glossary-details {
   .about-principles {
     grid-template-columns: 1fr;
   }
+
+  .about-principle,
+  .about-section {
+    padding: 32px 0;
+  }
+
+  .about-principle + .about-principle {
+    padding-left: 0;
+    border-left: 0;
+    border-top: 1px solid var(--rule-soft);
+  }
+
+  .about-principle:not(:last-child) { padding-right: 0; }
 
   .about-source-card {
     align-items: flex-start;
@@ -1821,7 +1854,7 @@ html[data-product="codeology"] .glossary-details {
   }
 
   .credits-hero {
-    padding: 30px 20px;
+    padding: 34px 0 30px;
   }
 
   .credits-hero h1 {
@@ -1832,6 +1865,8 @@ html[data-product="codeology"] .glossary-details {
     grid-template-columns: 1fr;
     gap: 6px;
   }
+
+  .credits-section { padding: 34px 0; }
 
   .credits-actions,
   .credits-action {
@@ -1891,12 +1926,17 @@ html[data-product="codeology"] .glossary-details {
   .cv-analysis-hero,
   .cv-analysis-workspace,
   .cv-analysis-results {
-    padding: 26px 20px;
+    padding: 34px 0;
   }
 
   .cv-analysis-hero h1 {
     font-size: clamp(3.6rem, 18vw, 5.8rem);
   }
+
+  .cv-auth-gate,
+  .cv-provider-panel,
+  .cv-history,
+  .cv-enhancement-studio { padding: 34px 0; }
 
   .cv-document-facts,
   .cv-role-area-grid,
@@ -1951,11 +1991,21 @@ html[data-product="codeology"] .glossary-details {
 .cv-provider-panel,
 .cv-history,
 .cv-enhancement-studio {
-  margin-top: 24px;
-  padding: clamp(24px, 4vw, 44px);
+  margin-top: 0;
+  padding: clamp(36px, 5vw, 56px) 0;
   border: 0;
   border-radius: 0;
   background: transparent;
+}
+
+.cv-auth-gate,
+.cv-provider-panel,
+.cv-history {
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.cv-enhancement-studio {
+  border-top: 1px solid var(--rule-soft);
 }
 
 .cv-auth-gate {
