@@ -51,5 +51,8 @@ assert.ok(browser.includes('processing_error_code'), 'CV history must show the s
 assert.ok(edge.includes("body.connectionId"));
 assert.ok(!edge.includes("!/^[A-Za-z0-9_-]+$/.test(secret)"), 'provider keys must be validated by their provider, not a Gemini-only character regex');
 assert.ok(edge.includes("if (previous.data)"), 'a failed key replacement must preserve the previous provider connection');
+assert.ok(edge.includes("action === 'update-provider-model'"), 'connected providers must support a non-destructive model update');
+assert.ok(edge.includes("await verifyProvider(provider, secretResult.data, model)"), 'a changed model must be verified against the stored provider key');
+assert.ok(browser.includes("update-provider-model"), 'the browser must expose model updates for existing provider connections');
 
 console.log('CV server document and structured-analysis contracts are valid.');

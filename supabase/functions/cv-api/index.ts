@@ -281,6 +281,21 @@ Deno.serve(async (req) => {
       return response(origin, 200, { connection: upsert.data, requestId });
     }
 
+    if (action === 'update-provider-model') {
+      const connectionId = clean(body.connectionId, 64);
+      if (!UUID.test(connectionId)) throw new Error('invalid_request');
+      const connection = await service.from('ai_provider_connections').select('id,provider,display_name,key_hint,model,verified_at').eq('id', connectionId).eq('user_id', userId).maybeSingle();
+      if (connection.error || !connection.data) throw new Error('provider_not_connected');
+      const provider = safeProvider(connection.data.provider);
+      const model = safeModel(provider, body.model);
+      const secretResult = await service.rpc('codeology_read_provider_secret', { p_user_id: userId, p_connection_id: connection.data.id });
+      if (secretResult.error || !secretResult.data) throw new Error('provider_not_connected');
+      await verifyProvider(provider, secretResult.data, model);
+      const updated = await service.from('ai_provider_connections').update({ model, verified_at: new Date().toISOString() }).eq('id', connection.data.id).eq('user_id', userId).select('id,provider,display_name,key_hint,model,verified_at').single();
+      if (updated.error || !updated.data) throw new Error('provider_storage_unavailable');
+      return response(origin, 200, { connection: updated.data, requestId });
+    }
+
     if (action === 'delete-provider') {
       const connectionId = clean(body.connectionId, 64);
       if (!UUID.test(connectionId)) throw new Error('invalid_request');
