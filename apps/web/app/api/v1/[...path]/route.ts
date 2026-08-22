@@ -10,8 +10,9 @@ async function proxy(request: NextRequest, context: { params: Promise<{ path: st
     const value = request.headers.get(header);
     if (value) headers.set(header, value);
   }
-  const response = await fetch(target, { method: request.method, headers, cache: "no-store" });
+  const body = ["GET", "HEAD"].includes(request.method) ? undefined : await request.arrayBuffer();
+  const response = await fetch(target, { method: request.method, headers, body, cache: "no-store" });
   return new Response(response.body, { status: response.status, headers: { "content-type": response.headers.get("content-type") ?? "application/json", "x-request-id": response.headers.get("x-request-id") ?? "" } });
 }
 
-export { proxy as GET, proxy as HEAD };
+export { proxy as DELETE, proxy as GET, proxy as HEAD, proxy as PATCH, proxy as POST };

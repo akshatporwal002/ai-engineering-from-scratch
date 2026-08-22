@@ -324,6 +324,26 @@
         "title": "CvDocumentCreate",
         "type": "object"
       },
+      "CvDocumentDetail": {
+        "properties": {
+          "analyses": {
+            "items": {
+              "$ref": "#/components/schemas/AnalysisJobView"
+            },
+            "title": "Analyses",
+            "type": "array"
+          },
+          "document": {
+            "$ref": "#/components/schemas/CvDocumentView"
+          }
+        },
+        "required": [
+          "document",
+          "analyses"
+        ],
+        "title": "CvDocumentDetail",
+        "type": "object"
+      },
       "CvDocumentView": {
         "properties": {
           "created_at": {
@@ -824,7 +844,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CvDocumentView"
+                  "$ref": "#/components/schemas/CvDocumentDetail"
                 }
               }
             },

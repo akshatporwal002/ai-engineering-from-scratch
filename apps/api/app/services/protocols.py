@@ -3,7 +3,7 @@
 from typing import Protocol
 from uuid import UUID
 
-from app.domain.models import AnalysisInput, AnalysisJobView, CvDocumentCreate, CvDocumentView, Page, ProgressState, ProviderConnectionView, SaveProviderConnection
+from app.domain.models import AnalysisInput, AnalysisJobView, CvDocumentCreate, CvDocumentDetail, CvDocumentView, Page, ProgressState, ProviderConnectionView, SaveProviderConnection
 
 
 class ProgressService(Protocol):
@@ -21,6 +21,7 @@ class CvDocumentService(Protocol):
     async def create(self, user_id: UUID, command: CvDocumentCreate) -> CvDocumentView: ...
     async def list(self, user_id: UUID, offset: int, limit: int) -> Page: ...
     async def get(self, user_id: UUID, item_id: UUID) -> CvDocumentView: ...
+    async def detail(self, user_id: UUID, item_id: UUID) -> CvDocumentDetail: ...
     async def delete(self, user_id: UUID, item_id: UUID) -> None: ...
 
 

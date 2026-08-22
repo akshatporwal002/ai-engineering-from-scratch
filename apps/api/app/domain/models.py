@@ -110,6 +110,11 @@ class AnalysisJobView(BaseModel):
     error_code: str | None = None
 
 
+class CvDocumentDetail(BaseModel):
+    document: CvDocumentView
+    analyses: list[AnalysisJobView]
+
+
 class Page(BaseModel):
     items: list[CvDocumentView]
     offset: int = Field(ge=0)

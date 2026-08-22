@@ -22,7 +22,7 @@ class AnalysisService:
     def __init__(self, repository: MemoryRepositories, clock: DeterministicClock, ids: DeterministicIds, provider: AnalysisProvider) -> None:
         self.repository, self.clock, self.ids, self.provider = repository, clock, ids, provider
 
-    async def run(self, user_id: UUID, document_id: UUID, model: str, request: AnalysisInput) -> AnalysisJobView:
+    async def run(self, user_id: UUID, document_id: UUID, model: str, request: AnalysisInput, *, provider: AnalysisProvider | None = None, secret: SecretStr | None = None) -> AnalysisJobView:
         document = await self.repository.get_document(user_id, document_id)
         if document is None:
             raise ApiError("document_not_found", "The CV document was not found.", 404)
@@ -30,7 +30,7 @@ class AnalysisService:
         await self.repository.put_document(user_id, document)
         job = AnalysisJobView(id=self.ids.next(), document_id=document_id, status="pending", created_at=self.clock.now())
         try:
-            job.result = await self.provider.analyze_cv(SecretStr("fake-fixture-key"), model, request)
+            job.result = await (provider or self.provider).analyze_cv(secret or SecretStr("fake-fixture-key"), model, request)
             job.status = "complete"
             document.status = transition(document.status, "complete")  # type: ignore[arg-type]
         except ApiError as error:

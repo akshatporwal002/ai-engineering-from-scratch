@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import { EditorialPage } from "../../components/public/editorial-page";
-import { loadEditorialPage } from "../../lib/content/public-content";
+import { ProductWorkspace } from "../../components/product/product-workspace";
 
-const page = loadEditorialPage("cv-analysis");
-export const metadata: Metadata = { title: page.title, description: page.description, alternates: { canonical: "/cv-analysis" } };
-export default function CvAnalysisPage() { return <EditorialPage page={page} />; }
+export const metadata: Metadata = { title: "CV Analysis workspace · Codeology", description: "Local mock-backed CV analysis workspace.", alternates: { canonical: "/cv-analysis" } };
+export default function CvAnalysisPage() { return <ProductWorkspace enabled={process.env.NODE_ENV !== "production"} />; }

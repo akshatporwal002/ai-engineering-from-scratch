@@ -41,7 +41,8 @@ class FakeProvider:
         self.outcome = outcome
 
     async def verify_key(self, secret: SecretStr, model: str) -> None:
-        if not secret.get_secret_value().startswith("fake-") or self.outcome == FakeOutcome.INVALID_KEY:
+        value = secret.get_secret_value()
+        if not value.startswith("fake-") or value == "fake-invalid" or self.outcome == FakeOutcome.INVALID_KEY:
             raise ApiError(*ERRORS[FakeOutcome.INVALID_KEY])
         if not model:
             raise ApiError("provider_model_unavailable", "Select a supported provider model.", 422)
@@ -74,3 +75,14 @@ def provider_for(provider_id: ProviderId, outcome: FakeOutcome = FakeOutcome.SUC
     if provider_id not in MODELS:
         raise ApiError("provider_unavailable", "The provider is unavailable.", 503)
     return FakeProvider(outcome)
+
+
+def outcome_for_secret(secret: SecretStr) -> FakeOutcome:
+    value = secret.get_secret_value().removeprefix("fake-")
+    aliases = {"invalid": FakeOutcome.INVALID_KEY}
+    if value in aliases:
+        return aliases[value]
+    try:
+        return FakeOutcome(value)
+    except ValueError:
+        return FakeOutcome.SUCCESS

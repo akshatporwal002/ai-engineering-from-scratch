@@ -29,6 +29,11 @@ class ProviderAndAnalysisTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(validate_model(ProviderId.OPENAI, "gpt-5-mini"), "gpt-5-mini")
         with self.assertRaises(ApiError): validate_model(ProviderId.OPENAI, "user-controlled-model")
 
+    async def test_reserved_invalid_fixture_key_is_rejected_during_verification(self):
+        with self.assertRaises(ApiError) as caught:
+            await FakeProvider().verify_key(SecretStr("fake-invalid"), "gpt-5-mini")
+        self.assertEqual(caught.exception.code, "provider_request_invalid")
+
     async def test_connection_never_returns_secret_and_model_update_reuses_it(self):
         repository, user = MemoryRepositories(), UUID(int=1)
         service = ProviderConnectionService(repository, DeterministicClock(), DeterministicIds())

@@ -7,7 +7,8 @@ from fastapi import APIRouter, Query, Request, Response
 
 from app.application import Application
 from app.core.errors import ApiError
-from app.domain.models import AnalysisCreate, AnalysisJobView, CvDocumentCreate, CvDocumentView, Page, ProgressState, ProviderConnectionView, ProviderModelUpdate, SaveProviderConnection
+from app.domain.models import AnalysisCreate, AnalysisJobView, CvDocumentCreate, CvDocumentDetail, CvDocumentView, Page, ProgressState, ProviderConnectionView, ProviderModelUpdate, SaveProviderConnection
+from app.providers.fake import outcome_for_secret, provider_for
 from app.services.progress import reconcile_progress
 
 router = APIRouter()
@@ -54,9 +55,9 @@ async def list_documents(request: Request, offset: Annotated[int, Query(ge=0)] =
     return await application(request).documents.list(FIXTURE_USER, offset, limit)
 
 
-@router.get("/cv/documents/{document_id}", response_model=CvDocumentView)
-async def get_document(document_id: UUID, request: Request) -> CvDocumentView:
-    return await application(request).documents.get(FIXTURE_USER, document_id)
+@router.get("/cv/documents/{document_id}", response_model=CvDocumentDetail)
+async def get_document(document_id: UUID, request: Request) -> CvDocumentDetail:
+    return await application(request).documents.detail(FIXTURE_USER, document_id)
 
 
 @router.post("/cv/documents/{document_id}/analyses", response_model=AnalysisJobView, status_code=201)
@@ -65,7 +66,11 @@ async def analyze(document_id: UUID, body: AnalysisCreate, request: Request) -> 
     connection = await app.repositories.get_connection(FIXTURE_USER, body.connection_id)
     if connection is None:
         raise ApiError("provider_not_connected", "Connect a provider before running analysis.", 404)
-    return await app.analyses.run(FIXTURE_USER, document_id, connection.model_id, body)
+    secret = await app.repositories.get_credential(FIXTURE_USER, connection.id)
+    if secret is None:
+        raise ApiError("provider_not_connected", "Connect a provider before running analysis.", 404)
+    provider = provider_for(connection.provider_id, outcome_for_secret(secret))
+    return await app.analyses.run(FIXTURE_USER, document_id, connection.model_id, body, provider=provider, secret=secret)
 
 
 @router.delete("/cv/documents/{document_id}", status_code=204)

@@ -5,7 +5,7 @@ from pathlib import PurePath
 from uuid import UUID
 
 from app.core.errors import ApiError
-from app.domain.models import CvDocumentCreate, CvDocumentView, Page
+from app.domain.models import CvDocumentCreate, CvDocumentDetail, CvDocumentView, Page
 from app.repositories.memory import DeterministicClock, DeterministicIds, MemoryRepositories
 
 MAX_BYTES = 10 * 1024 * 1024
@@ -74,6 +74,9 @@ class DocumentService:
         if item is None:
             raise ApiError("document_not_found", "The CV document was not found.", 404)
         return item
+
+    async def detail(self, user_id: UUID, item_id: UUID) -> CvDocumentDetail:
+        return CvDocumentDetail(document=await self.get(user_id, item_id), analyses=await self.repository.list_analyses(user_id, item_id))
 
     async def delete(self, user_id: UUID, item_id: UUID) -> None:
         await self.get(user_id, item_id)

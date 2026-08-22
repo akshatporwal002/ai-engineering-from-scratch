@@ -37,6 +37,18 @@ class ContractTests(unittest.TestCase):
         for secret in ["private cv", "private prompt", "private response", "private key", "Bearer private", "private cookie"]:
             self.assertNotIn(secret, output)
 
+    def test_http_fixture_matrix_uses_api_owned_state(self):
+        text = "Synthetic CV fixture text long enough for the current one hundred and twenty character minimum. It contains no person or private information."
+        expected = {"quota": "provider_service_error", "rate_limit": "analysis_rate_limited", "unavailable": "provider_unavailable", "timeout": "provider_timeout", "malformed": "provider_schema_invalid", "safety": "provider_rejected"}
+        for outcome, code in expected.items():
+            client = TestClient(create_app())
+            connection = client.post("/api/v1/providers", json={"provider_id": "openai", "model_id": "gpt-5-mini", "credential": f"fake-{outcome}"}).json()
+            document = client.post("/api/v1/cv/documents", json={"filename": "fixture.txt", "mime_type": "text/plain", "pasted_text": text, "target_role": "AI Engineer", "consent": True}).json()
+            job = client.post(f"/api/v1/cv/documents/{document['id']}/analyses", json={"connection_id": connection["id"], "cv_text": text, "target_role": "AI Engineer", "job_description": ""}).json()
+            self.assertEqual((job["status"], job["error_code"]), ("failed", code))
+            detail = client.get(f"/api/v1/cv/documents/{document['id']}").json()
+            self.assertEqual(detail["analyses"][0]["id"], job["id"])
+
 
 if __name__ == "__main__":
     unittest.main()
