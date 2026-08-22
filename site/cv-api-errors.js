@@ -10,7 +10,7 @@
   var SAFE_CODES = new Set([
     'authentication_required', 'invalid_request', 'document_not_found', 'provider_not_connected',
     'provider_rejected', 'provider_schema_invalid', 'provider_unavailable',
-    'provider_storage_unavailable', 'analysis_rate_limited', 'file_too_large',
+    'provider_storage_unavailable', 'provider_model_unavailable', 'analysis_rate_limited', 'file_too_large',
     'file_type_invalid', 'file_signature_invalid', 'not_enough_text',
     'docx_not_enough_text', 'origin_not_allowed', 'request_failed',
   ]);

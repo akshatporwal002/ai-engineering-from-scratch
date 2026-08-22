@@ -4,7 +4,7 @@
 
   var client = null;
   var user = null;
-  var provider = null;
+  var providers = [];
   var documents = [];
   var activeAnalysis = null;
   var editableCv = null;
@@ -24,14 +24,19 @@
     txt: 'text/plain',
     md: 'text/markdown',
   };
+  var PROVIDERS = {
+    gemini: { label: 'Google Gemini', keyLabel: 'Gemini', models: [['gemini-3.7-flash', 'Gemini 3.7 Flash · highest quality'], ['gemini-3.6-flash', 'Gemini 3.6 Flash · balanced'], ['gemini-3.5-flash-lite', 'Gemini 3.5 Flash-Lite · lowest cost']] },
+    openai: { label: 'OpenAI', keyLabel: 'OpenAI', models: [['gpt-5.4-mini', 'GPT-5.4 mini · balanced'], ['gpt-5.4-nano', 'GPT-5.4 nano · lowest cost'], ['gpt-5.4', 'GPT-5.4 · highest quality']] },
+    anthropic: { label: 'Anthropic', keyLabel: 'Anthropic', models: [['claude-sonnet-5', 'Claude Sonnet 5 · balanced'], ['claude-haiku-4-5', 'Claude Haiku 4.5 · lowest cost'], ['claude-opus-5', 'Claude Opus 5 · highest quality']] },
+  };
   var ERROR_MESSAGES = {
     authentication_required: 'Please log in again.', invalid_request: 'Check the submitted fields and try again.',
-    provider_not_connected: 'Connect a Gemini key before running an analysis.', provider_rejected: 'Gemini rejected that key or the selected model is unavailable.',
-    provider_unavailable: 'Gemini is temporarily unavailable. Your saved CV has not been lost.', analysis_rate_limited: 'You can run five analyses every ten minutes. Try again shortly.',
+    provider_not_connected: 'Connect an AI provider before running an analysis.', provider_rejected: 'The provider rejected that API key.', provider_model_unavailable: 'That model is not available to this provider account.',
+    provider_unavailable: 'The selected AI provider is temporarily unavailable. Your saved CV has not been lost.', analysis_rate_limited: 'You can run five analyses every ten minutes. Try again shortly.',
     file_too_large: 'The file exceeds the 10 MB limit.', file_type_invalid: 'Use PDF, DOCX, TXT, or Markdown.', file_signature_invalid: 'The file contents do not match its declared type.',
     not_enough_text: 'The CV needs at least 120 characters of readable text.', docx_not_enough_text: 'The DOCX needs at least 120 characters of readable text.',
-    document_not_found: 'That saved CV could not be found.', provider_schema_invalid: 'Gemini returned an incomplete result. Run the analysis again.', request_failed: 'The secure service could not complete the request. Try again or contact support.',
-    provider_storage_unavailable: 'Gemini accepted the key, but encrypted key storage is temporarily unavailable. Your key was not saved.',
+    document_not_found: 'That saved CV could not be found.', provider_schema_invalid: 'The provider returned an incomplete result. Run the analysis again.', request_failed: 'The secure service could not complete the request. Try again or contact support.',
+    provider_storage_unavailable: 'The provider accepted the key, but encrypted key storage is temporarily unavailable. Your key was not saved.',
     network_unavailable: 'The secure analysis service could not be reached. Check your connection and try again.', service_unavailable: 'The secure analysis service is temporarily unavailable. Try again shortly.',
     origin_not_allowed: 'This site address is not authorized to use the secure analysis service.',
   };
@@ -71,11 +76,41 @@
     return result.data;
   }
 
+  function selectedProvider() { return document.getElementById('cvProviderType').value; }
+  function providerConnection(id) { return providers.find(function (item) { return item.id === id; }) || null; }
+
+  function syncProviderModels() {
+    var definition = PROVIDERS[selectedProvider()];
+    var model = document.getElementById('cvProviderModel');
+    var previous = model.value;
+    model.replaceChildren();
+    definition.models.forEach(function (item) { var option = element('option', '', item[1]); option.value = item[0]; model.appendChild(option); });
+    if (definition.models.some(function (item) { return item[0] === previous; })) model.value = previous;
+    document.getElementById('cvProviderKeyLabel').textContent = definition.keyLabel;
+    renderProvider();
+  }
+
   function renderProvider() {
     var connected = document.getElementById('cvProviderConnected');
+    var provider = providers.find(function (item) { return item.provider === selectedProvider(); }) || null;
     connected.hidden = !provider;
-    providerForm.hidden = !!provider;
-    if (provider) document.getElementById('cvProviderHint').textContent = provider.key_hint + ' · ' + provider.model;
+    document.getElementById('cvProviderKeyFields').hidden = !!provider;
+    if (provider) {
+      document.getElementById('cvProviderConnectedName').textContent = provider.display_name + ' connected';
+      document.getElementById('cvProviderHint').textContent = provider.key_hint + ' · ' + provider.model;
+      document.getElementById('cvProviderModel').value = provider.model;
+      document.getElementById('cvProviderModel').dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    renderAnalysisProviders();
+  }
+
+  function renderAnalysisProviders() {
+    var select = document.getElementById('cvAnalysisProvider');
+    var previous = select.value;
+    select.replaceChildren();
+    providers.forEach(function (item) { var option = element('option', '', item.display_name + ' · ' + item.model); option.value = item.id; select.appendChild(option); });
+    if (!providers.length) { var empty = element('option', '', 'Connect a provider first'); empty.value = ''; select.appendChild(empty); }
+    if (providers.some(function (item) { return item.id === previous; })) select.value = previous;
   }
 
   function analysisRows(documentRow) {
@@ -111,9 +146,9 @@
 
   async function loadAccountData() {
     if (!client || !user) return;
-    var connectionResult = await client.from('ai_provider_connections').select('id,provider,display_name,key_hint,model,verified_at').eq('provider', 'gemini').maybeSingle();
+    var connectionResult = await client.from('ai_provider_connections').select('id,provider,display_name,key_hint,model,verified_at').order('created_at', { ascending: true });
     if (connectionResult.error) throw connectionResult.error;
-    provider = connectionResult.data;
+    providers = connectionResult.data || [];
     var docsResult = await client.from('cv_documents').select('id,original_filename,mime_type,byte_size,target_role,status,processing_error_code,created_at,cv_analyses(id,created_at,analysis,role_readiness_score,role_readiness_label,model)').order('created_at', { ascending: false }).limit(50);
     if (docsResult.error) throw docsResult.error;
     documents = docsResult.data || [];
@@ -126,7 +161,7 @@
     user = auth && auth.getUser ? auth.getUser() : null;
     gate.hidden = !!user;
     workspace.hidden = !user;
-    if (!user) { provider = null; documents = []; results.hidden = true; return; }
+    if (!user) { providers = []; documents = []; results.hidden = true; renderAnalysisProviders(); return; }
     loadAccountData().catch(function () { status('cvProviderStatus', 'Account data is temporarily unavailable.', 'error'); });
   }
 
@@ -168,6 +203,7 @@
     status('cvFormStatus', '', '');
     var role = document.getElementById('targetRole').value.trim();
     var description = document.getElementById('jobDescription').value.trim();
+    var provider = providerConnection(document.getElementById('cvAnalysisProvider').value);
     if (!provider) { status('cvFormStatus', ERROR_MESSAGES.provider_not_connected, 'error'); document.getElementById('ai-provider-settings').scrollIntoView({ behavior: 'smooth' }); return; }
     if (role.length < 2) { status('cvFormStatus', 'Enter the target role.', 'error'); return; }
     if (!document.getElementById('cvProviderConsent').checked) { status('cvFormStatus', 'Confirm provider consent before analysis.', 'error'); return; }
@@ -185,8 +221,8 @@
       var inserted = await client.from('cv_documents').insert({ user_id: user.id, storage_path: path, original_filename: safeFilename(file.name), mime_type: mime, byte_size: file.size, content_sha256: await sha256(file), source_kind: fileInput.files && fileInput.files[0] ? 'upload' : 'pasted', target_role: role, job_description: description, provider_consent_at: new Date().toISOString() }).select('id').single();
       if (inserted.error) { await client.storage.from('cv-documents').remove([path]); throw inserted.error; }
       documentRow = inserted.data;
-      status('cvFormStatus', 'Analyzing through your connected Gemini account…', 'neutral');
-      var result = await api('analyze', { documentId: documentRow.id });
+      status('cvFormStatus', 'Analyzing through ' + provider.display_name + '…', 'neutral');
+      var result = await api('analyze', { documentId: documentRow.id, connectionId: provider.id });
       status('cvFormStatus', 'Analysis saved to your account.', 'success');
       await loadAccountData();
       renderAnalysis(result.analysis);
@@ -267,8 +303,9 @@
 
   loginButton.addEventListener('click', function () { if (window.CodeologyAuth) window.CodeologyAuth.open(); });
   document.addEventListener('codeology:auth-changed', syncAuth);
-  providerForm.addEventListener('submit', async function (event) { event.preventDefault(); var key = document.getElementById('cvProviderKey').value.trim(); if (key.length < 20) { status('cvProviderStatus', 'Enter a valid Gemini API key.', 'error'); return; } setBusy(providerForm, true); status('cvProviderStatus', 'Verifying with Gemini…', 'neutral'); try { var result = await api('save-provider', { apiKey: key, model: 'gemini-3.6-flash' }); provider = result.connection; providerForm.reset(); renderProvider(); status('cvProviderStatus', 'Gemini key verified and encrypted for your account.', 'success'); } catch (error) { status('cvProviderStatus', message(error), 'error'); } finally { setBusy(providerForm, false); } });
-  document.getElementById('cvProviderDelete').addEventListener('click', async function () { if (!provider || !window.confirm('Disconnect and permanently delete this provider key? Saved CV analyses will remain.')) return; try { await api('delete-provider', { connectionId: provider.id }); provider = null; renderProvider(); status('cvProviderStatus', 'Provider key deleted.', 'success'); } catch (error) { status('cvProviderStatus', message(error), 'error'); } });
+  providerForm.addEventListener('submit', async function (event) { event.preventDefault(); var key = document.getElementById('cvProviderKey').value.trim(); var providerId = selectedProvider(); var definition = PROVIDERS[providerId]; if (key.length < 20) { status('cvProviderStatus', 'Enter the API key only, without a variable name or quotes.', 'error'); return; } setBusy(providerForm, true); status('cvProviderStatus', 'Verifying with ' + definition.label + '…', 'neutral'); try { var result = await api('save-provider', { provider: providerId, apiKey: key, model: document.getElementById('cvProviderModel').value }); providers = providers.filter(function (item) { return item.provider !== providerId; }).concat([result.connection]); document.getElementById('cvProviderKey').value = ''; renderProvider(); status('cvProviderStatus', definition.label + ' key verified and encrypted for your account.', 'success'); } catch (error) { status('cvProviderStatus', message(error), 'error'); } finally { setBusy(providerForm, false); } });
+  document.getElementById('cvProviderDelete').addEventListener('click', async function () { var provider = providers.find(function (item) { return item.provider === selectedProvider(); }) || null; if (!provider || !window.confirm('Disconnect and permanently delete this provider key? Saved CV analyses will remain.')) return; try { await api('delete-provider', { connectionId: provider.id }); providers = providers.filter(function (item) { return item.id !== provider.id; }); renderProvider(); status('cvProviderStatus', 'Provider key deleted.', 'success'); } catch (error) { status('cvProviderStatus', message(error), 'error'); } });
+  document.getElementById('cvProviderType').addEventListener('change', syncProviderModels);
   analysisForm.addEventListener('submit', uploadAndAnalyze);
   document.getElementById('cvClearButton').addEventListener('click', function () { analysisForm.reset(); textInput.value = ''; fileName.textContent = 'No file selected'; document.getElementById('cvCharacterCount').textContent = '0 / 100,000'; status('cvFormStatus', 'Form cleared. Saved account CVs were not deleted.', 'success'); });
   textInput.addEventListener('input', function () { document.getElementById('cvCharacterCount').textContent = textInput.value.length.toLocaleString() + ' / 100,000'; });
@@ -283,5 +320,6 @@
   document.getElementById('cvTemplate').addEventListener('change', function (event) { document.getElementById('cvPreview').setAttribute('data-template', event.target.value); });
   document.getElementById('cvExportPdf').addEventListener('click', function () { if (!activeAnalysis) return; document.body.classList.add('cv-printing'); window.print(); setTimeout(function () { document.body.classList.remove('cv-printing'); }, 0); });
   document.getElementById('cvExportDocx').addEventListener('click', function () { if (editableCv && window.CodeologyCVExport) window.CodeologyCVExport.exportDocx(editableCv, editableCv.name || 'codeology-cv'); });
+  syncProviderModels();
   bindAuthWhenReady();
 }());

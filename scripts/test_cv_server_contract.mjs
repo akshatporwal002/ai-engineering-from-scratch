@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { extractDocxText } from '../supabase/functions/_shared/docx.js';
 import { normalizeAnalysis, readinessLabel } from '../supabase/functions/_shared/analysis-contract.js';
+import { readFile } from 'node:fs/promises';
 
 function u16(value) { return Uint8Array.from([value & 255, (value >>> 8) & 255]); }
 function u32(value) { return Uint8Array.from([value & 255, (value >>> 8) & 255, (value >>> 16) & 255, (value >>> 24) & 255]); }
@@ -30,5 +31,17 @@ assert.equal(readinessLabel(80), 'strong');
 assert.equal(readinessLabel(34), 'early');
 assert.throws(() => normalizeAnalysis({ summary: 'x', readinessRationale: 'y', dimensions: dimensions.slice(0, 4), careerSignals }), /provider_schema_invalid/);
 assert.ok(!JSON.stringify(normalized).includes('<script>'));
+
+const edge = await readFile(new URL('../supabase/functions/cv-api/index.ts', import.meta.url), 'utf8');
+const browser = await readFile(new URL('../site/cv-analysis.js', import.meta.url), 'utf8');
+for (const provider of ['gemini', 'openai', 'anthropic']) {
+  assert.ok(edge.includes(provider), `Edge provider catalog must include ${provider}`);
+  assert.ok(browser.includes(provider), `Browser provider catalog must include ${provider}`);
+}
+assert.ok(edge.includes("api.openai.com/v1/responses"));
+assert.ok(edge.includes("api.anthropic.com/v1/messages"));
+assert.ok(edge.includes("body.connectionId"));
+assert.ok(!edge.includes("!/^[A-Za-z0-9_-]+$/.test(secret)"), 'provider keys must be validated by their provider, not a Gemini-only character regex');
+assert.ok(edge.includes("if (previous.data)"), 'a failed key replacement must preserve the previous provider connection');
 
 console.log('CV server document and structured-analysis contracts are valid.');

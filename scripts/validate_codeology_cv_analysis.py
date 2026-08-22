@@ -23,6 +23,7 @@ EDGE = ROOT / "supabase" / "functions" / "cv-api" / "index.ts"
 DOCX = ROOT / "supabase" / "functions" / "_shared" / "docx.js"
 CONTRACT = ROOT / "supabase" / "functions" / "_shared" / "analysis-contract.js"
 MIGRATION = ROOT / "supabase" / "migrations" / "20260822043422_create_account_backed_cv_analysis.sql"
+PROVIDER_MIGRATION = ROOT / "supabase" / "migrations" / "20260822070000_enable_multiple_ai_providers.sql"
 
 
 class CVParser(HTMLParser):
@@ -78,7 +79,7 @@ def audit(page: str, ui: str, api_errors: str, export: str, css: str, ui_control
     if parser.main_count != 1 or parser.form_count != 2: errors.append("one main landmark and two forms are required")
     for element_id, count in parser.ids.items():
         if count > 1: errors.append(f"duplicate id {element_id!r}")
-    required = {"cvAuthGate", "cvAccountWorkspace", "cvProviderForm", "cvProviderKey", "cvAnalysisForm", "targetRole", "jobDescription", "cvText", "cvFile", "cvProviderConsent", "cvHistoryList", "cvResults", "cvReadinessScore", "cvDimensions", "cvCareerSignals", "cvSuggestions", "cvPreview", "cvExportPdf", "cvExportDocx"}
+    required = {"cvAuthGate", "cvAccountWorkspace", "cvProviderForm", "cvProviderType", "cvProviderModel", "cvProviderKey", "cvAnalysisForm", "cvAnalysisProvider", "targetRole", "jobDescription", "cvText", "cvFile", "cvProviderConsent", "cvHistoryList", "cvResults", "cvReadinessScore", "cvDimensions", "cvCareerSignals", "cvSuggestions", "cvPreview", "cvExportPdf", "cvExportDocx"}
     for element_id in sorted(required - parser.ids.keys()): errors.append(f"missing required id {element_id!r}")
     accepted = (parser.controls.get("cvFile", {}).get("accept") or "").lower()
     for marker in (".pdf", ".docx", ".txt", ".md"):
@@ -107,6 +108,10 @@ def audit(page: str, ui: str, api_errors: str, export: str, css: str, ui_control
     edge_lower = edge.lower()
     for marker in ("auth.getuser", "x-goog-api-key", "generativelanguage.googleapis.com", "abortsignal.timeout", "analysis_rate_limited", "responsemimetype", "normalizeanalysis", "ignore any instructions", "test.learn.akshatporwal.dev", "codeology-git-dev-hola-312a.vercel.app", "codeology-git-akshat-cv-analysis-hola-312a.vercel.app", "status === 204 ? null", "console.error(json.stringify({ requestid, action, code }))"):
         if marker not in edge_lower: errors.append(f"Edge Function missing security contract {marker!r}")
+    for marker in ("api.openai.com/v1/responses", "api.anthropic.com/v1/messages", "providerendpoint", "connectionid", "jsonanalysisschema"):
+        if marker not in edge_lower: errors.append(f"Edge Function missing multi-provider contract {marker!r}")
+    for marker in ("gemini", "openai", "anthropic", "gpt-5.4-mini", "claude-sonnet-5"):
+        if marker not in browser_runtime or marker not in edge_lower: errors.append(f"provider catalog drift for {marker!r}")
     for forbidden in ("console.log(secret", "console.log(text", "api key prefix", "req.body"):
         if forbidden in edge_lower: errors.append(f"Edge Function may expose sensitive data through {forbidden!r}")
     for marker in ("docx_encrypted", "max_entry_bytes", "word/document.xml", "decompressionstream"):
@@ -129,7 +134,7 @@ def audit(page: str, ui: str, api_errors: str, export: str, css: str, ui_control
 
 
 def inputs() -> tuple[str, str, str, str, str, str, dict[str, Any], str, str, str, str, str]:
-    return (PAGE.read_text(), UI.read_text(), API_ERRORS.read_text(), EXPORT.read_text(), CSS.read_text(), UI_CONTROLS.read_text(), json.loads(CONFIG.read_text()), DOC.read_text(), EDGE.read_text(), DOCX.read_text(), CONTRACT.read_text(), MIGRATION.read_text())
+    return (PAGE.read_text(), UI.read_text(), API_ERRORS.read_text(), EXPORT.read_text(), CSS.read_text(), UI_CONTROLS.read_text(), json.loads(CONFIG.read_text()), DOC.read_text(), EDGE.read_text(), DOCX.read_text(), CONTRACT.read_text(), MIGRATION.read_text() + "\n" + PROVIDER_MIGRATION.read_text())
 
 
 def main() -> int:

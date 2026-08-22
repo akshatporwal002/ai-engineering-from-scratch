@@ -2005,6 +2005,29 @@ html[data-product="codeology"] .glossary-details {
   align-items: flex-end;
 }
 
+.cv-provider-choice,
+.cv-provider-key-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: end;
+}
+
+.cv-provider-key-fields {
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-top: 1rem;
+}
+
+.cv-analysis-provider-field {
+  max-width: 36rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 700px) {
+  .cv-provider-choice,
+  .cv-provider-key-fields { grid-template-columns: 1fr; }
+}
+
 .cv-provider-form .cv-field {
   flex: 1;
 }
