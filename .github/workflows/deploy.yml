@@ -36,6 +36,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
+      - name: Install build dependencies
+        run: npm install --no-package-lock --ignore-scripts --no-audit --no-fund
       - name: Run quality gate
         run: npm run ci
       - name: Validate deployment secrets
