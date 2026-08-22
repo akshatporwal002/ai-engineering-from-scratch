@@ -629,6 +629,76 @@ a { color: inherit; text-underline-offset: 0.2em; }
 .credits-ledger dd { margin: 0; overflow-wrap: anywhere; }
 .cv-analysis-hero { display: grid; grid-template-columns: 1fr minmax(16rem, 0.4fr); gap: 2rem; align-items: end; }
 
+.lesson-page {
+  --rule-soft: var(--line);
+  --bg: var(--canvas);
+  --blueprint: var(--accent);
+  --ink-mute: var(--muted);
+  --ink-soft: var(--muted);
+  width: min(100% - 3rem, 88rem);
+  margin-inline: auto;
+  padding-top: clamp(4rem, 9vw, 8rem);
+}
+.lesson-hero { max-width: 72rem; padding-bottom: clamp(3rem, 7vw, 6rem); }
+.lesson-hero h1 { margin: 0.5rem 0 1.5rem; color: var(--display-accent); font: clamp(4.5rem, 11vw, 9rem)/0.8 var(--font-display); text-transform: uppercase; }
+.lesson-hero > p:not(.ui-eyebrow) { max-width: 55rem; font-size: clamp(1.3rem, 2.5vw, 1.8rem); font-style: italic; }
+.lesson-hero dl { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 3rem 0 0; border-block: 1px solid var(--ink); }
+.lesson-hero dl div { display: grid; gap: 0.25rem; min-width: 0; padding: 1rem; border-right: 1px solid var(--line); }
+.lesson-hero dl div:last-child { border-right: 0; }
+.lesson-hero dt, .lesson-hero dd { margin: 0; }
+.lesson-hero dt { color: var(--accent); font: 700 0.62rem var(--font-mono); text-transform: uppercase; }
+.lesson-hero dd { overflow-wrap: anywhere; }
+.lesson-source { display: grid; grid-template-columns: auto 1fr auto; gap: 1rem; align-items: center; margin-bottom: 4rem; padding: 1.1rem; border: 1px solid var(--line); border-left: 4px solid var(--accent); background: var(--surface); }
+.lesson-source strong, .lesson-source a { color: var(--accent); font: 700 0.65rem var(--font-mono); text-transform: uppercase; }
+.lesson-source p { margin: 0; }
+.lesson-layout { display: grid; grid-template-columns: 14rem minmax(0, 52rem); gap: clamp(2rem, 6vw, 6rem); justify-content: center; align-items: start; }
+.lesson-toc { position: sticky; top: 6rem; display: grid; max-height: calc(100vh - 8rem); overflow-y: auto; border-top: 1px solid var(--ink); }
+.lesson-toc strong { padding: 1rem 0.5rem; color: var(--accent); font: 700 0.65rem var(--font-mono); text-transform: uppercase; }
+.lesson-toc a { padding: 0.45rem 0.5rem; border-left: 2px solid transparent; color: var(--muted); font: 0.67rem/1.35 var(--font-mono); text-decoration: none; }
+.lesson-toc a[aria-current="location"] { border-left-color: var(--accent); color: var(--ink); }
+.lesson-toc__level-3 { margin-left: 0.8rem; }
+.lesson-article { min-width: 0; font-size: 1.08rem; line-height: 1.68; }
+.lesson-article h2, .lesson-article h3 { scroll-margin-top: 6rem; text-transform: uppercase; }
+.lesson-article h2 { margin: 5rem 0 1.5rem; padding-top: 1.2rem; border-top: 1px solid var(--ink); font: clamp(2.6rem, 5vw, 4.4rem)/0.92 var(--font-display); }
+.lesson-article h3 { margin: 3rem 0 1rem; font: 2rem/1 var(--font-display); }
+.lesson-article p { margin: 1rem 0; }
+.lesson-article blockquote { margin: 2rem 0; padding: 1rem 1.5rem; border-left: 4px solid var(--accent); background: var(--surface); }
+.lesson-article :not(pre) > code { padding: 0.12rem 0.28rem; border-radius: 0.25rem; background: var(--surface-strong); font: 0.86em var(--font-mono); }
+.lesson-table { max-width: 100%; overflow-x: auto; margin: 2rem 0; border-block: 1px solid var(--ink); }
+.lesson-table table { width: 100%; min-width: 36rem; border-collapse: collapse; }
+.lesson-table th, .lesson-table td { padding: 0.8rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.lesson-table th { color: var(--accent); font: 700 0.65rem var(--font-mono); text-transform: uppercase; }
+.lesson-code { margin: 2rem 0; border: 1px solid #333; border-radius: var(--radius-sm); overflow: hidden; background: #151515; color: #f5f3ee; }
+.lesson-code > div { display: flex; justify-content: space-between; align-items: center; padding: 0.55rem 0.8rem; border-bottom: 1px solid #333; color: #aaa; font: 0.65rem var(--font-mono); text-transform: uppercase; }
+.lesson-code button { min-height: 36px; padding: 0.3rem 0.7rem; border: 1px solid #555; border-radius: var(--radius-pill); color: #fff; font: inherit; }
+.lesson-code pre { overflow-x: auto; margin: 0; padding: 1.1rem; font: 0.83rem/1.65 var(--font-mono); }
+.syntax-comment { color: #8a9a82; }
+.syntax-string { color: #ffc66d; }
+.syntax-number { color: #9cdcfe; }
+.syntax-keyword { color: #ff7a59; }
+.lesson-mermaid, .lesson-legacy-figure { margin: 2rem 0; padding: 1rem; border: 1px solid var(--line); background: var(--surface); }
+.lesson-mermaid figcaption { color: var(--accent); font: 700 0.65rem var(--font-mono); text-transform: uppercase; }
+.lesson-mermaid__flow { display: flex; flex-wrap: wrap; align-items: center; gap: 0.55rem; padding: 1.5rem 0; list-style: none; }
+.lesson-mermaid__flow li { display: inline-flex; align-items: center; min-height: 44px; padding: 0.55rem 0.8rem; border: 1px solid var(--ink); border-radius: var(--radius-sm); }
+.lesson-mermaid__flow li:not(:last-child)::after { content: "→"; margin-left: 1.15rem; color: var(--accent); }
+.lesson-mermaid details pre { overflow-x: auto; padding: 1rem; background: var(--canvas); font: 0.72rem/1.5 var(--font-mono); }
+.lesson-render-error { padding: 1.2rem; border: 1px solid var(--line); border-left: 4px solid var(--danger); background: var(--surface); }
+.lesson-quiz { width: min(100%, 66rem); margin: 6rem auto 0; padding: clamp(1rem, 4vw, 3rem); border: 1px solid var(--ink); }
+.lesson-quiz > h2 { margin: 0.5rem 0 1rem; font: clamp(2.7rem, 6vw, 5rem)/0.9 var(--font-display); text-transform: uppercase; }
+.lesson-quiz fieldset { display: grid; gap: 0.6rem; margin: 2rem 0; padding: 1.2rem; border: 1px solid var(--line); }
+.lesson-quiz legend { max-width: 90%; padding: 0 0.5rem; font-weight: 700; }
+.lesson-quiz legend span { margin-right: 0.7rem; color: var(--accent); font: 0.7rem var(--font-mono); }
+.lesson-quiz label { display: grid; grid-template-columns: auto 1fr; gap: 0.65rem; align-items: start; padding: 0.7rem; border-radius: var(--radius-sm); background: var(--surface); }
+.lesson-quiz input { width: 1.1rem; height: 1.1rem; margin-top: 0.15rem; accent-color: var(--accent); }
+.quiz-correct, .quiz-incorrect { padding: 0.8rem; border-left: 3px solid var(--success); background: var(--surface); }
+.quiz-incorrect { border-left-color: var(--danger); }
+.lesson-quiz__actions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.lesson-quiz__actions button { min-height: 44px; padding: 0.6rem 1rem; border: 1px solid var(--accent); border-radius: var(--radius-pill); color: var(--accent); font: 700 0.68rem var(--font-mono); text-transform: uppercase; }
+.lesson-adjacent { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-block: 4rem; }
+.lesson-adjacent a { display: grid; gap: 0.4rem; padding: 1.2rem; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); text-decoration: none; }
+.lesson-adjacent span { color: var(--accent); font: 0.62rem var(--font-mono); text-transform: uppercase; }
+.lesson-adjacent strong { font: 1.5rem var(--font-display); text-transform: uppercase; }
+
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes shimmer { to { background-position: -220% 0; } }
 
@@ -655,6 +725,12 @@ a { color: inherit; text-underline-offset: 0.2em; }
   .public-list { grid-template-columns: repeat(2, 1fr); }
   .academy-hero, .cv-analysis-hero { grid-template-columns: 1fr; }
   .academy-principles { grid-template-columns: 1fr; }
+  .lesson-layout { grid-template-columns: 1fr; }
+  .lesson-toc { position: relative; top: auto; display: flex; max-height: none; overflow-x: auto; padding-block: 0.5rem; }
+  .lesson-toc strong, .lesson-toc a { flex: 0 0 auto; }
+  .lesson-toc a { border-left: 0; border-bottom: 2px solid transparent; }
+  .lesson-toc a[aria-current="location"] { border-bottom-color: var(--accent); }
+  .lesson-toc__level-3 { display: none; }
 }
 
 @media (max-width: 620px) {
@@ -671,6 +747,11 @@ a { color: inherit; text-underline-offset: 0.2em; }
   .showcase__heading { grid-template-columns: 2rem 1fr; }
   .ui-dialog__actions > * { flex: 1 1 10rem; }
   .public-page, .academy-page { width: min(100% - 2rem, 84rem); }
+  .lesson-page { width: min(100% - 2rem, 88rem); }
+  .lesson-hero h1 { font-size: clamp(3.1rem, 18vw, 5rem); overflow-wrap: anywhere; }
+  .lesson-hero dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lesson-source { grid-template-columns: 1fr; }
+  .lesson-adjacent { grid-template-columns: 1fr; }
   .public-hero h1,
   .academy-hero h1,
   .legacy-content h1 {

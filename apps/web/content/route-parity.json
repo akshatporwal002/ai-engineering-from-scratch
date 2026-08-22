@@ -83,9 +83,9 @@
     "legacyUrl": "/lesson.html",
     "nextUrl": "/lessons/[...slug]",
     "kind": "lesson",
-    "status": "planned",
+    "status": "complete",
     "fixture": "site/lesson.html",
-    "requiredTests": ["reference-lesson:reader"]
+    "requiredTests": ["reference-lesson:reader", "reference-lesson:paired-evidence"]
   },
   {
     "legacyUrl": "/prereqs.html",
