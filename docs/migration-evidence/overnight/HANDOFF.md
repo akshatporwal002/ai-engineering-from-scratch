@@ -3,7 +3,8 @@
 ## Scope and commits
 
 - Starting commit: `9175271058291e1c462844d19bb0bc2f22c7cd92`
-- Implementation sequence: `6ca742c8` — foundation; `a2c04db6` — foundation handoff; `722659f5` — shared UI; `df35e950` — public routes; `39c76532` — typed content; `d2e663ea` — reference lesson; `62de568b` — in-memory application services; `554d9805` — mock-backed account and CV flows; `test(migration): add parity and visual evidence` — pending Workstream 8 commit.
+- Ending implementation commit: `52f3b7a00ecbae68a393d14bf79ef39995d07133`. The final handoff-only commit follows this SHA and cannot self-reference its own commit ID.
+- Implementation sequence: `6ca742c8` — foundation; `a2c04db6` — foundation handoff; `722659f5` — shared UI; `df35e950` — public routes; `39c76532` — typed content; `d2e663ea` — reference lesson; `62de568b` — in-memory application services; `554d9805` — mock-backed account and CV flows; `52f3b7a0` — parity dashboard and final visual evidence; `docs(migration): record overnight implementation results` — this handoff-only commit.
 - No push, merge, deployment, database, external service, real account, real credential, real CV, Supabase, or provider API action occurred.
 
 ## Workstream status
@@ -18,6 +19,8 @@
 | 6. Pure API domain | Complete | Pydantic contracts, repository/service protocols, deterministic in-memory adapters, cross-language progress reconciliation, bounded CV intake, fake provider failure matrix, analysis state machine, safe error mapping, stable pagination, deterministic OpenAPI, generated TypeScript contracts, and drift tests. |
 | 7. Mock product routes | Complete | A development-only synthetic learner workspace consumes FastAPI-owned provider, progress, CV, analysis, history, pagination, deletion, and settings state through the local proxy. It covers every fake outcome, accessible status/error states, all result fields, and explicit privacy/persistence boundaries. |
 | 8. Evidence suite | Complete | Browser evidence covers every migrated route and important interaction at both required viewports. API and fixture matrices cover all required states. A deterministic dashboard is generated from the 12-entry parity manifest and checked for drift: 11 routes are complete and assessment remains honestly planned. |
+
+Completed workstreams: 1–8. Partial workstreams: none. Unstarted workstreams: none. The assessment route is explicitly planned rather than migrated because assessment migration was outside the overnight reference scope.
 
 ## Validation record
 
@@ -47,6 +50,18 @@
 - Local web proxy `GET /api/v1/health` — passed and preserved the supplied request ID.
 - `npm run ci` — failed in existing `scripts/test_translate_workflow.py::TranslateWorkflowContractTest.test_commit_failure_never_reports_publish_success`; it returned success where the test expected a commit failure. This was discovered only in final CI and is unrelated to the new application paths. Do not treat CI as passing until reproduced and resolved separately.
 
+### Final validation on `52f3b7a0`
+
+| Command | Exit | Result |
+|---|---:|---|
+| `npm run check:precommit` | 0 | 503 lessons, 33 certification lessons, 8 assessments, and all Codeology validators passed. |
+| `npm run test:migration` | 0 | 32 API tests, 23 Vitest tests, and 48 Chromium tests passed. |
+| `npm run typecheck:migration` | 0 | TypeScript and Python compilation passed. |
+| `npm run build:migration` | 0 | Next.js production build compiled and generated 21 pages; Python compilation passed. |
+| `npm run ci` | 1 | The unrelated translation-workflow contract test above failed before the root build phase. |
+| `git diff --check` | 0 | No whitespace errors. |
+| `git status --short` | 0 | Before this handoff commit: only browser-regenerated evidence PNGs plus the three user-owned untracked specification files were present. After this commit, the expected remaining entries are only those three untouched specification files. |
+
 ## Dependencies and architecture
 
 `apps/web/package.json` pins Next.js 16.3.2, React, Tailwind, TypeScript, Vitest, Playwright, axe, component-test support, and Zod 4.1.12. Zod is the sole Workstream 4 addition and validates repository content before it enters render or assessment contracts; installation used `--no-package-lock`, reported zero vulnerabilities, and remained isolated from lesson code. The initial Next.js 15 and Vitest 3.2.4 pins were upgraded after the temporary-lockfile audit identified current high/critical advisories; a repeated install audit reported zero vulnerabilities. Workstream 5 adds no dependency: a trusted-source Markdown parser stays within the TypeScript allowlist, the fixed local compatibility endpoint serves the exact checked-in figure script, and deterministic local Mermaid composition retains complete source fallback without external traffic. Production builds explicitly use Next's webpack path because the managed environment denies Turbopack's internal CSS-worker port. `apps/api/pyproject.toml` pins FastAPI, Pydantic, Pydantic Settings, and Uvicorn. All are isolated from lesson directories.
@@ -59,6 +74,22 @@ All required public route classes and the single reference lesson are migrated. 
 
 Editorial HTML and lesson Markdown are trusted checked-in repository content, never user input. The lesson loader is allowlisted to one fixed source and the compatibility script route cannot select an arbitrary filesystem path. CV Analysis accepts only synthetic fixtures in memory and never calls a provider. It is marked as local/non-production in development and disabled in the production build; file extraction remains an explicit fake boundary. All browser evidence blocks non-loopback traffic and checks concrete fixture secrets plus the synthetic CV body are absent. Real authentication, persistence, file extraction, secret/object storage, and provider adapters remain unimplemented.
 
+## Evidence index and known nondeterminism
+
+- Route status and required tests: `MIGRATION_DASHBOARD.md`.
+- Foundation and design decisions: `STARTING_STATE.md`, `DESIGN_MAPPING.md`.
+- API contract evidence: `WORKSTREAM_6.md`.
+- Final quality matrix: `WORKSTREAM_8.md`.
+- Paired screenshots and classifications: `visual/WORKSTREAM_2.md`, `visual/WORKSTREAM_3.md`, `visual/WORKSTREAM_5.md`, and `visual/WORKSTREAM_7.md`.
+
+No test was observed to be flaky. Repeated Chromium captures can produce byte-level PNG differences from browser/legacy rasterization even when the visible layout and assertions are stable. The committed images are from the final passing migration run; acceptance relies on paired visual inspection plus deterministic overflow, accessibility, console, content, and interaction assertions rather than PNG byte identity.
+
+## Unresolved items
+
+- Root CI must be green before integration; its translation-workflow failure is not caused by files in this experiment and was intentionally not repaired across scope boundaries.
+- `/assessment.html` remains mapped to the planned `/assessments/[assessment]` route. Migrating it requires a separately authorized product slice, not an expansion of the single-reference-lesson overnight experiment.
+- Production authentication, persistence, provider calls, file extraction, and deployment remain explicitly excluded; no architecture choice for those boundaries was made here.
+
 ## Reviewer checklist
 
 1. Run `npm run test:migration`, `npm run typecheck:migration`, and `npm run build:migration`.
@@ -69,4 +100,4 @@ Editorial HTML and lesson Markdown are trusted checked-in repository content, ne
 
 ## Recommended next action
 
-Run every final validation command, record the ending implementation SHA and exact outcomes, then freeze the handoff. Assessment migration remains a separately scoped follow-up.
+Review the highest-risk API/proxy/privacy boundaries and paired visual evidence, then resolve the unrelated root-CI translation failure before considering selective integration. Assessment migration remains a separately scoped follow-up.
