@@ -42,5 +42,17 @@ class CodeologyCVAnalysisTest(unittest.TestCase):
         errors = validator.audit(*values)
         self.assertTrue(any("hiring prediction" in error for error in errors), errors)
 
+    def test_account_sections_require_explicit_spacing(self) -> None:
+        values = list(validator.inputs())
+        values[4] = values[4].replace(".cv-provider-panel + .cv-analysis-workspace", ".missing-section-gap")
+        errors = validator.audit(*values)
+        self.assertTrue(any("spacing" in error for error in errors), errors)
+
+    def test_edge_function_errors_must_be_decoded(self) -> None:
+        values = list(validator.inputs())
+        values[2] = values[2].replace("clone().json()", "json()")
+        errors = validator.audit(*values)
+        self.assertTrue(any("error decoder" in error for error in errors), errors)
+
 
 if __name__ == "__main__": unittest.main()

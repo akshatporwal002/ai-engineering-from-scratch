@@ -106,7 +106,7 @@ After migration, run Supabase security and performance advisors. Verify that the
 - CV file, metadata, target context, processing status, structured results, and history are account-owned.
 - The analysis includes five readiness dimensions, strengths, missing signals, improvement steps, rewrites, a structured preview, and lesson links.
 - Saved analyses can be reopened; a CV and all related analyses can be permanently deleted.
-- Provider failure, malformed output, malformed DOCX, invalid signatures, rate limits, and unauthenticated requests fail closed with safe errors.
+- Provider failure, malformed output, malformed DOCX, invalid signatures, rate limits, unauthenticated requests, and encrypted-storage failures fail closed with allowlisted error codes. The browser decodes the JSON body from Supabase `FunctionsHttpError` responses so learners see an actionable category without receiving database details, credentials, prompts, or provider output.
 - Desktop and mobile layouts, keyboard controls, status regions, focus movement, and printable output are covered by browser review.
 - Focused tests, `npm run check:precommit`, and `npm run ci` must pass before handoff.
 

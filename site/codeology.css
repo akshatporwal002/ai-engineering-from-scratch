@@ -1232,6 +1232,8 @@ html[data-product="codeology"] .glossary-details {
 
 .cv-analysis-page > * + * { margin-top: 24px; }
 
+.cv-provider-panel + .cv-analysis-workspace { margin-top: 24px; }
+
 .cv-analysis-hero,
 .cv-analysis-workspace,
 .cv-analysis-results,

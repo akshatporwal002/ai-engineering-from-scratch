@@ -30,7 +30,10 @@
     provider_unavailable: 'Gemini is temporarily unavailable. Your saved CV has not been lost.', analysis_rate_limited: 'You can run five analyses every ten minutes. Try again shortly.',
     file_too_large: 'The file exceeds the 10 MB limit.', file_type_invalid: 'Use PDF, DOCX, TXT, or Markdown.', file_signature_invalid: 'The file contents do not match its declared type.',
     not_enough_text: 'The CV needs at least 120 characters of readable text.', docx_not_enough_text: 'The DOCX needs at least 120 characters of readable text.',
-    document_not_found: 'That saved CV could not be found.', provider_schema_invalid: 'Gemini returned an incomplete result. Run the analysis again.', request_failed: 'The request could not be completed safely.',
+    document_not_found: 'That saved CV could not be found.', provider_schema_invalid: 'Gemini returned an incomplete result. Run the analysis again.', request_failed: 'The secure service could not complete the request. Try again or contact support.',
+    provider_storage_unavailable: 'Gemini accepted the key, but encrypted key storage is temporarily unavailable. Your key was not saved.',
+    network_unavailable: 'The secure analysis service could not be reached. Check your connection and try again.', service_unavailable: 'The secure analysis service is temporarily unavailable. Try again shortly.',
+    origin_not_allowed: 'This site address is not authorized to use the secure analysis service.',
   };
 
   function element(tag, className, text) {
@@ -56,15 +59,16 @@
     form.setAttribute('aria-busy', busy ? 'true' : 'false');
   }
 
-  function api(action, values) {
-    return client.functions.invoke('cv-api', { body: Object.assign({ action: action }, values || {}) }).then(function (result) {
-      if (result.error || (result.data && result.data.error)) {
-        var failure = new Error((result.data && result.data.error) || 'request_failed');
-        failure.code = failure.message;
-        throw failure;
-      }
-      return result.data;
-    });
+  async function api(action, values) {
+    var result = await client.functions.invoke('cv-api', { body: Object.assign({ action: action }, values || {}) });
+    if (result.error || (result.data && result.data.error)) {
+      var decoder = window.CodeologyCvApiErrors;
+      var code = decoder && decoder.codeFromResult ? await decoder.codeFromResult(result) : 'request_failed';
+      var failure = new Error(code);
+      failure.code = code;
+      throw failure;
+    }
+    return result.data;
   }
 
   function renderProvider() {

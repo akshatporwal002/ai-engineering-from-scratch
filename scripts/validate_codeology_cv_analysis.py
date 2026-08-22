@@ -13,6 +13,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent
 PAGE = ROOT / "site" / "cv-analysis.html"
 UI = ROOT / "site" / "cv-analysis.js"
+API_ERRORS = ROOT / "site" / "cv-api-errors.js"
 EXPORT = ROOT / "site" / "cv-export.js"
 CSS = ROOT / "site" / "codeology.css"
 UI_CONTROLS = ROOT / "site" / "ui-controls.js"
@@ -66,7 +67,7 @@ def normalized(values: list[str]) -> str:
     return " ".join("".join(values).split())
 
 
-def audit(page: str, ui: str, export: str, css: str, ui_controls: str, config: dict[str, Any], documentation: str,
+def audit(page: str, ui: str, api_errors: str, export: str, css: str, ui_controls: str, config: dict[str, Any], documentation: str,
           edge: str, docx: str, contract: str, migration: str) -> list[str]:
     parser = CVParser()
     parser.feed(page)
@@ -83,16 +84,19 @@ def audit(page: str, ui: str, export: str, css: str, ui_controls: str, config: d
     for marker in (".pdf", ".docx", ".txt", ".md"):
         if marker not in accepted: errors.append(f"CV input must accept {marker}")
     if parser.controls.get("cvProviderConsent", {}).get("type") != "checkbox" or "required" not in parser.controls.get("cvProviderConsent", {}): errors.append("provider consent must be a required checkbox")
-    for script in ("data.js", "cv-analysis-engine.js", "cv-export.js", "cv-analysis.js", "ui-controls.js", "header.js"):
+    for script in ("data.js", "cv-analysis-engine.js", "cv-export.js", "cv-api-errors.js", "cv-analysis.js", "ui-controls.js", "header.js"):
         if script not in parser.scripts: errors.append(f"missing script {script!r}")
     page_text = normalized(parser.text).lower()
     for phrase in ("private to your account", "encrypted server-side", "pdf · docx · txt · md", "delete a cv at any time", "formative guidance, not a hiring prediction", "does not establish identity, authorship, competence, employability"):
         if phrase not in page_text: errors.append(f"missing privacy or claim boundary {phrase!r}")
+    browser_runtime = (ui + "\n" + api_errors).lower()
     for marker in ("localstorage.setitem('cv", "sessionstorage.setitem('cv", "service_role", "supabase_service_role"):
-        if marker in ui.lower(): errors.append(f"browser CV runtime contains forbidden marker {marker!r}")
+        if marker in browser_runtime: errors.append(f"browser CV runtime contains forbidden marker {marker!r}")
     for marker in ("client.storage.from('cv-documents').upload", "client.from('cv_documents').insert", "client.functions.invoke('cv-api'", "codeologyauth", "textcontent", "confirm("):
         if marker not in ui.lower(): errors.append(f"browser runtime missing account contract {marker!r}")
     if "innerHTML" in ui: errors.append("analysis results must use safe DOM construction")
+    for marker in ("error.context", "clone().json()", "functionsfetcherror", "provider_storage_unavailable"):
+        if marker not in api_errors.lower(): errors.append(f"provider error decoder missing {marker!r}")
     for marker in ("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "exportDocx", "word/document.xml"):
         if marker not in export: errors.append(f"DOCX export missing {marker!r}")
     sql = migration.lower()
@@ -114,6 +118,8 @@ def audit(page: str, ui: str, export: str, css: str, ui_controls: str, config: d
     if matches != [{"label": "CV Analysis", "href": "cv-analysis.html"}]: errors.append("navigation requires one CV Analysis route")
     for selector in (".cv-auth-gate", ".cv-provider-panel", ".cv-upload-grid", ".cv-readiness-hero", ".cv-enhancement-studio", ".cv-preview", ".cv-file-action", ".cv-consent-box"):
         if selector not in css: errors.append(f"missing CV selector {selector!r}")
+    if ".cv-provider-panel + .cv-analysis-workspace" not in css:
+        errors.append("provider and CV account sections require explicit spacing")
     for contract in ("role', 'listbox", "aria-haspopup", "ArrowDown", "Escape"):
         if contract not in ui_controls: errors.append(f"site/ui-controls.js missing accessible select contract {contract!r}")
     if "@media print" not in css or "@media (max-width: 700px)" not in css: errors.append("mobile and printable CV layouts are required")
@@ -122,8 +128,8 @@ def audit(page: str, ui: str, export: str, css: str, ui_controls: str, config: d
     return errors
 
 
-def inputs() -> tuple[str, str, str, str, str, dict[str, Any], str, str, str, str, str]:
-    return (PAGE.read_text(), UI.read_text(), EXPORT.read_text(), CSS.read_text(), UI_CONTROLS.read_text(), json.loads(CONFIG.read_text()), DOC.read_text(), EDGE.read_text(), DOCX.read_text(), CONTRACT.read_text(), MIGRATION.read_text())
+def inputs() -> tuple[str, str, str, str, str, str, dict[str, Any], str, str, str, str, str]:
+    return (PAGE.read_text(), UI.read_text(), API_ERRORS.read_text(), EXPORT.read_text(), CSS.read_text(), UI_CONTROLS.read_text(), json.loads(CONFIG.read_text()), DOC.read_text(), EDGE.read_text(), DOCX.read_text(), CONTRACT.read_text(), MIGRATION.read_text())
 
 
 def main() -> int:

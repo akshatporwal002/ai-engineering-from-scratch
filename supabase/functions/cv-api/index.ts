@@ -39,6 +39,7 @@ function errorCode(error: unknown) {
     'authentication_required', 'invalid_request', 'document_not_found', 'provider_not_connected',
     'file_too_large', 'file_type_invalid', 'file_signature_invalid', 'not_enough_text',
     'analysis_rate_limited', 'provider_rejected', 'provider_schema_invalid', 'provider_unavailable',
+    'provider_storage_unavailable',
     'docx_invalid_zip', 'docx_invalid_directory', 'docx_encrypted', 'docx_too_large',
     'docx_invalid_entry', 'docx_unsupported_compression', 'docx_not_enough_text', 'docx_document_missing',
   ]);
@@ -166,9 +167,9 @@ Deno.serve(async (req) => {
       const model = safeModel(body.model);
       await verifyProvider(secret, model);
       const upsert = await service.from('ai_provider_connections').upsert({ user_id: userId, provider: 'gemini', display_name: 'Gemini', key_hint: keyHint(secret), model, verified_at: new Date().toISOString() }, { onConflict: 'user_id,provider' }).select('id,provider,display_name,key_hint,model,verified_at').single();
-      if (upsert.error || !upsert.data) throw new Error('request_failed');
+      if (upsert.error || !upsert.data) throw new Error('provider_storage_unavailable');
       const stored = await service.rpc('codeology_store_provider_secret', { p_user_id: userId, p_connection_id: upsert.data.id, p_secret: secret });
-      if (stored.error) { await service.from('ai_provider_connections').delete().eq('id', upsert.data.id).eq('user_id', userId); throw new Error('request_failed'); }
+      if (stored.error) { await service.from('ai_provider_connections').delete().eq('id', upsert.data.id).eq('user_id', userId); throw new Error('provider_storage_unavailable'); }
       return response(origin, 200, { connection: upsert.data, requestId });
     }
 
@@ -223,7 +224,7 @@ Deno.serve(async (req) => {
       await service.from('cv_documents').update({ status: 'failed', processing_error_code: code }).eq('id', clean(body.documentId, 64)).eq('user_id', userId);
     }
     console.error(JSON.stringify({ requestId, action, code }));
-    const status = code === 'authentication_required' ? 401 : code === 'analysis_rate_limited' ? 429 : code === 'request_failed' || code === 'provider_unavailable' ? 502 : 400;
+    const status = code === 'authentication_required' ? 401 : code === 'analysis_rate_limited' ? 429 : code === 'provider_storage_unavailable' ? 503 : code === 'request_failed' || code === 'provider_unavailable' ? 502 : 400;
     return response(origin, status, { error: code, requestId });
   }
 });
