@@ -1,6 +1,6 @@
 # Workstream 3 public-route evidence
 
-The acceptance run completed on 2026-08-23 with 36 of 36 Chromium tests passing. The suite blocks every non-loopback request and compares the local legacy application at `127.0.0.1:4173` with Next.js at `127.0.0.1:4174`.
+The Workstream 3 acceptance run completed on 2026-08-23 with 36 of 36 Chromium tests passing. Workstream 8 later regenerated the paired files during the final 48-test pass so they reflect the current application. The suite blocks every non-loopback request and compares the local legacy application at `127.0.0.1:4173` with Next.js at `127.0.0.1:4174`.
 
 ## Coverage
 
@@ -30,7 +30,7 @@ Each Next.js route passed the single-main/single-h1 landmark check, serious/crit
 | Glossary | Intentional | The legacy ledger becomes a responsive definition grid. All 243 generated entries, aliases, categories, anchors, definitions, related terms, and search/filter behavior remain. |
 | Roadmap | Intentional | The global-script dependency graph is re-expressed as deterministic phase cards and jump anchors using the same generated phase and prerequisite data. This removes the legacy mobile clipping visible in the paired fixture while keeping every phase and prerequisite inspectable. |
 | Certifications | Intentional | Programme and track pages render directly from `program.json` and all four track manifests. The new layout foregrounds the current access notice and independent-curriculum boundary; exam facts, blueprint domains, audience, study plans, and canonical track URLs remain. |
-| CV Analysis | Required boundary | Only the public presentation and privacy explanation are carried forward. Upload, account, storage, and provider controls are deliberately absent and replaced with an explicit local-preview boundary, as required by the runbook. |
+| CV Analysis | Intentional, superseded by Workstream 7 | The original public-presentation boundary was expanded only after the FastAPI slice passed. The current screenshots show the development-only synthetic workspace; `WORKSTREAM_7.md` classifies its account, upload, provider, analysis, and privacy differences. |
 | Mobile typography | Corrective improvement | The initial acceptance run found three long-heading overflows and one serious contrast finding. Responsive wrapping/sizing and the accessible accent token fixed them; the final run has no overflow or serious/critical axe finding. |
 
 No material difference remains unexplained. The evidence is viewport-cropped rather than full-page so reviewers can compare the navigation, hero hierarchy, initial interaction surface, focus-scale controls, and first content transition at the exact required viewport dimensions.

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build --webpack",
     "start": "next start",
-    "check:parity": "node scripts/check-route-parity.mjs",
+    "check:parity": "node scripts/check-route-parity.mjs && node scripts/build-migration-dashboard.mjs --check",
+    "build:migration-dashboard": "node scripts/build-migration-dashboard.mjs",
     "test": "vitest run",
     "test:e2e": "playwright test",
     "typecheck": "tsc --noEmit"

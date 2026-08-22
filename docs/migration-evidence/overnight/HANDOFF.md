@@ -3,7 +3,7 @@
 ## Scope and commits
 
 - Starting commit: `9175271058291e1c462844d19bb0bc2f22c7cd92`
-- Implementation sequence: `6ca742c8` — foundation; `a2c04db6` — foundation handoff; `722659f5` — shared UI; `df35e950` — public routes; `39c76532` — typed content; `d2e663ea` — reference lesson; `62de568b` — in-memory application services; `feat(web): add mock-backed account and cv flows` — pending Workstream 7 commit.
+- Implementation sequence: `6ca742c8` — foundation; `a2c04db6` — foundation handoff; `722659f5` — shared UI; `df35e950` — public routes; `39c76532` — typed content; `d2e663ea` — reference lesson; `62de568b` — in-memory application services; `554d9805` — mock-backed account and CV flows; `test(migration): add parity and visual evidence` — pending Workstream 8 commit.
 - No push, merge, deployment, database, external service, real account, real credential, real CV, Supabase, or provider API action occurred.
 
 ## Workstream status
@@ -17,7 +17,7 @@
 | 5. Reference lesson | Complete | The preferred optimization lesson preserves trusted Markdown, metadata, provenance, code/copy controls, five diagram definitions, the exact local interactive figure behavior, quiz content and in-memory scoring, TOC state, source navigation, error states, and legacy URL compatibility. |
 | 6. Pure API domain | Complete | Pydantic contracts, repository/service protocols, deterministic in-memory adapters, cross-language progress reconciliation, bounded CV intake, fake provider failure matrix, analysis state machine, safe error mapping, stable pagination, deterministic OpenAPI, generated TypeScript contracts, and drift tests. |
 | 7. Mock product routes | Complete | A development-only synthetic learner workspace consumes FastAPI-owned provider, progress, CV, analysis, history, pagination, deletion, and settings state through the local proxy. It covers every fake outcome, accessible status/error states, all result fields, and explicit privacy/persistence boundaries. |
-| 8. Evidence suite | Partial | Browser evidence covers the shared UI, public routes, reference lesson, and mock product route. API evidence covers services, boundaries, failures, state transitions, OpenAPI, cross-language merge fixtures, and contract drift. The generated migration dashboard remains. |
+| 8. Evidence suite | Complete | Browser evidence covers every migrated route and important interaction at both required viewports. API and fixture matrices cover all required states. A deterministic dashboard is generated from the 12-entry parity manifest and checked for drift: 11 routes are complete and assessment remains honestly planned. |
 
 ## Validation record
 
@@ -42,6 +42,7 @@
 - Workstream 7 `npm run test:web` — passed: 5 files and 23 tests.
 - Workstream 7 `npm run test:web:e2e` — passed: 48 Chromium checks, including five account/CV-flow tests, every provider failure, axe, keyboard-accessible controls, history pagination, delete cancellation/confirmation, privacy assertions, responsive overflow, and paired screenshots.
 - Workstream 7 `npm run check:precommit`, `npm run typecheck:migration`, and `npm run build:migration` — passed; the production build renders the fixture workspace as disabled.
+- Workstream 8 `npm run check:route-parity` — passed: all 12 legacy HTML routes are accounted for, 11 are complete, one is planned, and the generated dashboard matches the manifest.
 - Local API (`127.0.0.1:8000`) and web (`127.0.0.1:3000`) startup — passed with elevated local-loopback permission only.
 - Local web proxy `GET /api/v1/health` — passed and preserved the supplied request ID.
 - `npm run ci` — failed in existing `scripts/test_translate_workflow.py::TranslateWorkflowContractTest.test_commit_failure_never_reports_publish_success`; it returned success where the test expected a commit failure. This was discovered only in final CI and is unrelated to the new application paths. Do not treat CI as passing until reproduced and resolved separately.
@@ -64,8 +65,8 @@ Editorial HTML and lesson Markdown are trusted checked-in repository content, ne
 2. Start `npm run dev:api` and `npm run dev:web`; request `GET /api/v1/health` through the web origin.
 3. Inspect `apps/api/app/main.py`, `apps/api/app/application.py`, `apps/api/openapi.json`, and `apps/web/app/api/v1/[...path]/route.ts` before extending any trust boundary.
 4. Reproduce and resolve the unrelated root-CI translation test before integration.
-5. Inspect `visual/WORKSTREAM_3.md`, `visual/WORKSTREAM_5.md`, `visual/WORKSTREAM_7.md`, and their screenshot pairs, especially the intentional roadmap, local Mermaid, and fixture-product boundaries.
+5. Inspect `MIGRATION_DASHBOARD.md`, `WORKSTREAM_8.md`, and the owning visual evidence files, especially the intentional roadmap, local Mermaid, and fixture-product boundaries.
 
 ## Recommended next action
 
-Complete Workstream 8 by generating the migration dashboard from the route-parity manifest, then run every final validation command and freeze this handoff.
+Run every final validation command, record the ending implementation SHA and exact outcomes, then freeze the handoff. Assessment migration remains a separately scoped follow-up.
