@@ -7,7 +7,7 @@ const DOCX_MIME = 'application/vnd.openxmlformats-officedocument.wordprocessingm
 const ALLOWED_MIME = new Set(['application/pdf', DOCX_MIME, 'text/plain', 'text/markdown']);
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const PROVIDERS = {
-  gemini: { displayName: 'Google Gemini', models: ['gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-3.5-flash-lite'] },
+  gemini: { displayName: 'Google Gemini', models: ['gemini-3.5-flash', 'gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-3.5-flash-lite'] },
   openai: { displayName: 'OpenAI', models: ['gpt-5.4-mini', 'gpt-5.4-nano', 'gpt-5.4'] },
   anthropic: { displayName: 'Anthropic', models: ['claude-sonnet-5', 'claude-haiku-4-5', 'claude-opus-5'] },
 } as const;
@@ -183,7 +183,9 @@ async function callGemini(secret: string, model: string, instruction: string, co
     result = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-goog-api-key': secret },
-      body: JSON.stringify({ contents: [{ role: 'user', parts }], generationConfig: { maxOutputTokens: 8192, responseMimeType: 'application/json', responseSchema: analysisSchema() } }),
+      // Gemini can reject large or deeply nested response schemas. We still demand JSON,
+      // then validate and normalize the parsed result before it can be persisted.
+      body: JSON.stringify({ contents: [{ role: 'user', parts }], generationConfig: { maxOutputTokens: 4096, responseMimeType: 'application/json' } }),
       signal: AbortSignal.timeout(60000),
     });
   } catch (_) { throw new Error('provider_unavailable'); }

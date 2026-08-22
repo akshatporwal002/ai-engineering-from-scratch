@@ -25,7 +25,7 @@
     md: 'text/markdown',
   };
   var PROVIDERS = {
-    gemini: { label: 'Google Gemini', keyLabel: 'Gemini', models: [['gemini-3.7-flash', 'Gemini 3.7 Flash · highest quality'], ['gemini-3.6-flash', 'Gemini 3.6 Flash · balanced'], ['gemini-3.5-flash-lite', 'Gemini 3.5 Flash-Lite · lowest cost']] },
+    gemini: { label: 'Google Gemini', keyLabel: 'Gemini', models: [['gemini-3.5-flash', 'Gemini 3.5 Flash · free-tier compatible'], ['gemini-3.7-flash', 'Gemini 3.7 Flash · highest quality'], ['gemini-3.6-flash', 'Gemini 3.6 Flash · balanced'], ['gemini-3.5-flash-lite', 'Gemini 3.5 Flash-Lite · lowest cost']] },
     openai: { label: 'OpenAI', keyLabel: 'OpenAI', models: [['gpt-5.4-mini', 'GPT-5.4 mini · balanced'], ['gpt-5.4-nano', 'GPT-5.4 nano · lowest cost'], ['gpt-5.4', 'GPT-5.4 · highest quality']] },
     anthropic: { label: 'Anthropic', keyLabel: 'Anthropic', models: [['claude-sonnet-5', 'Claude Sonnet 5 · balanced'], ['claude-haiku-4-5', 'Claude Haiku 4.5 · lowest cost'], ['claude-opus-5', 'Claude Opus 5 · highest quality']] },
   };

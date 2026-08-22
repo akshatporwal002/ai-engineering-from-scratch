@@ -63,7 +63,7 @@ Every public table has RLS enabled and explicit grants. Provider-secret RPCs are
 `supabase/functions/cv-api/index.ts` exposes four authenticated actions:
 
 ```json
-{"action":"save-provider","provider":"gemini","apiKey":"learner key","model":"gemini-3.6-flash"}
+{"action":"save-provider","provider":"gemini","apiKey":"learner key","model":"gemini-3.5-flash"}
 {"action":"analyze","documentId":"uuid","connectionId":"uuid"}
 {"action":"delete-provider","connectionId":"uuid"}
 {"action":"delete-cv","documentId":"uuid"}
