@@ -34,7 +34,7 @@ def audit(lesson: str, shell: str) -> list[str]:
     for contract in required_lesson:
         if contract not in lesson:
             errors.append(f"site/lesson.html: missing lesson contract {contract!r}")
-    if not re.search(r'codeology\.css\?v=20260812[a-z]" data-codeology-style="20260812[a-z]"', lesson):
+    if not re.search(r'codeology\.css\?v=20260814[a-z]" data-codeology-style="20260814[a-z]"', lesson):
         errors.append("site/lesson.html: direct Codeology stylesheet contract is missing")
     forbidden_lesson = (
         '<link rel="canonical" href="https://aiengineeringfromscratch.com/',

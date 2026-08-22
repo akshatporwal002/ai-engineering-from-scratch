@@ -8,7 +8,9 @@
 (function () {
   'use strict';
 
-  var REPO_RAW = 'https://raw.githubusercontent.com/rohitg00/ai-engineering-from-scratch/';
+  // Hosted branch builds must read from the Codeology fork because refs such
+  // as `dev` do not exist in the upstream curriculum repository.
+  var REPO_RAW = 'https://raw.githubusercontent.com/akshatporwal002/ai-engineering-from-scratch/';
 
   function isLocal() {
     var host = window.location.hostname;

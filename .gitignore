@@ -29,6 +29,7 @@ Cargo.lock
 .env
 .env.local
 .env.*.local
+Akshat_Resume.pdf
 *.pem
 *.key
 
@@ -83,3 +84,4 @@ i18n/*/phases/
 i18n/*/.cache/
 i18n/*/.translate-cache.json
 site/langs.js
+.env.local

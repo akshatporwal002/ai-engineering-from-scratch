@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "ai-engineering-from-scratch",
+  "canonicalPath": "site/content-source.js",
+  "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f",
+  "adapted": true,
+  "adaptationSummary": "Loads hosted lesson content from the matching branch of the Codeology fork, allowing dev previews to resolve lessons while keeping local repository previews unchanged."
+}

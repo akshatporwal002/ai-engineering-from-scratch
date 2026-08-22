@@ -107,6 +107,60 @@ class CodeologyShellTest(unittest.TestCase):
         )
         self.assertTrue(any("footer Credits integration" in error for error in errors), errors)
 
+    def test_login_inside_navigation_is_rejected(self) -> None:
+        config = json.loads(validator.CONFIG.read_text(encoding="utf-8"))
+        registry = json.loads(validator.SOURCES.read_text(encoding="utf-8"))
+        shell = validator.SHELL.read_text(encoding="utf-8").replace(
+            "actions.appendChild(login)", "nav.appendChild(login)", 1
+        )
+        errors = validator.audit(
+            config,
+            validator.CSS.read_text(encoding="utf-8"),
+            shell,
+            validator.HEADER.read_text(encoding="utf-8"),
+            registry,
+        )
+        self.assertTrue(any("right-side action group" in error for error in errors), errors)
+
+    def test_mobile_actions_must_survive_navigation_replacement(self) -> None:
+        config = json.loads(validator.CONFIG.read_text(encoding="utf-8"))
+        registry = json.loads(validator.SOURCES.read_text(encoding="utf-8"))
+        shell = validator.SHELL.read_text(encoding="utf-8").replace(
+            "if (mobileTools) nav.appendChild(mobileTools)", "mobileTools = null", 1
+        )
+        errors = validator.audit(
+            config,
+            validator.CSS.read_text(encoding="utf-8"),
+            shell,
+            validator.HEADER.read_text(encoding="utf-8"),
+            registry,
+        )
+        self.assertTrue(any("mobile action controls" in error for error in errors), errors)
+
+    def test_narration_loader_is_rejected(self) -> None:
+        config = json.loads(validator.CONFIG.read_text(encoding="utf-8"))
+        registry = json.loads(validator.SOURCES.read_text(encoding="utf-8"))
+        header = validator.HEADER.read_text(encoding="utf-8") + "\nensureNarration();"
+        errors = validator.audit(
+            config,
+            validator.CSS.read_text(encoding="utf-8"),
+            validator.SHELL.read_text(encoding="utf-8"),
+            header,
+            registry,
+        )
+        self.assertTrue(any("retired narration" in error for error in errors), errors)
+
+    def test_retired_language_and_narration_assets_are_absent(self) -> None:
+        site = validator.ROOT / "site"
+        self.assertFalse((site / "lang-picker.js").exists())
+        self.assertFalse((site / "tts.js").exists())
+        combined = "\n".join(
+            (site / name).read_text(encoding="utf-8")
+            for name in ("index.html", "lesson.html", "header.js", "build.js")
+        )
+        for retired in ("lang-picker.js", "langs.js", "ensureNarration", "tts.js"):
+            self.assertNotIn(retired, combined)
+
 
 if __name__ == "__main__":
     unittest.main()

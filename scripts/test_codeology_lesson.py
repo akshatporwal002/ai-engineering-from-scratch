@@ -12,6 +12,9 @@ class CodeologyLessonTest(unittest.TestCase):
     def setUp(self) -> None:
         self.lesson = validator.LESSON.read_text(encoding="utf-8")
         self.shell = validator.SHELL.read_text(encoding="utf-8")
+        self.content_source = (
+            validator.ROOT / "site" / "content-source.js"
+        ).read_text(encoding="utf-8")
 
     def test_repository_lesson_reader_passes(self) -> None:
         self.assertEqual(validator.audit(self.lesson, self.shell), [])
@@ -42,6 +45,18 @@ class CodeologyLessonTest(unittest.TestCase):
 
     def test_missing_header_clearance_is_rejected(self) -> None:
         self.assertTrue(validator.audit_css(".lesson-layout { padding-top: 56px; }"))
+
+    def test_hosted_branch_content_uses_codeology_fork(self) -> None:
+        fork_raw = (
+            "https://raw.githubusercontent.com/"
+            "akshatporwal002/ai-engineering-from-scratch/"
+        )
+        upstream_raw = (
+            "https://raw.githubusercontent.com/"
+            "rohitg00/ai-engineering-from-scratch/"
+        )
+        self.assertIn(fork_raw, self.content_source)
+        self.assertNotIn(upstream_raw, self.content_source)
 
 
 if __name__ == "__main__":

@@ -19,7 +19,7 @@
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20260809a">
   <link rel="stylesheet" href="certifications.css?v=20260809a">
-  <link rel="stylesheet" href="codeology.css?v=20260812j" data-codeology-style="20260812j">
+  <link rel="stylesheet" href="codeology.css?v=20260814c" data-codeology-style="20260814c">
   <style>
     .scroll-progress {
       position: fixed;
@@ -1846,7 +1846,6 @@
           <line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
       </button>
-      <div id="langPicker"></div>
       <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" type="button">
         <span class="theme-icon" id="themeIcon">N</span>
       </button>
@@ -1884,8 +1883,6 @@
   </div>
 
   <script src="build-meta.js"></script>
-  <script src="langs.js?v=20260802a"></script>
-  <script src="lang-picker.js?v=20260808d"></script>
   <script src="data.js?v=20260808g"></script>
   <script>
     (function () {
@@ -1907,9 +1904,9 @@
       });
     }());
   </script>
-  <script src="content-source.js?v=20260808d"></script>
+  <script src="content-source.js?v=20260814a"></script>
   <script src="progress.js?v=20260801a"></script>
-  <script src="header.js?v=20260812j" defer></script>
+  <script src="header.js?v=20260822d" defer></script>
   <script src="cmdpalette.js?v=20260808h" defer></script>
   <script src="figures.js?v=20260801a"></script>
   <script src="lesson-figures.js?v=20260801a"></script>
@@ -2021,12 +2018,6 @@
         });
       }
 
-      // lang-picker.js renders the switcher into #langPicker; when the reader
-      // chooses a language, re-fetch the current lesson in it (quiz stays English).
-      window.AIFS_onLangChange = function () {
-        if (typeof lessonPath !== 'undefined' && lessonPath) fetchLesson(lessonPath);
-      };
-
       var params = new URLSearchParams(window.location.search);
       var lessonPath = params.get('path');
       var requestedTrackId = params.get('track') || '';
@@ -2054,7 +2045,7 @@
       var currentLessonIndex = -1;
       var flatLessons = [];
       var ACTIVE_REF = (typeof window !== 'undefined' && window.__AIFS_REF) ? window.__AIFS_REF : 'main';
-      var REPO_TREE = 'https://github.com/rohitg00/ai-engineering-from-scratch/tree/' + encodeURIComponent(ACTIVE_REF) + '/';
+      var REPO_TREE = 'https://github.com/akshatporwal002/ai-engineering-from-scratch/tree/' + encodeURIComponent(ACTIVE_REF) + '/';
       var certificationTrack = null;
       var certificationOriginTrack = null;
       var certificationLesson = null;
@@ -2207,8 +2198,6 @@
         if (certificationLesson) {
           document.documentElement.lang = 'en';
           document.documentElement.dir = 'ltr';
-          var langPicker = document.getElementById('langPicker');
-          if (langPicker) langPicker.hidden = true;
         }
 
         if (certificationMode) {
@@ -2417,26 +2406,16 @@
 
       var lessonQuizPromise = null;
 
-      // language state (current lang + RTL direction) is owned by lang-picker.js
-      function currentLang() {
-        return window.AIFS_currentLang ? window.AIFS_currentLang() : 'en';
-      }
-
-      function applyRenderedLanguage(lang) {
-        var actual = lang || 'en';
-        if (window.AIFS_applyLangDir) {
-          window.AIFS_applyLangDir(actual);
-          return;
-        }
-        document.documentElement.lang = actual;
-        document.documentElement.dir = /^(ar|he|fa|ur)$/i.test(actual) ? 'rtl' : 'ltr';
+      function applyRenderedLanguage() {
+        document.documentElement.lang = 'en';
+        document.documentElement.dir = 'ltr';
       }
 
       function fetchRepositoryFile(relativePath) {
         var source = window.AIFSContentSource;
         var primary = source && source.repoUrl
           ? source.repoUrl(relativePath)
-          : 'https://raw.githubusercontent.com/rohitg00/ai-engineering-from-scratch/' + ACTIVE_REF + '/' + relativePath;
+          : 'https://raw.githubusercontent.com/akshatporwal002/ai-engineering-from-scratch/' + ACTIVE_REF + '/' + relativePath;
         var fallback = source && source.rawRepoUrl ? source.rawRepoUrl(relativePath) : primary;
 
         return fetch(primary).then(function (response) {
@@ -2476,10 +2455,6 @@
         // Local previews read the checked-out repository first. Deploys and a
         // missing local file use the branch-aware raw source from build-meta.
         var enPath = path + '/docs/en.md';
-        var lang = currentLang();
-        var translatedUrl = 'https://raw.githubusercontent.com/rohitg00/ai-engineering-from-scratch/translations/i18n/'
-          + lang + '/' + path + '/docs/' + lang + '.md';
-
         if (!retried || !lessonQuizPromise) {
           lessonQuizPromise = fetchRepositoryFile(path + '/quiz.json')
             .then(function (res) { return res.json(); })
@@ -2487,18 +2462,9 @@
         }
         var quizPromiseForRequest = lessonQuizPromise;
 
-        var lessonDocument = lang === 'en'
-          ? fetchRepositoryFile(enPath).then(function (response) {
-              return { response: response, lang: 'en' };
-            })
-          : fetch(translatedUrl).then(function (response) {
-              if (!response.ok) throw new Error('fetch-failed');
-              return { response: response, lang: lang };
-            }).catch(function () {
-              return fetchRepositoryFile(enPath).then(function (response) {
-                return { response: response, lang: 'en' };
-              });
-            });
+        var lessonDocument = fetchRepositoryFile(enPath).then(function (response) {
+          return { response: response, lang: 'en' };
+        });
 
         lessonDocument
           .then(function (documentResult) {
@@ -3804,7 +3770,7 @@
       var repositoryDirectoryCache = {};
 
       function githubDirectoryFetch(apiPath) {
-        return fetch('https://api.github.com/repos/rohitg00/ai-engineering-from-scratch/contents/' + apiPath + '?ref=' + encodeURIComponent(ACTIVE_REF), {
+        return fetch('https://api.github.com/repos/akshatporwal002/ai-engineering-from-scratch/contents/' + apiPath + '?ref=' + encodeURIComponent(ACTIVE_REF), {
           headers: { 'Accept': 'application/vnd.github.v3+json' }
         }).then(function (res) {
           if (!res.ok) throw new Error(res.status);

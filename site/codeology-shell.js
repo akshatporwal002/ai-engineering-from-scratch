@@ -2,8 +2,8 @@
 (function () {
   'use strict';
 
-  var VERSION = '20260814a';
-  var AUTH_VERSION = '20260814a';
+  var VERSION = '20260822d';
+  var AUTH_VERSION = '20260822d';
   var CONFIG_URL = 'codeology-config.json?v=' + VERSION;
   var STYLE_URL = 'codeology.css?v=' + VERSION;
 
@@ -49,17 +49,24 @@
     var navs = document.querySelectorAll('.site-header .header-nav');
     for (var i = 0; i < navs.length; i++) {
       var nav = navs[i];
+      var header = nav.closest('.site-header');
+      var mobileTools = nav.querySelector('.header-mobile-tools');
+      var actions = header && header.querySelector('.header-actions');
+      if (mobileTools) mobileTools.remove();
       while (nav.firstChild) nav.removeChild(nav.firstChild);
       for (var j = 0; j < navigation.length; j++) {
         nav.appendChild(navigationLink(navigation[j], currentPage));
       }
+      if (mobileTools) nav.appendChild(mobileTools);
+      if (!actions) continue;
+      if (actions.querySelector('[data-codeology-auth-trigger]')) continue;
       var login = document.createElement('button');
       login.type = 'button';
-      login.className = 'header-github codeology-login-button';
+      login.className = 'codeology-login-button';
       login.textContent = 'Log in';
       login.setAttribute('aria-label', 'Log in to Codeology');
       login.setAttribute('data-codeology-auth-trigger', '');
-      nav.appendChild(login);
+      actions.appendChild(login);
     }
   }
 
@@ -99,13 +106,17 @@
     badge.className = 'codeology-content-source';
     badge.setAttribute('aria-label', 'Imported lesson source');
 
+    var summary = document.createElement('span');
+    summary.className = 'codeology-content-source__summary';
+
     var kind = document.createElement('strong');
     kind.className = 'codeology-content-source__kind';
     kind.textContent = 'Imported lesson';
-    badge.appendChild(kind);
-    appendText(badge, ' from ');
-    badge.appendChild(sourceLink(source.name, source.url));
-    appendText(badge, ' by ' + source.author + ' · ' + source.license);
+    summary.appendChild(kind);
+    appendText(summary, ' from ');
+    summary.appendChild(sourceLink(source.name, source.url));
+    appendText(summary, ' by ' + source.author + ' · ' + source.license);
+    badge.appendChild(summary);
 
     var pinned = sourceLink('View pinned source', pinnedUrl);
     pinned.className = 'codeology-content-source__pinned';

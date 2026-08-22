@@ -4,5 +4,5 @@
   "canonicalPath": "site/roadmap.js",
   "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f",
   "adapted": true,
-  "adaptationSummary": "Adds honest browser-local learning-state labels, accessible lesson counts, rounded SVG nodes and progressive visual glow while preserving the imported curriculum graph, keyboard navigation, route inspection, URL state, panning, zoom and recommendation behavior."
+  "adaptationSummary": "Adds honest browser-local learning-state labels, accessible lesson counts, rounded SVG nodes and progressive visual glow while removing narration-only attributes and preserving keyboard navigation, routing, panning and zoom."
 }

@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "ai-engineering-from-scratch",
+  "canonicalPath": "site/ui-controls.js",
+  "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f",
+  "adapted": true,
+  "adaptationSummary": "Adds an accessible Codeology-owned select enhancement for the adapted catalog, learning map, and CV workspace while preserving the imported static-site runtime."
+}

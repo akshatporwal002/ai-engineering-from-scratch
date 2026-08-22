@@ -118,7 +118,7 @@ def audit(html: str, css: str, config: dict[str, Any]) -> list[str]:
 
     if "codeology-source-strip" in html:
         errors.append("site/credits.html: persistent source strip must not return")
-    if not re.search(r'codeology\.css\?v=20260812[a-z]" data-codeology-style="20260812[a-z]"', html):
+    if not re.search(r'codeology\.css\?v=20260822[a-z]" data-codeology-style="20260822[a-z]"', html):
         errors.append("site/credits.html: direct Codeology stylesheet contract is missing")
     if len(parser.structured_data) != 1:
         errors.append("site/credits.html: exactly one active JSON-LD block is required")

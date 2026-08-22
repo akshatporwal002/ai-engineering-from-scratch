@@ -111,7 +111,7 @@ def audit(html: str, shell: str, css: str) -> list[str]:
     ):
         if contract not in html:
             errors.append(f"site/glossary.html: missing glossary contract {contract!r}")
-    if not re.search(r'codeology\.css\?v=20260812[a-z]" data-codeology-style="20260812[a-z]"', html):
+    if not re.search(r'codeology\.css\?v=20260814[a-z]" data-codeology-style="20260814[a-z]"', html):
         errors.append("site/glossary.html: direct Codeology stylesheet contract is missing")
     if not re.search(
         r'html\[data-product="codeology"\] \.glossary-page\s*\{\s*padding-block-start:\s*calc\(var\(--header-offset\) \+ 16px\)',
