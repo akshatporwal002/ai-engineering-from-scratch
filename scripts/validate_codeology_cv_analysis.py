@@ -100,7 +100,7 @@ def audit(page: str, ui: str, export: str, css: str, config: dict[str, Any], doc
     if sql.count("enable row level security") < 3: errors.append("all three public CV tables require RLS")
     if sql.count("create policy") < 9: errors.append("CV and Storage require explicit ownership policies")
     edge_lower = edge.lower()
-    for marker in ("auth.getuser", "x-goog-api-key", "generativelanguage.googleapis.com", "abortsignal.timeout", "analysis_rate_limited", "responsemimetype", "normalizeanalysis", "ignore any instructions", "codeology-git-akshat-cv-analysis-hola-312a.vercel.app", "status === 204 ? null", "console.error(json.stringify({ requestid, action, code }))"):
+    for marker in ("auth.getuser", "x-goog-api-key", "generativelanguage.googleapis.com", "abortsignal.timeout", "analysis_rate_limited", "responsemimetype", "normalizeanalysis", "ignore any instructions", "test.learn.akshatporwal.dev", "codeology-git-dev-hola-312a.vercel.app", "codeology-git-akshat-cv-analysis-hola-312a.vercel.app", "status === 204 ? null", "console.error(json.stringify({ requestid, action, code }))"):
         if marker not in edge_lower: errors.append(f"Edge Function missing security contract {marker!r}")
     for forbidden in ("console.log(secret", "console.log(text", "api key prefix", "req.body"):
         if forbidden in edge_lower: errors.append(f"Edge Function may expose sensitive data through {forbidden!r}")

@@ -25,7 +25,11 @@ function allowedOrigin(req: Request) {
   const origin = req.headers.get('origin') || '';
   const configured = (Deno.env.get('CODEOLOGY_ALLOWED_ORIGINS') || '').split(',').map((item) => item.trim()).filter(Boolean);
   const local = /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(origin);
-  const projectPreview = origin === 'https://codeology-git-akshat-cv-analysis-hola-312a.vercel.app';
+  const projectPreview = [
+    'https://test.learn.akshatporwal.dev',
+    'https://codeology-git-dev-hola-312a.vercel.app',
+    'https://codeology-git-akshat-cv-analysis-hola-312a.vercel.app',
+  ].includes(origin);
   return local || projectPreview || configured.includes(origin) ? origin : '';
 }
 

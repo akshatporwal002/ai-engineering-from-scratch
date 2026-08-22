@@ -69,7 +69,7 @@ Every public table has RLS enabled and explicit grants. Provider-secret RPCs are
 {"action":"delete-cv","documentId":"uuid"}
 ```
 
-The function verifies the bearer token itself and rejects unlisted origins. Localhost and the exact Vercel branch-preview alias are accepted for development; production must set `CODEOLOGY_ALLOWED_ORIGINS` to a comma-separated exact allowlist. `GEMINI_ALLOWED_MODELS` may override the default model allowlist. The provider host is fixed in code, preventing a user-controlled URL or SSRF path.
+The function verifies the bearer token itself and rejects unlisted origins. Localhost, the exact `dev` test domain, and the exact Vercel branch-preview aliases are accepted for development; production must set `CODEOLOGY_ALLOWED_ORIGINS` to a comma-separated exact allowlist. `GEMINI_ALLOWED_MODELS` may override the default model allowlist. The provider host is fixed in code, preventing a user-controlled URL or SSRF path.
 
 PDF signatures are checked before inline processing. DOCX extraction uses a bounded, dependency-free ZIP reader that accepts only the expected `word/document.xml`, rejects encrypted or unsupported archives, and limits expanded XML to 8 MB. Text inputs are decoded as strict UTF-8. All inputs require at least 120 readable characters; stored files are limited to 10 MB; job descriptions are limited to 20,000 characters; and a learner can save at most five analyses per ten minutes.
 
