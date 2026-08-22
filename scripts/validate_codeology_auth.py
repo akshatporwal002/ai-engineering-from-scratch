@@ -39,7 +39,8 @@ def audit(
         "client.from('lesson_progress')",
         "onConflict: 'user_id,lesson_path'",
         "codeology:progress-owner:v1",
-        "Only your account and learning progress are stored",
+        "Your account stores learning progress and any account features you choose to use",
+        "getClient: function () { return client; }",
     )
     for contract in required_auth:
         if contract not in auth:

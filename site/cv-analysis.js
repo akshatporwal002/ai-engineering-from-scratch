@@ -1,25 +1,35 @@
-/** Render the local CV analysis without transmitting or persisting CV data. */
+/** Account-backed CV upload, analysis history, enhancement and export UI. */
 (function () {
   'use strict';
 
-  var engine = window.CodeologyCVAnalysis;
-  var form = document.getElementById('cvAnalysisForm');
-  if (!engine || !form) return;
-
-  var role = document.getElementById('targetRole');
-  var jobDescription = document.getElementById('jobDescription');
-  var cvText = document.getElementById('cvText');
-  var cvFile = document.getElementById('cvFile');
-  var count = document.getElementById('cvCharacterCount');
-  var status = document.getElementById('cvFormStatus');
-  var clearButton = document.getElementById('cvClearButton');
+  var client = null;
+  var user = null;
+  var provider = null;
+  var documents = [];
+  var activeAnalysis = null;
+  var editableCv = null;
+  var loginButton = document.getElementById('cvLoginButton');
+  var gate = document.getElementById('cvAuthGate');
+  var workspace = document.getElementById('cvAccountWorkspace');
+  var providerForm = document.getElementById('cvProviderForm');
+  var analysisForm = document.getElementById('cvAnalysisForm');
+  var fileInput = document.getElementById('cvFile');
+  var textInput = document.getElementById('cvText');
   var results = document.getElementById('cvResults');
-  var resultsTitle = document.getElementById('cvResultsTitle');
-
-  var STATUS_LABELS = {
-    clear: 'Clear evidence',
-    some: 'Some evidence',
-    'not-found': 'Not found'
+  var MAX_BYTES = 10 * 1024 * 1024;
+  var MIME = {
+    pdf: 'application/pdf',
+    docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    txt: 'text/plain',
+    md: 'text/markdown',
+  };
+  var ERROR_MESSAGES = {
+    authentication_required: 'Please log in again.', invalid_request: 'Check the submitted fields and try again.',
+    provider_not_connected: 'Connect a Gemini key before running an analysis.', provider_rejected: 'Gemini rejected that key or the selected model is unavailable.',
+    provider_unavailable: 'Gemini is temporarily unavailable. Your saved CV has not been lost.', analysis_rate_limited: 'You can run five analyses every ten minutes. Try again shortly.',
+    file_too_large: 'The file exceeds the 10 MB limit.', file_type_invalid: 'Use PDF, DOCX, TXT, or Markdown.', file_signature_invalid: 'The file contents do not match its declared type.',
+    not_enough_text: 'The CV needs at least 120 characters of readable text.', docx_not_enough_text: 'The DOCX needs at least 120 characters of readable text.',
+    document_not_found: 'That saved CV could not be found.', provider_schema_invalid: 'Gemini returned an incomplete result. Run the analysis again.', request_failed: 'The request could not be completed safely.',
   };
 
   function element(tag, className, text) {
@@ -29,212 +39,237 @@
     return node;
   }
 
-  function setStatus(message, kind) {
-    status.textContent = message || '';
-    status.className = 'cv-form-status' + (kind ? ' is-' + kind : '');
+  function status(id, message, kind) {
+    var node = document.getElementById(id);
+    node.textContent = message || '';
+    node.className = 'cv-form-status' + (kind ? ' is-' + kind : '');
   }
 
-  function updateCharacterCount() {
-    count.textContent = cvText.value.length.toLocaleString('en-US') + ' / ' + engine.LIMITS.maxCharacters.toLocaleString('en-US');
+  function message(error) {
+    var code = error && (error.code || error.message);
+    return ERROR_MESSAGES[code] || 'Something went wrong. Try again.';
   }
 
-  function setInvalid(field, invalid) {
-    if (invalid) field.setAttribute('aria-invalid', 'true');
-    else field.removeAttribute('aria-invalid');
+  function setBusy(form, busy) {
+    Array.prototype.forEach.call(form.elements, function (control) { control.disabled = busy; });
+    form.setAttribute('aria-busy', busy ? 'true' : 'false');
   }
 
-  function statusBadge(value) {
-    var badge = element('span', 'cv-status-badge', STATUS_LABELS[value] || value);
-    badge.setAttribute('data-status', value);
-    return badge;
-  }
-
-  function renderFacts(analysis) {
-    var container = document.getElementById('cvDocumentFacts');
-    var sectionLabels = analysis.document.sections.map(function (section) { return section.label; });
-    var facts = [
-      { label: 'Target', value: analysis.role.label },
-      { label: 'Words reviewed', value: analysis.document.wordCount.toLocaleString('en-US') },
-      { label: 'Sections found', value: sectionLabels.length ? sectionLabels.join(', ') : 'No standard headings found' },
-      { label: 'Quantified statements', value: String(analysis.document.quantifiedStatements) }
-    ];
-    container.replaceChildren();
-    facts.forEach(function (fact) {
-      var item = element('div', 'cv-document-fact');
-      item.appendChild(element('span', '', fact.label));
-      item.appendChild(element('strong', '', fact.value));
-      container.appendChild(item);
+  function api(action, values) {
+    return client.functions.invoke('cv-api', { body: Object.assign({ action: action }, values || {}) }).then(function (result) {
+      if (result.error || (result.data && result.data.error)) {
+        var failure = new Error((result.data && result.data.error) || 'request_failed');
+        failure.code = failure.message;
+        throw failure;
+      }
+      return result.data;
     });
   }
 
-  function renderRoleAreas(analysis) {
-    var container = document.getElementById('cvRoleAreas');
-    container.replaceChildren();
-    analysis.roleAreas.forEach(function (item) {
-      var card = element('article', 'cv-role-area');
-      card.setAttribute('data-status', item.status);
-      var heading = element('div', 'cv-role-area-heading');
-      heading.appendChild(element('h4', '', item.label));
-      heading.appendChild(statusBadge(item.status));
-      card.appendChild(heading);
-
-      if (item.matchedTerms.length) {
-        var terms = element('ul', 'cv-term-list');
-        terms.setAttribute('aria-label', 'Matching terms');
-        item.matchedTerms.slice(0, 7).forEach(function (term) {
-          terms.appendChild(element('li', '', term));
-        });
-        card.appendChild(terms);
-      } else {
-        card.appendChild(element('p', 'cv-role-area-empty', 'No matching terms were found in the CV text.'));
-      }
-
-      if (item.roleContextTerms.length) {
-        card.appendChild(element('p', 'cv-role-context-note', 'Role context also mentions: ' + item.roleContextTerms.slice(0, 4).join(', ') + '.'));
-      }
-      container.appendChild(card);
-    });
+  function renderProvider() {
+    var connected = document.getElementById('cvProviderConnected');
+    connected.hidden = !provider;
+    providerForm.hidden = !!provider;
+    if (provider) document.getElementById('cvProviderHint').textContent = provider.key_hint + ' · ' + provider.model;
   }
 
-  function renderSignals(analysis) {
-    var container = document.getElementById('cvSignals');
-    container.replaceChildren();
-    analysis.signals.forEach(function (item) {
-      var card = element('article', 'cv-signal-card');
-      card.setAttribute('data-status', item.status);
-      card.appendChild(element('span', 'cv-signal-count', String(item.occurrences).padStart(2, '0')));
+  function analysisRows(documentRow) {
+    var rows = documentRow.cv_analyses || [];
+    return rows.slice().sort(function (a, b) { return Date.parse(b.created_at) - Date.parse(a.created_at); });
+  }
+
+  function renderHistory() {
+    var list = document.getElementById('cvHistoryList');
+    list.replaceChildren();
+    if (!documents.length) { list.appendChild(element('p', 'cv-empty-state', 'No saved CVs yet. Your first upload will appear here.')); return; }
+    documents.forEach(function (documentRow) {
+      var card = element('article', 'cv-history-card');
       var copy = element('div', '');
-      copy.appendChild(element('h4', '', item.label));
-      copy.appendChild(element('p', '', item.occurrences === 1 ? '1 matching phrase' : item.occurrences + ' matching phrases'));
-      card.appendChild(copy);
-      card.appendChild(statusBadge(item.status));
-      container.appendChild(card);
+      copy.appendChild(element('strong', '', documentRow.original_filename));
+      copy.appendChild(element('span', '', documentRow.target_role + ' · ' + new Date(documentRow.created_at).toLocaleDateString()));
+      copy.appendChild(element('small', '', documentRow.status === 'complete' ? 'Analysis ready' : documentRow.status));
+      var actions = element('div', 'cv-history-actions');
+      var rows = analysisRows(documentRow);
+      if (rows.length) {
+        var open = element('button', 'cv-secondary-action', 'Open analysis');
+        open.type = 'button';
+        open.addEventListener('click', function () { renderAnalysis(rows[0]); });
+        actions.appendChild(open);
+      }
+      var remove = element('button', 'cv-danger-action', 'Delete');
+      remove.type = 'button';
+      remove.addEventListener('click', function () { deleteCv(documentRow); });
+      actions.appendChild(remove);
+      card.appendChild(copy); card.appendChild(actions); list.appendChild(card);
     });
   }
 
-  function lessonPath(url) {
-    var match = String(url || '').match(/(phases\/[^/]+\/[^/]+)\/?$/);
-    return match ? match[1] : '';
+  async function loadAccountData() {
+    if (!client || !user) return;
+    var connectionResult = await client.from('ai_provider_connections').select('id,provider,display_name,key_hint,model,verified_at').eq('provider', 'gemini').maybeSingle();
+    if (connectionResult.error) throw connectionResult.error;
+    provider = connectionResult.data;
+    var docsResult = await client.from('cv_documents').select('id,original_filename,mime_type,byte_size,target_role,status,processing_error_code,created_at,cv_analyses(id,created_at,analysis,role_readiness_score,role_readiness_label,model)').order('created_at', { ascending: false }).limit(50);
+    if (docsResult.error) throw docsResult.error;
+    documents = docsResult.data || [];
+    renderProvider(); renderHistory();
   }
 
-  function findLesson(query) {
-    if (typeof PHASES === 'undefined' || !Array.isArray(PHASES)) return null;
-    for (var i = 0; i < PHASES.length; i++) {
-      for (var j = 0; j < PHASES[i].lessons.length; j++) {
-        if (PHASES[i].lessons[j].name === query) {
-          return { phase: PHASES[i], lesson: PHASES[i].lessons[j] };
-        }
-      }
-    }
-    return null;
+  function syncAuth() {
+    var auth = window.CodeologyAuth;
+    client = auth && auth.getClient ? auth.getClient() : null;
+    user = auth && auth.getUser ? auth.getUser() : null;
+    gate.hidden = !!user;
+    workspace.hidden = !user;
+    if (!user) { provider = null; documents = []; results.hidden = true; return; }
+    loadAccountData().catch(function () { status('cvProviderStatus', 'Account data is temporarily unavailable.', 'error'); });
+  }
+
+  function bindAuthWhenReady() {
+    if (window.CodeologyAuth) { syncAuth(); return; }
+    var attempts = 0;
+    var timer = setInterval(function () {
+      attempts += 1;
+      if (window.CodeologyAuth || attempts > 100) { clearInterval(timer); syncAuth(); }
+    }, 100);
+  }
+
+  function safeFilename(name) {
+    return String(name || 'cv.txt').normalize('NFKC').replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 120) || 'cv.txt';
+  }
+
+  function fileMime(file) {
+    var extension = (file.name.split('.').pop() || '').toLowerCase();
+    return MIME[extension] || '';
+  }
+
+  async function sha256(file) {
+    var digest = await crypto.subtle.digest('SHA-256', await file.arrayBuffer());
+    return Array.from(new Uint8Array(digest)).map(function (value) { return value.toString(16).padStart(2, '0'); }).join('');
+  }
+
+  function selectedFile() {
+    var uploaded = fileInput.files && fileInput.files[0];
+    var pasted = textInput.value.trim();
+    if (uploaded && pasted) throw new Error('Choose a file or pasted text, not both.');
+    if (!uploaded && pasted.length < 120) throw new Error('Upload a CV or paste at least 120 characters.');
+    if (!uploaded && !pasted) throw new Error('Upload a CV or paste your CV text.');
+    if (uploaded) return uploaded;
+    return new File([pasted], 'pasted-cv.txt', { type: 'text/plain' });
+  }
+
+  async function uploadAndAnalyze(event) {
+    event.preventDefault();
+    status('cvFormStatus', '', '');
+    var role = document.getElementById('targetRole').value.trim();
+    var description = document.getElementById('jobDescription').value.trim();
+    if (!provider) { status('cvFormStatus', ERROR_MESSAGES.provider_not_connected, 'error'); document.getElementById('ai-provider-settings').scrollIntoView({ behavior: 'smooth' }); return; }
+    if (role.length < 2) { status('cvFormStatus', 'Enter the target role.', 'error'); return; }
+    if (!document.getElementById('cvProviderConsent').checked) { status('cvFormStatus', 'Confirm provider consent before analysis.', 'error'); return; }
+    var file;
+    try { file = selectedFile(); } catch (error) { status('cvFormStatus', error.message, 'error'); return; }
+    var mime = fileMime(file);
+    if (!mime || file.size < 1 || file.size > MAX_BYTES) { status('cvFormStatus', file.size > MAX_BYTES ? ERROR_MESSAGES.file_too_large : ERROR_MESSAGES.file_type_invalid, 'error'); return; }
+    setBusy(analysisForm, true);
+    var path = user.id + '/' + crypto.randomUUID() + '/' + safeFilename(file.name);
+    var documentRow = null;
+    try {
+      status('cvFormStatus', 'Uploading to your private account storage…', 'neutral');
+      var uploaded = await client.storage.from('cv-documents').upload(path, file, { contentType: mime, upsert: false, cacheControl: '3600' });
+      if (uploaded.error) throw uploaded.error;
+      var inserted = await client.from('cv_documents').insert({ user_id: user.id, storage_path: path, original_filename: safeFilename(file.name), mime_type: mime, byte_size: file.size, content_sha256: await sha256(file), source_kind: fileInput.files && fileInput.files[0] ? 'upload' : 'pasted', target_role: role, job_description: description, provider_consent_at: new Date().toISOString() }).select('id').single();
+      if (inserted.error) { await client.storage.from('cv-documents').remove([path]); throw inserted.error; }
+      documentRow = inserted.data;
+      status('cvFormStatus', 'Analyzing through your connected Gemini account…', 'neutral');
+      var result = await api('analyze', { documentId: documentRow.id });
+      status('cvFormStatus', 'Analysis saved to your account.', 'success');
+      await loadAccountData();
+      renderAnalysis(result.analysis);
+    } catch (error) {
+      status('cvFormStatus', message(error), 'error');
+      if (documentRow) await loadAccountData().catch(function () {});
+    } finally { setBusy(analysisForm, false); }
+  }
+
+  async function deleteCv(documentRow) {
+    if (!window.confirm('Permanently delete "' + documentRow.original_filename + '" and all of its analyses?')) return;
+    try { await api('delete-cv', { documentId: documentRow.id }); documents = documents.filter(function (item) { return item.id !== documentRow.id; }); renderHistory(); results.hidden = true; status('cvFormStatus', 'CV file and analyses permanently deleted.', 'success'); }
+    catch (error) { status('cvFormStatus', message(error), 'error'); }
+  }
+
+  function renderList(id, items) {
+    var list = document.getElementById(id); list.replaceChildren();
+    (items && items.length ? items : ['No item returned.']).forEach(function (item) { list.appendChild(element('li', '', item)); });
+  }
+
+  function lessonCandidates(analysis) {
+    var words = (analysis.missingSkills || []).join(' ').toLowerCase().split(/[^a-z0-9]+/).filter(function (word) { return word.length > 3; });
+    var matches = [];
+    if (typeof PHASES === 'undefined') return matches;
+    PHASES.forEach(function (phase) { phase.lessons.forEach(function (lesson) { var name = lesson.name.toLowerCase(); var score = words.filter(function (word) { return name.indexOf(word) !== -1; }).length; if (score) matches.push({ phase: phase, lesson: lesson, score: score }); }); });
+    return matches.sort(function (a, b) { return b.score - a.score; }).slice(0, 6);
   }
 
   function renderLessons(analysis) {
-    var container = document.getElementById('cvLessonList');
-    container.replaceChildren();
-    var resolved = analysis.lessonQueries.map(findLesson).filter(Boolean);
-    if (!resolved.length) {
-      container.appendChild(element('p', 'cv-role-area-empty', 'Browse the catalog to choose a lesson for this role.'));
-      return;
-    }
-    resolved.forEach(function (match) {
-      var path = lessonPath(match.lesson.url);
-      if (!path) return;
-      var link = element('a', 'cv-lesson-link');
-      link.href = 'lesson.html?path=' + encodeURIComponent(path);
-      var phase = element('span', 'cv-lesson-phase', 'Phase ' + String(match.phase.id).padStart(2, '0') + ' · ' + match.phase.name);
-      var name = element('strong', '', match.lesson.name);
-      var arrow = element('span', 'cv-lesson-arrow', '→');
-      arrow.setAttribute('aria-hidden', 'true');
-      link.appendChild(phase);
-      link.appendChild(name);
-      link.appendChild(arrow);
-      container.appendChild(link);
-    });
+    var list = document.getElementById('cvLessonList'); list.replaceChildren();
+    var matches = lessonCandidates(analysis);
+    if (!matches.length) { var browse = element('a', 'cv-lesson-link', 'Browse the Codeology catalog →'); browse.href = 'catalog.html'; list.appendChild(browse); return; }
+    matches.forEach(function (match) { var pathMatch = String(match.lesson.url || '').match(/(phases\/[^/]+\/[^/]+)\/?$/); if (!pathMatch) return; var link = element('a', 'cv-lesson-link'); link.href = 'lesson.html?path=' + encodeURIComponent(pathMatch[1]); link.appendChild(element('span', 'cv-lesson-phase', 'Phase ' + String(match.phase.id).padStart(2, '0') + ' · ' + match.phase.name)); link.appendChild(element('strong', '', match.lesson.name)); link.appendChild(element('span', 'cv-lesson-arrow', '→')); list.appendChild(link); });
   }
 
-  function renderEditPrompts(analysis) {
-    var container = document.getElementById('cvEditPrompts');
-    container.replaceChildren();
-    analysis.editPrompts.forEach(function (prompt) {
-      container.appendChild(element('li', '', prompt));
-    });
+  function renderDimensions(items) {
+    var grid = document.getElementById('cvDimensions'); grid.replaceChildren();
+    items.forEach(function (item) { var card = element('article', 'cv-dimension-card'); var heading = element('div', 'cv-dimension-heading'); heading.appendChild(element('h3', '', item.label)); heading.appendChild(element('strong', '', item.score + '/100')); var meter = element('div', 'cv-dimension-meter'); var fill = element('span', ''); fill.style.width = item.score + '%'; meter.appendChild(fill); card.appendChild(heading); card.appendChild(meter); card.appendChild(element('p', '', item.rationale)); if (item.evidence.length) { card.appendChild(element('h4', '', 'Evidence found')); var found = element('ul', ''); item.evidence.forEach(function (value) { found.appendChild(element('li', '', value)); }); card.appendChild(found); } if (item.gaps.length) { card.appendChild(element('h4', '', 'Gaps')); var gaps = element('ul', ''); item.gaps.forEach(function (value) { gaps.appendChild(element('li', '', value)); }); card.appendChild(gaps); } grid.appendChild(card); });
   }
 
-  function renderAnalysis(analysis) {
+  function renderCareerSignals(items) {
+    var grid = document.getElementById('cvCareerSignals'); grid.replaceChildren();
+    items.forEach(function (item) { var card = element('article', 'cv-career-signal-card'); var heading = element('div', 'cv-dimension-heading'); heading.appendChild(element('h4', '', item.label)); heading.appendChild(element('strong', '', item.score + '/100')); card.appendChild(heading); card.appendChild(element('p', '', item.finding)); grid.appendChild(card); });
+  }
+
+  function replaceExact(value, original, replacement) {
+    if (typeof value === 'string') return value === original ? replacement : value;
+    if (Array.isArray(value)) return value.map(function (item) { return replaceExact(item, original, replacement); });
+    if (value && typeof value === 'object') { Object.keys(value).forEach(function (key) { value[key] = replaceExact(value[key], original, replacement); }); }
+    return value;
+  }
+
+  function renderSuggestions(items) {
+    var list = document.getElementById('cvSuggestions'); list.replaceChildren();
+    if (!items.length) { list.appendChild(element('p', 'cv-empty-state', 'No targeted rewrites were returned.')); return; }
+    items.forEach(function (item) { var card = element('article', 'cv-suggestion-card'); card.appendChild(element('span', 'cv-analysis-eyebrow', item.section)); if (item.original) { card.appendChild(element('strong', '', 'Original')); card.appendChild(element('p', 'cv-suggestion-original', item.original)); } card.appendChild(element('strong', '', 'Suggested')); card.appendChild(element('p', 'cv-suggestion-replacement', item.replacement)); card.appendChild(element('small', '', item.rationale + (item.impact ? ' · ' + item.impact : '')));
+      var use = element('button', 'cv-secondary-action', 'Use in preview'); use.type = 'button'; use.addEventListener('click', function () { replaceExact(editableCv, item.original, item.replacement); renderPreview(); use.textContent = 'Applied'; use.disabled = true; }); card.appendChild(use); list.appendChild(card); });
+  }
+
+  function renderPreview() {
+    var preview = document.getElementById('cvPreview'); preview.replaceChildren();
+    var cv = editableCv || {}; preview.appendChild(element('h2', '', cv.name || 'Curriculum Vitae')); if (cv.contact) preview.appendChild(element('p', 'cv-preview-contact', cv.contact)); if (cv.headline) preview.appendChild(element('h3', '', cv.headline)); if (cv.summary) { preview.appendChild(element('h4', '', 'Profile')); preview.appendChild(element('p', '', cv.summary)); }
+    if (cv.skills && cv.skills.length) { preview.appendChild(element('h4', '', 'Skills')); preview.appendChild(element('p', 'cv-preview-skills', cv.skills.join(' · '))); }
+    if (cv.experience && cv.experience.length) { preview.appendChild(element('h4', '', 'Experience')); cv.experience.forEach(function (item) { var section = element('section', 'cv-preview-entry'); section.appendChild(element('h5', '', [item.title, item.company].filter(Boolean).join(' · '))); section.appendChild(element('small', '', item.dates)); var bullets = element('ul', ''); (item.bullets || []).forEach(function (bullet) { bullets.appendChild(element('li', '', bullet)); }); section.appendChild(bullets); preview.appendChild(section); }); }
+    if (cv.education && cv.education.length) { preview.appendChild(element('h4', '', 'Education')); cv.education.forEach(function (item) { preview.appendChild(element('p', '', [item.qualification, item.institution, item.dates].filter(Boolean).join(' · '))); }); }
+  }
+
+  function renderAnalysis(row) {
+    var analysis = row.analysis || row; activeAnalysis = analysis; editableCv = JSON.parse(JSON.stringify(analysis.structuredCv || {}));
     document.getElementById('cvResultSummary').textContent = analysis.summary;
-    renderFacts(analysis);
-    renderRoleAreas(analysis);
-    renderSignals(analysis);
-    renderEditPrompts(analysis);
-    renderLessons(analysis);
-    results.hidden = false;
-    resultsTitle.focus({ preventScroll: true });
-    results.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    document.getElementById('cvReadinessScore').textContent = analysis.roleReadinessScore;
+    document.getElementById('cvReadinessLabel').textContent = analysis.roleReadinessLabel;
+    document.getElementById('cvReadinessRationale').textContent = analysis.readinessRationale;
+    document.getElementById('cvReadinessConfidence').textContent = analysis.confidence;
+    renderDimensions(analysis.dimensions || []); renderCareerSignals(analysis.careerSignals || []); renderList('cvStrengths', analysis.strengths); renderList('cvMissingSkills', analysis.missingSkills); renderList('cvImprovementPlan', analysis.improvementPlan); renderLessons(analysis); renderSuggestions(analysis.suggestions || []); renderPreview();
+    results.hidden = false; document.getElementById('cvResultsTitle').focus({ preventScroll: true }); results.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
   }
 
-  function clearPrivateData() {
-    form.reset();
-    cvText.value = '';
-    cvFile.value = '';
-    results.hidden = true;
-    setInvalid(role, false);
-    setInvalid(cvText, false);
-    updateCharacterCount();
-    setStatus('Private CV text and analysis cleared from this page.', 'success');
-    cvText.focus();
-  }
-
-  cvText.addEventListener('input', function () {
-    updateCharacterCount();
-    setInvalid(cvText, false);
-  });
-
-  role.addEventListener('change', function () { setInvalid(role, false); });
-
-  cvFile.addEventListener('change', function () {
-    var file = cvFile.files && cvFile.files[0];
-    if (!file) return;
-    var lowerName = file.name.toLowerCase();
-    if (!(lowerName.endsWith('.txt') || lowerName.endsWith('.md'))) {
-      cvFile.value = '';
-      setStatus('Open a plain-text .txt or Markdown .md file. PDF and DOCX stay disabled in this private first release.', 'error');
-      return;
-    }
-    if (file.size > engine.LIMITS.maxCharacters * 4) {
-      cvFile.value = '';
-      setStatus('That file is too large. Use a file containing 50,000 characters or fewer.', 'error');
-      return;
-    }
-    file.text().then(function (text) {
-      if (text.length > engine.LIMITS.maxCharacters) throw new Error('That file contains more than 50,000 characters.');
-      cvText.value = text;
-      updateCharacterCount();
-      setStatus('Loaded ' + file.name + ' locally. Nothing was uploaded.', 'success');
-      cvText.focus();
-    }).catch(function (error) {
-      cvFile.value = '';
-      setStatus(error.message || 'The local file could not be read.', 'error');
-    });
-  });
-
-  form.addEventListener('submit', function (event) {
-    event.preventDefault();
-    setStatus('', '');
-    setInvalid(role, !role.value);
-    setInvalid(cvText, cvText.value.trim().length < engine.LIMITS.minCharacters);
-    try {
-      var analysis = engine.analyze(cvText.value, role.value, jobDescription.value);
-      renderAnalysis(analysis);
-      setStatus('Analysis complete. Your CV text remained in this browser tab.', 'success');
-    } catch (error) {
-      results.hidden = true;
-      setStatus(error.message || 'The CV could not be analyzed.', 'error');
-      if (!role.value) role.focus();
-      else cvText.focus();
-    }
-  });
-
-  clearButton.addEventListener('click', clearPrivateData);
-  updateCharacterCount();
+  loginButton.addEventListener('click', function () { if (window.CodeologyAuth) window.CodeologyAuth.open(); });
+  document.addEventListener('codeology:auth-changed', syncAuth);
+  providerForm.addEventListener('submit', async function (event) { event.preventDefault(); var key = document.getElementById('cvProviderKey').value.trim(); if (key.length < 20) { status('cvProviderStatus', 'Enter a valid Gemini API key.', 'error'); return; } setBusy(providerForm, true); status('cvProviderStatus', 'Verifying with Gemini…', 'neutral'); try { var result = await api('save-provider', { apiKey: key, model: 'gemini-3.6-flash' }); provider = result.connection; providerForm.reset(); renderProvider(); status('cvProviderStatus', 'Gemini key verified and encrypted for your account.', 'success'); } catch (error) { status('cvProviderStatus', message(error), 'error'); } finally { setBusy(providerForm, false); } });
+  document.getElementById('cvProviderDelete').addEventListener('click', async function () { if (!provider || !window.confirm('Disconnect and permanently delete this provider key? Saved CV analyses will remain.')) return; try { await api('delete-provider', { connectionId: provider.id }); provider = null; renderProvider(); status('cvProviderStatus', 'Provider key deleted.', 'success'); } catch (error) { status('cvProviderStatus', message(error), 'error'); } });
+  analysisForm.addEventListener('submit', uploadAndAnalyze);
+  document.getElementById('cvClearButton').addEventListener('click', function () { analysisForm.reset(); textInput.value = ''; document.getElementById('cvCharacterCount').textContent = '0 / 100,000'; status('cvFormStatus', 'Form cleared. Saved account CVs were not deleted.', 'success'); });
+  textInput.addEventListener('input', function () { document.getElementById('cvCharacterCount').textContent = textInput.value.length.toLocaleString() + ' / 100,000'; });
+  fileInput.addEventListener('change', function () { if (fileInput.files && fileInput.files[0]) textInput.value = ''; });
+  document.getElementById('cvTemplate').addEventListener('change', function (event) { document.getElementById('cvPreview').setAttribute('data-template', event.target.value); });
+  document.getElementById('cvExportPdf').addEventListener('click', function () { if (!activeAnalysis) return; document.body.classList.add('cv-printing'); window.print(); setTimeout(function () { document.body.classList.remove('cv-printing'); }, 0); });
+  document.getElementById('cvExportDocx').addEventListener('click', function () { if (editableCv && window.CodeologyCVExport) window.CodeologyCVExport.exportDocx(editableCv, editableCv.name || 'codeology-cv'); });
+  bindAuthWhenReady();
 }());

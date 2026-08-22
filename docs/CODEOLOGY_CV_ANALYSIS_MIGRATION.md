@@ -1,129 +1,119 @@
-# CV Analysis migration and implementation plan
+# Account-backed CV Analysis migration
 
-**Status:** Initial local-first slice implemented on the Codeology development line
+**Status:** Implemented platform slice; database migration and Edge Function must be deployed before use
 **Source reviewed:** `saurabhporwal/CA` at `d1aecc127b2a16567b1fe78461f81a50f8b04202`
-**Target:** Codeology static academy and its future stateful platform
+**Target:** Codeology online platform on the `dev` test environment first
 
-## Decision
+## Product decision
 
-CV Analysis is a good fit when it closes the gap between a learner's existing experience and Codeology's curriculum. The feature should help a learner answer three questions:
+CV Analysis belongs in Codeology when it turns a learner's career material into a concrete improvement and learning loop. The online version is associated with the learner's account and includes the useful Career Architect capabilities:
 
-1. What evidence does my CV already communicate?
-2. Which role-relevant signals are weak or absent?
-3. Which Codeology lessons should I study or use to build stronger evidence?
+- authenticated PDF, DOCX, TXT, Markdown, and pasted-text intake;
+- private file and analysis history;
+- target-role and optional job-description context;
+- learner-supplied Gemini credentials stored server-side;
+- structured Gemini analysis and CV extraction;
+- a target-role CV-readiness score with five inspectable dimensions;
+- the CA career-signal set: decision velocity, authority gap, narrative scarcity, authority signal, seniority perception, operational ROI, governance, observability, and scalability;
+- strengths, missing signals, an improvement plan, and Codeology lesson links;
+- rewrite suggestions and three CV preview templates;
+- Print/PDF and real DOCX export; and
+- complete file-and-analysis deletion plus provider-key deletion.
 
-It should not present a speculative employability score, promise job readiness, infer protected characteristics, or treat a CV as independently verified evidence. Its output is formative guidance based only on the text supplied by the learner.
+The readiness score measures how clearly a CV communicates evidence for the chosen role. It is not a probability of employment and cannot establish identity, authorship, competence, seniority, or suitability for employment. Model output remains formative guidance and never becomes Codeology verified evidence.
 
-## Why the source implementation is not copied directly
+## Source and licensing boundary
 
-The reviewed Career Architect implementation contains useful product concepts: target-role selection, document intake, role-gap analysis, recommendations, and a follow-on CV improvement flow. Its current technical shape does not fit Codeology's first release:
+No explicit licence file was found in the inspected CA snapshot. This implementation therefore ports product capabilities but does not copy source code or visual assets. It also does not import CA's database dump, logs, cookies, credentials, provider-key files, payment code, job crawler, or administrator surfaces. Codeology code is original and follows this repository's platform seams.
 
-- It is a Next.js and FastAPI application backed by authentication, a database, object storage, and an external model provider.
-- PDF and DOCX extraction depends on libraries outside this repository's educational dependency allowlist.
-- The analysis path stores parsed CV text and results.
-- Diagnostic output includes CV excerpts and part of the model credential, which is unsuitable for personal career data.
-- No explicit licence file was found in the inspected source snapshot. This implementation therefore reuses product ideas and writes original Codeology code; it does not copy source code or visual assets.
-
-Before any later code-level reuse, the owners should record the source project's licence and confirm that its contributors permit the intended migration.
-
-## Initial product slice
-
-The first slice is deliberately local-first:
+## Architecture
 
 ```mermaid
 flowchart LR
-  Learner["Learner"] --> Input["Paste CV text or open TXT / MD"]
-  Input --> Engine["Deterministic browser analysis"]
-  Engine --> Signals["Evidence signals and edit prompts"]
-  Engine --> Gaps["Role-area gaps"]
-  Gaps --> Lessons["Matching Codeology lessons"]
+  Browser["Authenticated learner browser"] --> Storage["Private cv-documents bucket"]
+  Browser --> RLS["Account-owned CV metadata"]
+  Browser --> Edge["cv-api Edge Function"]
+  Edge --> Auth["Verified Supabase user"]
+  Edge --> Vault["Encrypted provider key in Vault"]
+  Edge --> Gemini["Fixed Gemini API origin"]
+  Edge --> Analysis["Schema-validated saved analysis"]
+  Analysis --> Browser
 ```
 
-- The browser accepts pasted text or a local plain-text/Markdown file.
-- The CV is capped at 50,000 characters and is held only in page memory.
-- No CV text, filename, analysis, or target role is uploaded, persisted, logged, or placed in `localStorage`.
-- The deterministic engine detects common CV sections, quantified outcomes, ownership, delivery, reliability, collaboration, and role-specific technical terms.
-- Results use `clear`, `some`, and `not found` evidence labels rather than a global candidate score.
-- Curriculum recommendations resolve against the generated `PHASES` catalog and open the existing lesson reader.
-- The interface identifies the result as private formative guidance, not an assessment or Codeology skill claim.
+The browser uses only the Supabase publishable key and the signed-in user's JWT. It can read and create rows only when `auth.uid()` matches `user_id`. It can upload only into a path beginning with its own user UUID. The service-role key exists only in the Edge Function environment.
 
-PDF and DOCX are intentionally deferred. Asking learners to paste extracted text avoids introducing document parsers into the static academy and makes the privacy boundary unambiguous.
+Provider keys are posted to `cv-api`, verified against the selected Gemini model, encrypted in Supabase Vault, and represented in the public table only by a masked four-character hint. The raw key is never returned, stored in browser storage, placed in a URL, or written to logs.
 
-## Target files and ownership
+## Database and storage contract
 
-| Capability | Codeology location | Notes |
+Migration: `supabase/migrations/20260822043422_create_account_backed_cv_analysis.sql`
+
+| Surface | Purpose | Direct learner access |
 |---|---|---|
-| Navigation tab | `site/codeology-config.json` | Adds a working `CV Analysis` route to the shared shell |
-| Page structure | `site/cv-analysis.html` | Accessible form, privacy explanation, empty and result states |
-| Analysis policy | `site/cv-analysis-engine.js` | Pure deterministic module, usable in the browser and Node tests |
-| Browser interaction | `site/cv-analysis.js` | File reading, validation, rendering, clearing, focus management |
-| Visual language | `site/codeology.css` | Reuses Codeology tokens, typography, focus, surface, and responsive patterns |
-| Contract validation | `scripts/validate_codeology_cv_analysis.py` | Checks privacy, accessibility, routes, assets, and documentation |
-| Behavior tests | `scripts/test_cv_analysis_engine.mjs` | Exercises role matching, signal detection, limits, and deterministic results |
+| `ai_provider_connections` | Safe provider metadata and masked key hint | Own rows: select; deletion through `cv-api` |
+| `private.ai_provider_credentials` | Vault secret reference | None |
+| `cv_documents` | File metadata, consent, processing state and role context | Own rows: select/insert/update; deletion through `cv-api` |
+| `cv_analyses` | Normalized, versioned Gemini result | Own rows: select/delete |
+| `storage.objects` / `cv-documents` | Original CV files, maximum 10 MB | Own path: select/insert/delete |
 
-All of these files are original Codeology work and must remain assigned to the `codeology` source in `content-sources.yml`.
+Every public table has RLS enabled and explicit grants. Provider-secret RPCs are revoked from `public`, `anon`, and `authenticated` and granted only to `service_role`. Deleting an account cascades through provider metadata, CV metadata, and analyses. The `delete-cv` action removes the private object before its database row so the normal UI cannot orphan a file.
 
-## Analysis contract
+## Edge Function contract
 
-Input:
+`supabase/functions/cv-api/index.ts` exposes four authenticated actions:
 
 ```json
-{
-  "cvText": "Learner-supplied CV text",
-  "targetRole": "ai-engineer",
-  "jobDescription": "Optional learner-supplied role context"
-}
+{"action":"save-provider","apiKey":"learner key","model":"gemini-3.6-flash"}
+{"action":"analyze","documentId":"uuid"}
+{"action":"delete-provider","connectionId":"uuid"}
+{"action":"delete-cv","documentId":"uuid"}
 ```
 
-Output:
+The function verifies the bearer token itself and rejects unlisted origins. Localhost and the exact Vercel branch-preview alias are accepted for development; production must set `CODEOLOGY_ALLOWED_ORIGINS` to a comma-separated exact allowlist. `GEMINI_ALLOWED_MODELS` may override the default model allowlist. The provider host is fixed in code, preventing a user-controlled URL or SSRF path.
 
-```json
-{
-  "summary": "Plain-language evidence summary",
-  "document": {
-    "wordCount": 0,
-    "sections": [],
-    "quantifiedStatements": 0
-  },
-  "signals": [],
-  "roleAreas": [],
-  "editPrompts": [],
-  "lessonQueries": []
-}
+PDF signatures are checked before inline processing. DOCX extraction uses a bounded, dependency-free ZIP reader that accepts only the expected `word/document.xml`, rejects encrypted or unsupported archives, and limits expanded XML to 8 MB. Text inputs are decoded as strict UTF-8. All inputs require at least 120 readable characters; stored files are limited to 10 MB; job descriptions are limited to 20,000 characters; and a learner can save at most five analyses per ten minutes.
+
+CV and job-description contents are delimited as untrusted data. The provider is told to ignore instructions in those fields. Gemini returns JSON against a fixed schema; Codeology normalizes lengths, arrays, dimension IDs, scores, structured CV fields, and suggestions again before persistence. Logs contain only request ID, action, and safe error code—never the document, prompt, response, key, or signed URL.
+
+## UI and account behavior
+
+`site/auth.js` exposes the already-configured browser client through `CodeologyAuth.getClient()` and links the account dialog to AI provider and CV settings. The CV page remains unavailable while signed out. Once signed in it loads provider metadata and up to 50 account-owned CV records.
+
+Upload is a two-step operation: the browser uploads to its private storage path and inserts an owned metadata row, then invokes `cv-api`. If metadata creation fails, it removes the uploaded object. Failed analysis leaves the owned CV visible with a safe status so it can be retried or deleted. The raw CV is never placed in `localStorage` or `sessionStorage`.
+
+The enhancement studio renders with `textContent`-based DOM construction. Suggested replacements require an explicit learner action and cannot silently overwrite the stored analysis. PDF output uses the browser print surface. DOCX export is generated locally as an Open XML ZIP and does not contact another service.
+
+## Deployment
+
+From the repository root, configure a linked Supabase test project and apply the migration through the normal reviewed deployment process. Then deploy the function and set secrets:
+
+```bash
+npx supabase db push
+npx supabase functions deploy cv-api --no-verify-jwt
+npx supabase secrets set CODEOLOGY_ALLOWED_ORIGINS=https://test.example.com
+npx supabase secrets set GEMINI_ALLOWED_MODELS=gemini-3.6-flash
 ```
 
-The engine is intentionally explainable. Each result is derived from named terms or patterns. It does not infer years of experience, seniority, salary, personality, demographic attributes, identity, authorship, or suitability for employment.
+Build the site with `CODEOLOGY_SUPABASE_URL` and `CODEOLOGY_SUPABASE_PUBLISHABLE_KEY`, then deploy it to the `dev` test environment. Do not put `SUPABASE_SERVICE_ROLE_KEY` or a provider key into a site environment variable with a public prefix. Supabase provides its URL, anon key, and service-role key to deployed functions.
 
-## Later server-assisted phase
+After migration, run Supabase security and performance advisors. Verify that the bucket is private, anonymous requests cannot read any CV tables, two test accounts cannot access one another's objects or rows, origin rejection works, and account deletion removes all related records.
 
-A deeper semantic review may be worthwhile after the local slice is tested with learners. That phase belongs behind Codeology's stateful platform boundary and requires a separate approval because it changes the privacy and cost model.
+## Acceptance record
 
-Required gates:
+- Signed-out users see a login gate and cannot access the workspace.
+- A signed-in user can connect and delete a Gemini key without the browser receiving the secret again.
+- PDF, DOCX, TXT, Markdown, and pasted CVs pass the documented type and size boundary.
+- CV file, metadata, target context, processing status, structured results, and history are account-owned.
+- The analysis includes five readiness dimensions, strengths, missing signals, improvement steps, rewrites, a structured preview, and lesson links.
+- Saved analyses can be reopened; a CV and all related analyses can be permanently deleted.
+- Provider failure, malformed output, malformed DOCX, invalid signatures, rate limits, and unauthenticated requests fail closed with safe errors.
+- Desktop and mobile layouts, keyboard controls, status regions, focus movement, and printable output are covered by browser review.
+- Focused tests, `npm run check:precommit`, and `npm run ci` must pass before handoff.
 
-1. Obtain explicit consent before transmitting CV content and name the model provider, purpose, retention period, and deletion route.
-2. Prefer ephemeral processing. Do not retain the raw CV by default, and never log document text, contact details, prompts, model responses, credentials, or signed URLs.
-3. Strip contact fields before model review unless they are required for a learner-requested formatting check.
-4. Treat the CV and job description as untrusted data, not instructions. Keep provider prompts and policies outside the document payload.
-5. Enforce file type, byte, page, text-length, archive, and processing-time limits before parsing.
-6. Use schema-validated model output with an `insufficient evidence` outcome. Keep deterministic lesson mapping separate from model prose.
-7. Provide export and deletion controls before storing any result.
-8. Keep this formative surface separate from demonstrated or verified Codeology evidence.
-9. Add provider-failure, prompt-injection, malformed-document, accessibility, mobile, and deletion tests before release.
+## Rollback
 
-If PDF or DOCX support is required, implement parsing in the future platform service rather than adding non-allowlisted dependencies to lesson code or the static academy.
+Rollback the site first by removing the CV navigation entry and page assets. Undeploy `cv-api` or deny its origins to stop processing. Preserve the database and private bucket while users export or delete their data; do not drop account data as part of an application rollback. A later, separately approved retention operation can delete objects, Vault secrets, and tables after users are notified and recoverability requirements are satisfied.
 
-## Rollout and rollback
+## Deferred platform-wide work
 
-Roll out first on the `dev` test environment. Review at desktop and mobile widths in light and dark themes, test keyboard-only operation, and ask pilot learners whether the recommended lessons are relevant and whether the evidence labels are understandable.
-
-The slice is reversible: remove the navigation entry and the three `site/cv-analysis*` files. It creates no schema, account, storage, or migration dependency.
-
-## Acceptance criteria
-
-- A learner can paste CV text or read a local `.txt`/`.md` file and analyze it without a network request.
-- Short, empty, unsupported, and oversized inputs fail with an actionable message.
-- Results identify their evidence basis and do not display a job-readiness or employability score.
-- Every curriculum recommendation resolves to an existing local lesson route.
-- Clearing the form removes the CV text and rendered analysis from memory-visible UI state.
-- The page works by keyboard, exposes a single main landmark, uses live status messaging, and preserves visible focus.
-- Targeted checks, `npm run check:precommit`, and `npm run ci` pass before handoff.
+The provider-connection pattern is intentionally reusable for a future RAG learning assistant, but this change does not yet add embeddings, a vector index, a chatbot, cross-feature memory, automated grading, payment/credit gating, jobs ingestion, or administrator tooling. Those are separate trust boundaries and require their own acceptance and security reviews.

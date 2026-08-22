@@ -9,7 +9,7 @@
   var CACHE_KEY = 'gh:stars:' + REPO;
   var CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
   var COMPACT_HEADER_QUERY = '(max-width: 1100px)';
-  var CODEOLOGY_SHELL_VERSION = '20260814b';
+  var CODEOLOGY_SHELL_VERSION = '20260822c';
   var navId = 0;
 
   function ensureCodeologyShell() {

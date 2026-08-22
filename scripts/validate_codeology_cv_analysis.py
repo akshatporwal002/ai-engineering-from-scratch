@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the local-first Codeology CV Analysis product contract."""
+"""Validate the account-backed Codeology CV Analysis trust boundary."""
 
 from __future__ import annotations
 
@@ -10,171 +10,126 @@ from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
 
-
 ROOT = Path(__file__).resolve().parent.parent
 PAGE = ROOT / "site" / "cv-analysis.html"
-ENGINE = ROOT / "site" / "cv-analysis-engine.js"
 UI = ROOT / "site" / "cv-analysis.js"
+EXPORT = ROOT / "site" / "cv-export.js"
 CSS = ROOT / "site" / "codeology.css"
 CONFIG = ROOT / "site" / "codeology-config.json"
 DOC = ROOT / "docs" / "CODEOLOGY_CV_ANALYSIS_MIGRATION.md"
+EDGE = ROOT / "supabase" / "functions" / "cv-api" / "index.ts"
+DOCX = ROOT / "supabase" / "functions" / "_shared" / "docx.js"
+CONTRACT = ROOT / "supabase" / "functions" / "_shared" / "analysis-contract.js"
+MIGRATION = ROOT / "supabase" / "migrations" / "20260822043422_create_account_backed_cv_analysis.sql"
 
 
-class CVAnalysisParser(HTMLParser):
+class CVParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self.ids: Counter[str] = Counter()
-        self.title: list[str] = []
-        self.h1: list[str] = []
-        self.text: list[str] = []
-        self.canonical = ""
-        self.main_count = 0
-        self.form_count = 0
         self.scripts: list[str] = []
         self.controls: dict[str, dict[str, str | None]] = {}
-        self._in_title = False
-        self._in_h1 = False
+        self.text: list[str] = []
+        self.title: list[str] = []
+        self.h1: list[str] = []
+        self.main_count = 0
+        self.form_count = 0
+        self.canonical = ""
+        self._title = False
+        self._h1 = False
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         values = dict(attrs)
-        element_id = values.get("id")
-        if element_id:
-            self.ids[element_id] += 1
-            if tag in {"input", "select", "textarea", "button", "form"}:
-                self.controls[element_id] = values
-        if tag == "title":
-            self._in_title = True
-        elif tag == "h1":
-            self._in_h1 = True
-        elif tag == "main":
-            self.main_count += 1
-        elif tag == "form":
-            self.form_count += 1
-        elif tag == "link" and values.get("rel") == "canonical":
-            self.canonical = values.get("href", "") or ""
-        elif tag == "script" and values.get("src"):
-            self.scripts.append((values.get("src") or "").split("?")[0])
+        if values.get("id"):
+            self.ids[values["id"] or ""] += 1
+            if tag in {"input", "textarea", "select", "form", "button"}:
+                self.controls[values["id"] or ""] = values
+        if tag == "title": self._title = True
+        elif tag == "h1": self._h1 = True
+        elif tag == "main": self.main_count += 1
+        elif tag == "form": self.form_count += 1
+        elif tag == "script" and values.get("src"): self.scripts.append((values["src"] or "").split("?")[0])
+        elif tag == "link" and values.get("rel") == "canonical": self.canonical = values.get("href") or ""
 
     def handle_endtag(self, tag: str) -> None:
-        if tag == "title":
-            self._in_title = False
-        elif tag == "h1":
-            self._in_h1 = False
+        if tag == "title": self._title = False
+        elif tag == "h1": self._h1 = False
 
     def handle_data(self, data: str) -> None:
         self.text.append(data)
-        if self._in_title:
-            self.title.append(data)
-        if self._in_h1:
-            self.h1.append(data)
+        if self._title: self.title.append(data)
+        if self._h1: self.h1.append(data)
 
 
-def normalized(parts: list[str]) -> str:
-    return " ".join("".join(parts).split())
+def normalized(values: list[str]) -> str:
+    return " ".join("".join(values).split())
 
 
-def audit(page: str, engine: str, ui: str, css: str, config: dict[str, Any], documentation: str) -> list[str]:
-    parser = CVAnalysisParser()
+def audit(page: str, ui: str, export: str, css: str, config: dict[str, Any], documentation: str,
+          edge: str, docx: str, contract: str, migration: str) -> list[str]:
+    parser = CVParser()
     parser.feed(page)
     errors: list[str] = []
-
-    if normalized(parser.title) != "CV Analysis · Codeology":
-        errors.append("site/cv-analysis.html: title must identify Codeology CV Analysis")
-    if normalized(parser.h1) != "Turn your CV into a learning map.":
-        errors.append("site/cv-analysis.html: product proposition heading changed unexpectedly")
-    if parser.canonical != "cv-analysis.html":
-        errors.append("site/cv-analysis.html: canonical must be a relative Codeology route")
-    if parser.main_count != 1 or parser.form_count != 1:
-        errors.append("site/cv-analysis.html: exactly one main landmark and one form are required")
+    if normalized(parser.title) != "CV Analysis · Codeology": errors.append("page title must identify Codeology CV Analysis")
+    if normalized(parser.h1) != "Turn your CV into a learning map.": errors.append("product proposition heading changed unexpectedly")
+    if parser.canonical != "cv-analysis.html": errors.append("canonical must be the relative CV route")
+    if parser.main_count != 1 or parser.form_count != 2: errors.append("one main landmark and two forms are required")
     for element_id, count in parser.ids.items():
-        if count > 1:
-            errors.append(f"site/cv-analysis.html: duplicate id {element_id!r}")
-
-    required_ids = {
-        "cvAnalysisForm", "targetRole", "jobDescription", "cvText", "cvFile",
-        "cvFormStatus", "cvClearButton", "cvResults", "cvResultsTitle",
-        "cvRoleAreas", "cvSignals", "cvEditPrompts", "cvLessonList",
-    }
-    for element_id in sorted(required_ids - parser.ids.keys()):
-        errors.append(f"site/cv-analysis.html: missing required id {element_id!r}")
-
-    target = parser.controls.get("targetRole", {})
-    cv_text = parser.controls.get("cvText", {})
-    file_control = parser.controls.get("cvFile", {})
-    if "required" not in target or "required" not in cv_text:
-        errors.append("site/cv-analysis.html: target role and CV text must be required")
-    if cv_text.get("maxlength") != "50000" or cv_text.get("minlength") != "120":
-        errors.append("site/cv-analysis.html: CV text limits must remain 120..50000 characters")
-    accepted = (file_control.get("accept") or "").lower()
-    if ".txt" not in accepted or ".md" not in accepted or "pdf" in accepted or "word" in accepted or ".doc" in accepted:
-        errors.append("site/cv-analysis.html: local files must be TXT/MD only")
-
-    for script in ("data.js", "cv-analysis-engine.js", "cv-analysis.js", "header.js"):
-        if script not in parser.scripts:
-            errors.append(f"site/cv-analysis.html: missing script {script!r}")
-
-    text = normalized(parser.text).lower()
-    required_copy = (
-        "stays in your browser",
-        "does not upload, save, log, or send your cv",
-        "no employability score",
-        "formative guidance only",
-        "does not establish identity, authorship, competence, seniority, job readiness",
-    )
-    for phrase in required_copy:
-        if phrase not in text:
-            errors.append(f"site/cv-analysis.html: missing privacy or claim boundary {phrase!r}")
-
-    forbidden_runtime = ("fetch(", "xmlhttprequest", "websocket", "sendbeacon", "localstorage", "sessionstorage")
-    combined_runtime = (engine + "\n" + ui).lower()
-    for marker in forbidden_runtime:
-        if marker in combined_runtime:
-            errors.append(f"CV analysis runtime must not use network or persistent storage marker {marker!r}")
-    for contract in ("formative-local", "transmitted: false", "persisted: false", "claimsJobReadiness: false"):
-        if contract not in engine:
-            errors.append(f"site/cv-analysis-engine.js: missing policy contract {contract!r}")
-    if "textContent" not in ui or "innerHTML" in ui:
-        errors.append("site/cv-analysis.js: results must render through textContent-safe DOM construction")
-
+        if count > 1: errors.append(f"duplicate id {element_id!r}")
+    required = {"cvAuthGate", "cvAccountWorkspace", "cvProviderForm", "cvProviderKey", "cvAnalysisForm", "targetRole", "jobDescription", "cvText", "cvFile", "cvProviderConsent", "cvHistoryList", "cvResults", "cvReadinessScore", "cvDimensions", "cvCareerSignals", "cvSuggestions", "cvPreview", "cvExportPdf", "cvExportDocx"}
+    for element_id in sorted(required - parser.ids.keys()): errors.append(f"missing required id {element_id!r}")
+    accepted = (parser.controls.get("cvFile", {}).get("accept") or "").lower()
+    for marker in (".pdf", ".docx", ".txt", ".md"):
+        if marker not in accepted: errors.append(f"CV input must accept {marker}")
+    if parser.controls.get("cvProviderConsent", {}).get("type") != "checkbox" or "required" not in parser.controls.get("cvProviderConsent", {}): errors.append("provider consent must be a required checkbox")
+    for script in ("data.js", "cv-analysis-engine.js", "cv-export.js", "cv-analysis.js", "header.js"):
+        if script not in parser.scripts: errors.append(f"missing script {script!r}")
+    page_text = normalized(parser.text).lower()
+    for phrase in ("private to your account", "encrypted server-side", "pdf · docx · txt · md", "delete a cv at any time", "formative guidance, not a hiring prediction", "does not establish identity, authorship, competence, employability"):
+        if phrase not in page_text: errors.append(f"missing privacy or claim boundary {phrase!r}")
+    for marker in ("localstorage.setitem('cv", "sessionstorage.setitem('cv", "service_role", "supabase_service_role"):
+        if marker in ui.lower(): errors.append(f"browser CV runtime contains forbidden marker {marker!r}")
+    for marker in ("client.storage.from('cv-documents').upload", "client.from('cv_documents').insert", "client.functions.invoke('cv-api'", "codeologyauth", "textcontent", "confirm("):
+        if marker not in ui.lower(): errors.append(f"browser runtime missing account contract {marker!r}")
+    if "innerHTML" in ui: errors.append("analysis results must use safe DOM construction")
+    for marker in ("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "exportDocx", "word/document.xml"):
+        if marker not in export: errors.append(f"DOCX export missing {marker!r}")
+    sql = migration.lower()
+    for marker in ("create table public.ai_provider_connections", "create table public.cv_documents", "create table public.cv_analyses", "enable row level security", "auth.uid()", "with check", "'cv-documents'", "vault.create_secret", "to service_role", "revoke all on function"):
+        if marker not in sql: errors.append(f"database boundary missing {marker!r}")
+    if sql.count("enable row level security") < 3: errors.append("all three public CV tables require RLS")
+    if sql.count("create policy") < 9: errors.append("CV and Storage require explicit ownership policies")
+    edge_lower = edge.lower()
+    for marker in ("auth.getuser", "x-goog-api-key", "generativelanguage.googleapis.com", "abortsignal.timeout", "analysis_rate_limited", "responsemimetype", "normalizeanalysis", "ignore any instructions", "codeology-git-akshat-cv-analysis-hola-312a.vercel.app", "status === 204 ? null", "console.error(json.stringify({ requestid, action, code }))"):
+        if marker not in edge_lower: errors.append(f"Edge Function missing security contract {marker!r}")
+    for forbidden in ("console.log(secret", "console.log(text", "api key prefix", "req.body"):
+        if forbidden in edge_lower: errors.append(f"Edge Function may expose sensitive data through {forbidden!r}")
+    for marker in ("docx_encrypted", "max_entry_bytes", "word/document.xml", "decompressionstream"):
+        if marker not in docx.lower(): errors.append(f"DOCX parser missing boundary {marker!r}")
+    for marker in ("role-alignment", "decision-velocity", "roleReadinessLabel", "careerSignals", "structuredCv", "provider_schema_invalid"):
+        if marker not in contract: errors.append(f"analysis normalizer missing {marker!r}")
     navigation = config.get("product", {}).get("navigation", [])
     matches = [item for item in navigation if isinstance(item, dict) and item.get("href") == "cv-analysis.html"]
-    if matches != [{"label": "CV Analysis", "href": "cv-analysis.html"}]:
-        errors.append("site/codeology-config.json: navigation requires one CV Analysis route")
-
-    for selector in (".cv-analysis-page", ".cv-analysis-hero", ".cv-analysis-form", ".cv-role-area-grid", ".cv-result-boundary"):
-        if selector not in css:
-            errors.append(f"site/codeology.css: missing CV Analysis selector {selector!r}")
-    if "@media (max-width: 700px)" not in css or ".cv-analysis-page" not in css.split("@media (max-width: 700px)", 1)[1]:
-        errors.append("site/codeology.css: CV Analysis mobile rules are required")
-
-    for phrase in (
-        "d1aecc127b2a16567b1fe78461f81a50f8b04202",
-        "No explicit licence file was found",
-        "does not copy source code or visual assets",
-        "Later server-assisted phase",
-        "never log document text",
-    ):
-        if phrase not in documentation:
-            errors.append(f"CV Analysis migration documentation is missing {phrase!r}")
+    if matches != [{"label": "CV Analysis", "href": "cv-analysis.html"}]: errors.append("navigation requires one CV Analysis route")
+    for selector in (".cv-auth-gate", ".cv-provider-panel", ".cv-upload-grid", ".cv-readiness-hero", ".cv-enhancement-studio", ".cv-preview"):
+        if selector not in css: errors.append(f"missing CV selector {selector!r}")
+    if "@media print" not in css or "@media (max-width: 700px)" not in css: errors.append("mobile and printable CV layouts are required")
+    for phrase in ("d1aecc127b2a16567b1fe78461f81a50f8b04202", "No explicit licence file was found", "does not copy source code or visual assets", "Supabase Vault", "CODEOLOGY_ALLOWED_ORIGINS", "Rollback", "Deferred platform-wide work"):
+        if phrase not in documentation: errors.append(f"migration documentation missing {phrase!r}")
     return errors
 
 
+def inputs() -> tuple[str, str, str, str, dict[str, Any], str, str, str, str, str]:
+    return (PAGE.read_text(), UI.read_text(), EXPORT.read_text(), CSS.read_text(), json.loads(CONFIG.read_text()), DOC.read_text(), EDGE.read_text(), DOCX.read_text(), CONTRACT.read_text(), MIGRATION.read_text())
+
+
 def main() -> int:
-    errors = audit(
-        PAGE.read_text(encoding="utf-8"),
-        ENGINE.read_text(encoding="utf-8"),
-        UI.read_text(encoding="utf-8"),
-        CSS.read_text(encoding="utf-8"),
-        json.loads(CONFIG.read_text(encoding="utf-8")),
-        DOC.read_text(encoding="utf-8"),
-    )
+    errors = audit(*inputs())
     if errors:
-        for error in errors:
-            print(f"ERROR: {error}")
+        for error in errors: print(f"ERROR: {error}")
         return 1
-    print("Codeology CV Analysis privacy, UI, navigation and migration contracts are valid.")
+    print("Codeology account-backed CV Analysis UI, storage, RLS, provider and claim contracts are valid.")
     return 0
 
 
-if __name__ == "__main__":
-    sys.exit(main())
+if __name__ == "__main__": sys.exit(main())

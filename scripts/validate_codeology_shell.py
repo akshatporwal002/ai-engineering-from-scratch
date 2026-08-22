@@ -140,6 +140,9 @@ def audit(
         errors.append("site/codeology-shell.js: shared Codeology navigation is missing")
     if "actions.appendChild(login)" not in shell or "nav.appendChild(login)" in shell:
         errors.append("site/codeology-shell.js: login must live in the right-side action group")
+    for contract in ("mobileTools.remove()", "if (mobileTools) nav.appendChild(mobileTools)"):
+        if contract not in shell:
+            errors.append("site/codeology-shell.js: mobile action controls must survive async navigation replacement")
     if "replaceFooter(config)" not in shell:
         errors.append("site/codeology-shell.js: shared Codeology footer ownership is missing")
     for contract in ('a[href="credits.html"]', "credits.href = 'credits.html'"):

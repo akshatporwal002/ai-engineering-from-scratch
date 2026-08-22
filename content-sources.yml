@@ -88,6 +88,7 @@
         "scripts/test_codeology_assessment_charter.py",
         "scripts/test_codeology_cv_analysis.py",
         "scripts/test_cv_analysis_engine.mjs",
+        "scripts/test_cv_server_contract.mjs",
         "scripts/test_codeology_auth.py",
         "scripts/test_audit_codeology_content.py",
         "scripts/test_codeology_author_scenario_skill.py",
@@ -116,6 +117,13 @@
         "site/cv-analysis.html",
         "site/cv-analysis-engine.js",
         "site/cv-analysis.js",
+        "site/cv-export.js",
+        "supabase/config.toml",
+        "supabase/functions/_shared/analysis-contract.js",
+        "supabase/functions/_shared/docx.js",
+        "supabase/functions/cv-api/index.ts",
+        "supabase/functions/package.json",
+        "supabase/migrations/20260822043422_create_account_backed_cv_analysis.sql",
         "site/credits.html"
       ]
     }

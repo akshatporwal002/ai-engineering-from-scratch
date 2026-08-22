@@ -2,8 +2,8 @@
 (function () {
   'use strict';
 
-  var VERSION = '20260814b';
-  var AUTH_VERSION = '20260814b';
+  var VERSION = '20260822c';
+  var AUTH_VERSION = '20260822c';
   var CONFIG_URL = 'codeology-config.json?v=' + VERSION;
   var STYLE_URL = 'codeology.css?v=' + VERSION;
 
@@ -49,13 +49,17 @@
     var navs = document.querySelectorAll('.site-header .header-nav');
     for (var i = 0; i < navs.length; i++) {
       var nav = navs[i];
+      var header = nav.closest('.site-header');
+      var mobileTools = nav.querySelector('.header-mobile-tools');
+      var actions = header && header.querySelector('.header-actions');
+      if (mobileTools) mobileTools.remove();
       while (nav.firstChild) nav.removeChild(nav.firstChild);
       for (var j = 0; j < navigation.length; j++) {
         nav.appendChild(navigationLink(navigation[j], currentPage));
       }
-      var header = nav.closest('.site-header');
-      var actions = header && header.querySelector('.header-actions');
+      if (mobileTools) nav.appendChild(mobileTools);
       if (!actions) continue;
+      if (actions.querySelector('[data-codeology-auth-trigger]')) continue;
       var login = document.createElement('button');
       login.type = 'button';
       login.className = 'codeology-login-button';

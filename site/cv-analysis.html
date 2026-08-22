@@ -4,184 +4,72 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CV Analysis · Codeology</title>
-  <meta name="description" content="Privately analyze the evidence in your CV and connect role gaps to relevant Codeology lessons. Your CV stays in your browser.">
+  <meta name="description" content="Save, analyze, improve and export your CV through your Codeology account.">
   <link rel="canonical" href="cv-analysis.html">
   <meta property="og:title" content="CV Analysis · Codeology">
-  <meta property="og:description" content="A private, formative CV review that turns career gaps into a Codeology learning plan.">
+  <meta property="og:description" content="Account-backed CV analysis, role-readiness guidance and an improvement studio.">
   <meta property="og:type" content="website">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="CV Analysis · Codeology">
-  <meta name="twitter:description" content="Map the evidence in your CV to relevant Codeology learning.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=20260809a">
-  <link rel="stylesheet" href="codeology.css?v=20260822a" data-codeology-style="20260822a">
+  <link rel="stylesheet" href="codeology.css?v=20260822b" data-codeology-style="20260822b">
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
-
   <header class="site-header">
     <div class="header-inner">
       <a href="index.html" class="logo"><span class="logo-icon" aria-hidden="true"></span> CODEOLOGY</a>
-      <nav class="header-nav" aria-label="Primary">
-        <a href="index.html">Academy</a>
-        <a href="catalog.html">Catalog</a>
-        <a href="prereqs.html">Skill map</a>
-        <a href="cv-analysis.html" aria-current="page">CV Analysis</a>
-        <a href="glossary.html">Glossary</a>
-        <a href="about.html">About</a>
-      </nav>
-      <button class="search-toggle" type="button" data-cmd-palette aria-label="Search (⌘K)" title="Search (⌘K)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      </button>
+      <nav class="header-nav" aria-label="Primary"><a href="index.html">Academy</a><a href="catalog.html">Catalog</a><a href="prereqs.html">Skill map</a><a href="cv-analysis.html" aria-current="page">CV Analysis</a><a href="glossary.html">Glossary</a><a href="about.html">About</a></nav>
+      <button class="search-toggle" type="button" data-cmd-palette aria-label="Search (⌘K)" title="Search (⌘K)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
       <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" type="button"><span class="theme-icon" id="themeIcon">N</span></button>
     </div>
   </header>
 
   <main class="cv-analysis-page" id="main">
     <header class="cv-analysis-hero">
-      <div>
-        <span class="cv-analysis-eyebrow">Private formative tool · local browser analysis</span>
-        <h1>Turn your CV into a learning map.</h1>
-        <p>See which engineering signals your CV communicates, where role-relevant evidence is thin, and which Codeology lessons can help you build stronger proof.</p>
-      </div>
-      <aside class="cv-privacy-card" aria-label="CV privacy">
-        <strong>Your CV stays in your browser.</strong>
-        <p>This version runs entirely in your browser. It does not upload, save, log, or send your CV to an AI provider.</p>
-        <span>No account required · no employability score</span>
-      </aside>
+      <div><span class="cv-analysis-eyebrow">Account-backed career workspace</span><h1>Turn your CV into a learning map.</h1><p>Upload a CV, compare it with a target role, improve weak evidence, and keep every analysis available through your Codeology account.</p></div>
+      <aside class="cv-privacy-card" aria-label="CV data controls"><strong>Private to your account.</strong><p>Your original file and results are stored in private account storage. Analysis is sent to the Gemini account you connect only after you consent.</p><span>Delete a CV at any time · provider keys are encrypted server-side</span></aside>
     </header>
 
-    <section class="cv-analysis-workspace" aria-labelledby="analysisFormTitle">
-      <div class="cv-analysis-heading">
-        <span class="cv-analysis-eyebrow">01 · Add context</span>
-        <h2 id="analysisFormTitle">What role are you aiming for?</h2>
-        <p>Use plain text so the privacy boundary stays simple and visible.</p>
-      </div>
+    <section class="cv-auth-gate" id="cvAuthGate" aria-labelledby="cvAuthTitle"><span class="cv-analysis-eyebrow">Sign in required</span><h2 id="cvAuthTitle">Your CV workspace follows your account.</h2><p>Sign in so files, analyses, improvements, and provider settings can be protected by account ownership rules.</p><button type="button" class="cv-primary-action" id="cvLoginButton">Log in to continue</button></section>
 
-      <form id="cvAnalysisForm" class="cv-analysis-form" novalidate>
-        <div class="cv-field-grid">
-          <div class="cv-field">
-            <label for="targetRole">Target role</label>
-            <select id="targetRole" name="targetRole" required>
-              <option value="">Choose a role</option>
-              <option value="ai-engineer">AI Engineer</option>
-              <option value="ml-engineer">Machine Learning Engineer</option>
-              <option value="llm-engineer">LLM Application Engineer</option>
-              <option value="agent-engineer">Agent Engineer</option>
-              <option value="mlops-engineer">MLOps / AI Platform Engineer</option>
-              <option value="data-engineer">Data Engineer</option>
-              <option value="software-engineer">Software Engineer</option>
-            </select>
-          </div>
-
-          <details class="cv-role-context">
-            <summary>Optional job description</summary>
-            <div class="cv-field">
-              <label for="jobDescription">Role context</label>
-              <textarea id="jobDescription" name="jobDescription" rows="5" maxlength="20000" placeholder="Paste the responsibilities or requirements you want to compare with."></textarea>
-              <span class="cv-field-help">Used only during this local analysis.</span>
-            </div>
-          </details>
-        </div>
-
-        <div class="cv-field cv-text-field">
-          <div class="cv-field-label-row">
-            <label for="cvText">CV text</label>
-            <input id="cvFile" name="cvFile" type="file" accept=".txt,.md,text/plain,text/markdown">
-            <label class="cv-file-action" for="cvFile">Open local TXT or MD</label>
-          </div>
-          <textarea id="cvText" name="cvText" rows="16" minlength="120" maxlength="50000" required aria-describedby="cvTextHelp cvCharacterCount" placeholder="Paste the text from your CV here. Remove contact details first if you prefer."></textarea>
-          <div class="cv-field-meta">
-            <span id="cvTextHelp">Minimum 120 characters. Maximum 50,000.</span>
-            <span id="cvCharacterCount">0 / 50,000</span>
-          </div>
-        </div>
-
-        <p class="cv-form-status" id="cvFormStatus" role="status" aria-live="polite"></p>
-        <div class="cv-form-actions">
-          <button class="cv-primary-action" type="submit">Analyze my CV</button>
-          <button class="cv-secondary-action" id="cvClearButton" type="button">Clear private data</button>
-        </div>
-      </form>
-    </section>
-
-    <section class="cv-analysis-results" id="cvResults" aria-labelledby="cvResultsTitle" hidden>
-      <div class="cv-analysis-heading">
-        <span class="cv-analysis-eyebrow">02 · Read the evidence</span>
-        <h2 id="cvResultsTitle" tabindex="-1">Your formative learning brief</h2>
-        <p id="cvResultSummary"></p>
-      </div>
-
-      <div class="cv-document-facts" id="cvDocumentFacts" aria-label="CV document signals"></div>
-
-      <section class="cv-result-section" aria-labelledby="roleAreasTitle">
-        <div class="cv-result-heading"><h3 id="roleAreasTitle">Role-area coverage</h3><p>Labels reflect words found in the supplied text, not verified ability.</p></div>
-        <div class="cv-role-area-grid" id="cvRoleAreas"></div>
+    <div id="cvAccountWorkspace" hidden>
+      <section class="cv-provider-panel" id="ai-provider-settings" aria-labelledby="providerTitle">
+        <div class="cv-analysis-heading"><span class="cv-analysis-eyebrow">01 · Connect intelligence</span><h2 id="providerTitle">Use your Gemini API key</h2><p>The key travels to an authenticated server function, is encrypted in Supabase Vault, and is never saved in browser storage or returned to this page.</p></div>
+        <div id="cvProviderConnected" class="cv-provider-connected" hidden><div><strong>Gemini connected</strong><span id="cvProviderHint"></span></div><button type="button" class="cv-secondary-action" id="cvProviderDelete">Disconnect key</button></div>
+        <form id="cvProviderForm" class="cv-provider-form" novalidate><div class="cv-field"><label for="cvProviderKey">Gemini API key</label><input id="cvProviderKey" name="apiKey" type="password" minlength="20" maxlength="256" autocomplete="off" spellcheck="false" required><span class="cv-field-help">Codeology never logs the key, CV text, prompt, or provider response.</span></div><button type="submit" class="cv-primary-action">Verify and save key</button></form>
+        <p class="cv-form-status" id="cvProviderStatus" role="status" aria-live="polite"></p>
       </section>
 
-      <section class="cv-result-section" aria-labelledby="signalsTitle">
-        <div class="cv-result-heading"><h3 id="signalsTitle">Evidence-writing signals</h3><p>Strong CV bullets usually make ownership, action, scale, and outcomes inspectable.</p></div>
-        <div class="cv-signal-grid" id="cvSignals"></div>
+      <section class="cv-analysis-workspace" aria-labelledby="analysisFormTitle">
+        <div class="cv-analysis-heading"><span class="cv-analysis-eyebrow">02 · Add your CV</span><h2 id="analysisFormTitle">What role are you aiming for?</h2><p>Upload PDF, DOCX, TXT, or Markdown, or paste CV text. Files are limited to 10 MB.</p></div>
+        <form id="cvAnalysisForm" class="cv-analysis-form" novalidate>
+          <div class="cv-field-grid"><div class="cv-field"><label for="targetRole">Target role</label><input id="targetRole" name="targetRole" type="text" minlength="2" maxlength="120" placeholder="e.g. Graduate AI Engineer" required></div><details class="cv-role-context"><summary>Optional job description</summary><div class="cv-field"><label for="jobDescription">Role context</label><textarea id="jobDescription" name="jobDescription" rows="6" maxlength="20000" placeholder="Paste responsibilities or requirements."></textarea></div></details></div>
+          <div class="cv-upload-grid"><div class="cv-field cv-file-drop"><label for="cvFile">CV file</label><input id="cvFile" name="cvFile" type="file" accept=".pdf,.docx,.txt,.md,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/markdown"><span>PDF · DOCX · TXT · MD</span></div><div class="cv-field cv-text-field"><label for="cvText">Or paste CV text</label><textarea id="cvText" name="cvText" rows="8" minlength="120" maxlength="100000" placeholder="Paste at least 120 characters."></textarea><span class="cv-field-help" id="cvCharacterCount">0 / 100,000</span></div></div>
+          <label class="cv-consent"><input id="cvProviderConsent" type="checkbox" required> I consent to this CV and role context being sent to my connected Gemini provider for this analysis. I understand provider processing follows my provider account terms.</label>
+          <p class="cv-form-status" id="cvFormStatus" role="status" aria-live="polite"></p><div class="cv-form-actions"><button class="cv-primary-action" type="submit">Upload and analyze</button><button class="cv-secondary-action" id="cvClearButton" type="button">Clear form</button></div>
+        </form>
       </section>
 
-      <div class="cv-result-columns">
-        <section class="cv-result-section" aria-labelledby="editsTitle">
-          <div class="cv-result-heading"><h3 id="editsTitle">Editing prompts</h3></div>
-          <ol class="cv-edit-list" id="cvEditPrompts"></ol>
-        </section>
+      <section class="cv-history" aria-labelledby="cvHistoryTitle"><div class="cv-analysis-heading"><span class="cv-analysis-eyebrow">03 · Your account history</span><h2 id="cvHistoryTitle">Saved CV analyses</h2><p>Open an earlier result or permanently delete its file and analyses.</p></div><div id="cvHistoryList" class="cv-history-list"></div></section>
 
-        <section class="cv-result-section" aria-labelledby="lessonsTitle">
-          <div class="cv-result-heading"><h3 id="lessonsTitle">Recommended lessons</h3><p>Build the missing knowledge, then turn it into evidence through real work.</p></div>
-          <div class="cv-lesson-list" id="cvLessonList"></div>
-        </section>
-      </div>
-
-      <aside class="cv-result-boundary" aria-label="Analysis limits">
-        <strong>Formative guidance only</strong>
-        <p>This analysis does not establish identity, authorship, competence, seniority, job readiness, or suitability for employment. A missing term can mean the CV needs clearer writing—not that the learner lacks the skill.</p>
-        <a href="assurance.html">How Codeology labels real evidence →</a>
-      </aside>
-    </section>
+      <section class="cv-analysis-results" id="cvResults" aria-labelledby="cvResultsTitle" hidden>
+        <div class="cv-analysis-heading"><span class="cv-analysis-eyebrow">04 · Read the evidence</span><h2 id="cvResultsTitle" tabindex="-1">Target-role CV readiness</h2><p id="cvResultSummary"></p></div>
+        <div class="cv-readiness-hero"><div class="cv-readiness-score"><strong id="cvReadinessScore">0</strong><span>/ 100</span></div><div><span class="cv-status-badge" id="cvReadinessLabel"></span><p id="cvReadinessRationale"></p><small id="cvReadinessConfidence"></small></div></div>
+        <div class="cv-dimension-grid" id="cvDimensions"></div>
+        <section class="cv-result-section"><div class="cv-result-heading"><h3>Career Architect signals</h3><p>Nine focused views of the evidence communicated by this CV.</p></div><div class="cv-career-signal-grid" id="cvCareerSignals"></div></section>
+        <div class="cv-result-columns"><section class="cv-result-section"><div class="cv-result-heading"><h3>Strengths</h3></div><ul id="cvStrengths"></ul></section><section class="cv-result-section"><div class="cv-result-heading"><h3>Missing or weak signals</h3></div><ul id="cvMissingSkills"></ul></section></div>
+        <section class="cv-result-section"><div class="cv-result-heading"><h3>Improvement plan</h3></div><ol id="cvImprovementPlan"></ol></section>
+        <section class="cv-result-section"><div class="cv-result-heading"><h3>Codeology learning map</h3><p>Suggestions connect weak signals to lessons; they do not prove you lack a skill.</p></div><div class="cv-lesson-list" id="cvLessonList"></div></section>
+        <section class="cv-enhancement-studio" aria-labelledby="cvStudioTitle"><div class="cv-result-heading"><h3 id="cvStudioTitle">CV enhancement studio</h3><p>Review every rewrite. Suggestions never invent metrics; placeholders require your real evidence.</p></div><div id="cvSuggestions" class="cv-suggestion-list"></div><div class="cv-template-tools"><label for="cvTemplate">Preview template</label><select id="cvTemplate"><option value="professional">Professional</option><option value="modern">Modern</option><option value="minimal">Minimal</option></select><button type="button" class="cv-secondary-action" id="cvExportPdf">Print / PDF</button><button type="button" class="cv-secondary-action" id="cvExportDocx">Export DOCX</button></div><article class="cv-preview" id="cvPreview" data-template="professional" aria-label="Enhanced CV preview"></article></section>
+        <aside class="cv-result-boundary" aria-label="Analysis limits"><strong>Formative guidance, not a hiring prediction</strong><p>The readiness score describes how clearly this CV communicates evidence for the selected role. It does not establish identity, authorship, competence, employability, seniority, or suitability for employment.</p><a href="assurance.html">How Codeology labels real evidence →</a></aside>
+      </section>
+    </div>
   </main>
 
-  <footer class="site-footer">
-    <div class="container footer-inner">
-      <p>Codeology · Learn freely. Build for real. Prove what you can do.</p>
-      <div class="footer-links"><a href="catalog.html">Catalog</a><a href="assurance.html">Evidence policy</a><a href="credits.html">Credits</a><a href="about.html">About</a></div>
-    </div>
-  </footer>
-
-  <script>
-    (function () {
-      var root = document.documentElement;
-      var stored = null;
-      try { stored = localStorage.getItem('theme'); } catch (_) {}
-      if (stored) root.setAttribute('data-theme', stored);
-      else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) root.setAttribute('data-theme', 'dark');
-
-      function updateIcon() {
-        var icon = document.getElementById('themeIcon');
-        if (icon) icon.textContent = root.getAttribute('data-theme') === 'light' ? 'N' : 'D';
-      }
-
-      document.addEventListener('DOMContentLoaded', function () {
-        updateIcon();
-        var button = document.getElementById('themeToggle');
-        if (button) button.addEventListener('click', function () {
-          var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-          root.setAttribute('data-theme', next);
-          try { localStorage.setItem('theme', next); } catch (_) {}
-          updateIcon();
-        });
-      });
-    }());
-  </script>
-  <script src="data.js?v=20260814a"></script>
-  <script src="cv-analysis-engine.js?v=20260822a"></script>
-  <script src="cv-analysis.js?v=20260822a" defer></script>
-  <script src="header.js?v=20260814a" defer></script>
-  <script src="cmdpalette.js?v=20260808h" defer></script>
+  <footer class="site-footer"><div class="container footer-inner"><p>Codeology · Learn freely. Build for real. Prove what you can do.</p><div class="footer-links"><a href="catalog.html">Catalog</a><a href="assurance.html">Evidence policy</a><a href="credits.html">Credits</a><a href="about.html">About</a></div></div></footer>
+  <script>(function () { var root = document.documentElement; var stored = null; try { stored = localStorage.getItem('theme'); } catch (_) {} if (stored) root.setAttribute('data-theme', stored); else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) root.setAttribute('data-theme', 'dark'); function icon() { var node = document.getElementById('themeIcon'); if (node) node.textContent = root.getAttribute('data-theme') === 'light' ? 'N' : 'D'; } document.addEventListener('DOMContentLoaded', function () { icon(); var button = document.getElementById('themeToggle'); if (button) button.addEventListener('click', function () { root.setAttribute('data-theme', root.getAttribute('data-theme') === 'light' ? 'dark' : 'light'); try { localStorage.setItem('theme', root.getAttribute('data-theme')); } catch (_) {} icon(); }); }); }());</script>
+  <script src="data.js?v=20260814a"></script><script src="cv-analysis-engine.js?v=20260822a"></script><script src="cv-export.js?v=20260822b"></script><script src="cv-analysis.js?v=20260822b" defer></script><script src="header.js?v=20260822c" defer></script><script src="cmdpalette.js?v=20260808h" defer></script>
 </body>
 </html>

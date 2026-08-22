@@ -105,10 +105,11 @@
       + '</div></div>'
       + '<div data-auth-signed-in hidden>'
       + '<h2>Your account</h2><strong data-auth-name></strong><p data-auth-email></p>'
+      + '<a class="codeology-auth-settings" href="cv-analysis.html#ai-provider-settings">AI provider &amp; CV settings</a>'
       + '<button class="codeology-auth-signout" type="button" data-auth-signout>Log out</button>'
       + '</div>'
       + '<p class="codeology-auth-status" data-auth-status role="status"></p>'
-      + '<p class="codeology-auth-privacy">Only your account and learning progress are stored. Course content remains freely available without logging in.</p>'
+      + '<p class="codeology-auth-privacy">Your account stores learning progress and any account features you choose to use, including saved CV analyses. Course content remains freely available without logging in.</p>'
       + '</div>';
     document.body.appendChild(dialog);
 
@@ -309,7 +310,11 @@
     });
   }
 
-  window.CodeologyAuth = Object.freeze({ open: openDialog, getUser: function () { return currentUser; } });
+  window.CodeologyAuth = Object.freeze({
+    open: openDialog,
+    getUser: function () { return currentUser; },
+    getClient: function () { return client; },
+  });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 }());

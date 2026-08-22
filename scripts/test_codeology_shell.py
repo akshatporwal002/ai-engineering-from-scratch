@@ -122,6 +122,21 @@ class CodeologyShellTest(unittest.TestCase):
         )
         self.assertTrue(any("right-side action group" in error for error in errors), errors)
 
+    def test_mobile_actions_must_survive_navigation_replacement(self) -> None:
+        config = json.loads(validator.CONFIG.read_text(encoding="utf-8"))
+        registry = json.loads(validator.SOURCES.read_text(encoding="utf-8"))
+        shell = validator.SHELL.read_text(encoding="utf-8").replace(
+            "if (mobileTools) nav.appendChild(mobileTools)", "mobileTools = null", 1
+        )
+        errors = validator.audit(
+            config,
+            validator.CSS.read_text(encoding="utf-8"),
+            shell,
+            validator.HEADER.read_text(encoding="utf-8"),
+            registry,
+        )
+        self.assertTrue(any("mobile action controls" in error for error in errors), errors)
+
     def test_narration_loader_is_rejected(self) -> None:
         config = json.loads(validator.CONFIG.read_text(encoding="utf-8"))
         registry = json.loads(validator.SOURCES.read_text(encoding="utf-8"))
