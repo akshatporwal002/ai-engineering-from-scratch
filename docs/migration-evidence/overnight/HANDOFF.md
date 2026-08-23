@@ -261,3 +261,73 @@ canonical reference tree has no diff and the Catalog page remains unchanged.
   still active.
 - Catalog legacy restyling is excluded by explicit user direction; preserve its
   current Next appearance while continuing functional/accessibility checks.
+
+---
+
+## Glossary parity continuation — 2026-08-23
+
+### Scope and status
+
+- Glossary is now `visual-verified`; independent human review is still required.
+- The Next route preserves the maintained 243-entry ledger, source/category
+  order, search scoring, filters, URL state, keyboard shortcuts, letter and
+  deep-anchor navigation, evidence disclosures, lesson/source links, related
+  links, copy feedback, themes, responsive behavior, attribution, and footer.
+- The current Next Catalog design was explicitly preserved. No Catalog source,
+  style, status, or reference capture was changed.
+- No push, merge, deployment, account, provider, database, secret, CV, or other
+  external-state action occurred.
+
+### Accessibility and synchronization
+
+- Focused/open Glossary evidence exposed real light-theme contrast failures:
+  4.41:1 accent text, 4.13:1 muted labels, and 3.94:1 hover text. These were not
+  animation or intersection timing failures.
+- The maintained legacy source now uses `#b93600` for affected evidence and
+  related links and `#666` for evidence labels. Next consumes the same source
+  style, so the implementations do not diverge; dark mode is unchanged.
+- No Axe exclusion or WCAG/parity exception was added. Legacy and Next pass in
+  Chromium and WebKit under normal and reduced motion with zero serious or
+  critical findings.
+- Initial hash and smooth-scroll races produced two invalid capture sets. Both
+  are preserved under the separately labelled unsynchronized Glossary trees.
+  The canonical production tree was not overwritten. A separately named
+  `deep-anchor-synchronized` set deterministically sets the hash and aligns the
+  target after hydration.
+
+### Evidence and validation
+
+- Report: `docs/migration-evidence/visual-parity/reports/glossary.md`.
+- The production Glossary tree contains 128 immutable images and sidecars,
+  including 16 separately named synchronized deep-anchor references.
+- The accessibility matrix has 16 corrected focused-entry captures, 16
+  same-run projections, 16 diffs, and 16 sidecars. Light mode changes 29,820
+  antialiased text pixels; dark mode is exact; every sidecar reports zero pixels
+  outside approved regions.
+- Focused legacy/Next interaction, keyboard, responsive, console/network, Axe,
+  and normal/reduced-motion matrix: 2/2 browser projects passed.
+- Accessibility-corrected screenshot matrix: 16/16 passed.
+- Latest combined visual batch: 71/72 passed immediately. The sole Chromium
+  desktop empty-result mismatch comprised 41 isolated antialias-edge pixels;
+  the unchanged state passed 1/1 on immediate isolation. Canonical references
+  were not updated.
+- Unit suite: 24/24 passed. Typecheck, production build, route-parity, and diff
+  checks passed.
+- Full migration suite: 32 API tests, 24 unit tests, and 115/116 browser cases
+  passed; the unrelated Chromium lesson-fallback timeout passed 1/1 on
+  immediate isolation.
+- Root `npm run ci` again stopped only at the pre-existing
+  `test_commit_failure_never_reports_publish_success` translation-workflow
+  contract failure, after all preceding validation passed.
+- Chromium does not reliably tile sticky content in Glossary full-page images
+  taller than 100,000 pixels. Those desktop/wide full-page comparisons are
+  skipped by a measured canvas-height guard; exact viewports, Chromium
+  mobile/tablet full pages, all WebKit full pages, and shorter filtered
+  desktop/wide full pages remain mandatory. No tolerance or mask was added.
+
+### Remaining gates
+
+- A human reviewer must inspect the Glossary paired evidence before its status
+  becomes `reviewed`.
+- Other unreviewed route families remain active migration work.
+- Catalog legacy restyling remains excluded by explicit user preference.

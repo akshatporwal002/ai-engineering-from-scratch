@@ -32,6 +32,9 @@ export const glossaryEntrySchema = z.object({
   confusion: z.string(),
   related: z.array(z.string()),
   aliases: z.array(z.string()),
+  lessons: z.array(z.object({ label: nonEmpty, url: nonEmpty })),
+  sources: z.array(z.object({ label: nonEmpty, url: nonEmpty })),
+  whyCalled: z.string(),
 });
 
 export const certificationProgramSchema = z.object({

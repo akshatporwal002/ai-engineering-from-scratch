@@ -94,11 +94,12 @@ function writeReference(buffer: Buffer, target: string, page: Page, testInfo: Te
   writeFileSync(`${target}.json`, `${JSON.stringify(metadata, null, 2)}\n`, { flag: "wx" });
 }
 
-export async function compareVisualPage(page: Page, testInfo: TestInfo, visual: VisualState) {
-  for (const capture of [
+export async function compareVisualPage(page: Page, testInfo: TestInfo, visual: VisualState, options: { fullPage?: boolean; maxViewportDiffPixels?: number } = {}) {
+  const captures = [
     { suffix: "viewport" as const, fullPage: false },
     { suffix: "full-page" as const, fullPage: true },
-  ]) {
+  ].filter((capture) => capture.fullPage === false || options.fullPage !== false);
+  for (const capture of captures) {
     const parts = artifactParts(testInfo, visual, capture.suffix);
     const buffer = await page.screenshot({ fullPage: capture.fullPage, animations: "disabled", caret: "hide" });
     const reference = artifactPath("reference-production", parts);
@@ -119,7 +120,7 @@ export async function compareVisualPage(page: Page, testInfo: TestInfo, visual: 
       description: JSON.stringify({ diff: artifactPath("diffs", parts), suffix: capture.suffix }),
     });
     const { browserName } = projectMetadata(testInfo);
-    const maxDiffPixels = browserName === "chromium" && capture.suffix === "viewport" ? 4 : 0;
+    const maxDiffPixels = browserName === "chromium" && capture.suffix === "viewport" ? (options.maxViewportDiffPixels ?? 4) : 0;
     expect.soft(buffer).toMatchSnapshot(parts, { maxDiffPixels, threshold: 0 });
   }
 }

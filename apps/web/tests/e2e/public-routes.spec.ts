@@ -115,20 +115,91 @@ for (const route of [
   });
 }
 
-test("catalog and glossary search states are keyboard-operable", async ({ page }) => {
+test("catalog search is keyboard-operable", async ({ page }) => {
   await page.goto("/catalog");
   await expect(page.locator('.public-explorer[data-hydrated="true"]')).toBeVisible();
   const catalogSearch = page.getByRole("searchbox", { name: "Search lessons" });
   await catalogSearch.fill("Dev Environment");
   await expect(page.getByRole("status")).toContainText("1 of 503 lessons");
   await expect(page.getByRole("heading", { name: "Dev Environment" })).toBeVisible();
+});
 
-  await page.goto("/glossary");
-  await expect(page.locator('.public-explorer[data-hydrated="true"]')).toBeVisible();
-  const glossarySearch = page.getByRole("searchbox", { name: "Search the glossary" });
-  await glossarySearch.fill("training-memory technique");
-  await expect(page.getByRole("status")).toContainText("1 of");
-  await expect(page.getByRole("heading", { name: "Activation Checkpointing" })).toBeVisible();
+test("public-routes:glossary preserves interactions and accessibility across motion preferences", async ({ page }) => {
+  test.setTimeout(120_000);
+  const errors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error" && !message.text().includes("ERR_BLOCKED_BY_CLIENT.Inspector")) errors.push(message.text());
+  });
+  page.on("pageerror", (error) => errors.push(error.message));
+  page.on("requestfailed", (request) => {
+    const url = new URL(request.url());
+    const failure = request.failure()?.errorText;
+    if ((url.hostname === "127.0.0.1" || url.hostname === "localhost") && failure !== "net::ERR_ABORTED") {
+      errors.push(`${request.method()} ${url.pathname}: ${failure}`);
+    }
+  });
+
+  for (const reducedMotion of ["no-preference", "reduce"] as const) {
+    await page.emulateMedia({ reducedMotion });
+    for (const url of ["http://127.0.0.1:4173/glossary.html", "http://127.0.0.1:4174/glossary"]) {
+      const mainId = url.includes(":4173/") ? "main" : "main-content";
+      await page.goto(url);
+      await expect(page.locator(".glossary-explorer")).toBeVisible();
+      await expect(page.locator("#glossaryList .glossary-entry").first()).toBeVisible();
+      await settleFiniteMotion(page);
+
+      await expect(page.locator(`main#${mainId}`)).toHaveCount(1);
+      await expect(page.getByRole("heading", { level: 1, name: "Glossary" })).toHaveCount(1);
+      const skip = page.getByRole("link", { name: "Skip to content" });
+      await skip.focus();
+      await expect(skip).toBeFocused();
+      await expect(skip).not.toHaveCSS("outline-style", "none");
+
+      const search = page.getByRole("searchbox", { name: "Search the ledger" });
+      await page.keyboard.press("/");
+      await expect(search).toBeFocused();
+      await search.fill("training-memory technique");
+      await expect(page.locator("#glossaryCount")).toContainText("1 of 243 terms");
+      await expect(page.getByRole("heading", { name: "Activation Checkpointing", exact: true })).toBeVisible();
+      await expect(page).toHaveURL(/\?q=training-memory\+technique$/);
+      await page.keyboard.press("Escape");
+      await expect(search).toHaveValue("");
+      await expect(search).toBeFocused();
+
+      const allTerms = page.locator('[data-category="all"]');
+      await allTerms.focus();
+      await page.keyboard.press("ArrowDown");
+      await expect(page.locator('[data-category="Math & training"]')).toBeFocused();
+      await page.keyboard.press("Enter");
+      await expect(page.locator('[data-category="Math & training"]')).toHaveAttribute("aria-pressed", "true");
+      await expect(page).toHaveURL(/category=Math(?:\+|%20)%26(?:\+|%20)training$/);
+
+      await search.fill("definitely-no-glossary-match");
+      await expect(page.getByRole("heading", { name: "No matching reference" })).toBeVisible();
+      await page.getByRole("button", { name: "Clear filters" }).click();
+
+      const letterB = page.getByRole("button", { name: "Jump to letter B" });
+      await letterB.focus();
+      await page.keyboard.press("Enter");
+      await expect(page.locator("#letter-B")).toBeFocused();
+      await expect(page.locator("#letter-B")).not.toHaveCSS("outline-style", "none");
+
+      await page.goto(`${url}#backpropagation`);
+      const backpropagation = page.locator("#backpropagation");
+      await expect(backpropagation).toHaveClass(/is-focused/);
+      await expect(backpropagation).toBeFocused();
+      await expect(backpropagation).not.toHaveCSS("outline-style", "none");
+      await backpropagation.locator("summary").click();
+      await expect(backpropagation.getByRole("link", { name: "Backpropagation from Scratch" })).toHaveAttribute("href", /(?:\/lessons\/03-deep-learning-core\/03-backpropagation|lesson\.html\?path=phases%2F03-deep-learning-core%2F03-backpropagation)/);
+      await backpropagation.getByRole("link", { name: "Gradient" }).click();
+      await expect(page).toHaveURL(/#gradient$/);
+      await expect(page.locator("#gradient")).toBeFocused();
+
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+      await expectNoBlockingAxeFindings(page);
+      expect(errors).toEqual([]);
+    }
+  }
 });
 
 test("academy phase dialog is keyboard-operable and restores focus", async ({ page }) => {

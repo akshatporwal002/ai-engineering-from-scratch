@@ -50,6 +50,11 @@ export type AcademyLegacyPage = {
   html: string;
 };
 
+export type GlossaryLegacyPage = {
+  styles: string;
+  categories: string[];
+};
+
 function readRepositoryFile(relativePath: string) {
   const resolved = path.resolve(repositoryRoot, relativePath);
   if (!resolved.startsWith(repositoryRoot + path.sep)) throw new ContentValidationError(relativePath, "path escapes repository root");
@@ -132,6 +137,22 @@ export function loadRoadmapPrerequisites(): Record<string, number[]> {
 
 export function loadGlossary(): GlossaryEntry[] {
   return cached("glossary", () => validateContent(glossaryEntrySchema.array(), extractJsonConstant<unknown>(generatedData(), "GLOSSARY"), "site/data.js#GLOSSARY"));
+}
+
+export function loadGlossaryLegacyPage(): GlossaryLegacyPage {
+  return cached("glossary-legacy-page", () => {
+    const source = readRepositoryFile("site/glossary.html");
+    const routeStyles = source.match(/<style>([\s\S]*?)<\/style>/)?.[1];
+    if (!routeStyles) throw new Error("Legacy glossary page is missing its route styles");
+    return {
+      styles: `${readRepositoryFile("site/style.css")}\n${readRepositoryFile("site/codeology.css")}\n${routeStyles}\n.glossary-page button, .glossary-page input { line-height: normal; }\n.glossary-entry:focus-visible { outline: -webkit-focus-ring-color auto 1px; outline-offset: 0; }`,
+      categories: validateContent(
+        z.array(z.string().min(1)),
+        extractJsonConstant<unknown>(generatedData(), "GLOSSARY_CATEGORY_ORDER"),
+        "site/data.js#GLOSSARY_CATEGORY_ORDER",
+      ),
+    };
+  });
 }
 
 export function loadCertificationProgram(): CertificationProgram {

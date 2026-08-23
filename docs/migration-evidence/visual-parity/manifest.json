@@ -30,7 +30,14 @@
     "visual:editorial:credits:light",
     "visual:editorial:credits:dark",
     "visual:editorial:assurance:light",
-    "visual:editorial:assurance:dark"
+    "visual:editorial:assurance:dark",
+    "visual:glossary:default-light",
+    "visual:glossary:default-dark",
+    "visual:glossary:search",
+    "visual:glossary:category",
+    "visual:glossary:empty-result",
+    "visual:glossary:letter-navigation",
+    "visual:glossary:deep-anchor-synchronized"
   ],
   "knownBlockedStates": [
     {

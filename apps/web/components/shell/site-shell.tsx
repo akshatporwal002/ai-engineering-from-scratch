@@ -292,6 +292,14 @@ function Footer() {
       <a href="https://github.com/akshatporwal002/ai-engineering-from-scratch" target="_blank" rel="noopener">GitHub</a>
       <Link href="/credits">Credits</Link>
     </>
+  ) : pathname === "/glossary" ? (
+    <>
+      <Link href="/">Home</Link>
+      <a href="https://github.com/akshatporwal002/ai-engineering-from-scratch" target="_blank" rel="noopener">GitHub</a>
+      <Link href="/catalog">Catalog</Link>
+      <a href="https://github.com/akshatporwal002/ai-engineering-from-scratch/issues/new/choose" target="_blank" rel="noopener">Report / Suggest</a>
+      <Link href="/credits">Credits</Link>
+    </>
   ) : null;
 
   return (

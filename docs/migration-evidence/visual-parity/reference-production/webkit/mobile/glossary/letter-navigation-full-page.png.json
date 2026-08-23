@@ -1,0 +1,20 @@
+{
+  "productionUrl": "https://learn.akshatporwal.dev/glossary.html",
+  "capturedAt": "2026-08-23T10:02:45.424Z",
+  "browserProject": "webkit",
+  "viewport": {
+    "name": "mobile",
+    "width": 390,
+    "height": 844
+  },
+  "theme": "light",
+  "routeState": "letter-navigation",
+  "visualTestId": "glossary",
+  "migrationCommit": "ee48094d8d39f754e19c0e022e0576814d9ca383",
+  "migrationTree": "6bf354f885348f934f50de5f25d1bd2babf68e15",
+  "productionRevision": {
+    "buildRef": "main",
+    "buildMetaEtag": "c55b6a3010ca43473a4e753ad8d511bb",
+    "observedAt": "2026-08-23T05:44:36.000Z"
+  }
+}

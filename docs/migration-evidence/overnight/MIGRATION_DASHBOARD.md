@@ -5,9 +5,9 @@
 ## Coverage
 
 - Legacy HTML routes: 12
-- Implemented: 8
+- Implemented: 7
 - Interaction verified: 0
-- Visual verified: 3
+- Visual verified: 4
 - Human reviewed: 0
 - Planned: 1
 - Excluded: 0
@@ -26,7 +26,7 @@
 | `/certifications.html` | `/certifications` | certification-program | implemented | `public-routes:certifications`<br>`public-content:certification-validation` |
 | `/credits.html` | `/credits` | editorial | visual-verified | `public-routes:credits`<br>`public-content:provenance` |
 | `/cv-analysis.html` | `/cv-analysis` | presentation-only | implemented | `public-routes:cv-analysis`<br>`public-content:presentation-boundary` |
-| `/glossary.html` | `/glossary` | glossary | implemented | `public-routes:glossary`<br>`public-content:glossary-search` |
+| `/glossary.html` | `/glossary` | glossary | visual-verified | `public-routes:glossary`<br>`public-content:glossary-search` |
 | `/lesson.html` | `/lessons/[...slug]` | lesson | implemented | `reference-lesson:reader`<br>`reference-lesson:paired-evidence` |
 | `/prereqs.html` | `/roadmap` | roadmap | implemented | `public-routes:roadmap`<br>`public-content:prerequisites` |
 

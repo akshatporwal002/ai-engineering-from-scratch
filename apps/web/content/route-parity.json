@@ -55,9 +55,9 @@
     "requiredTests": ["public-routes:cv-analysis", "public-content:presentation-boundary"]
   },
   {
-    "legacyUrl": "/glossary.html", "productionUrl": "/glossary.html", "nextUrl": "/glossary", "kind": "glossary", "status": "implemented", "fixture": "site/glossary.html",
-    "states": ["default", "search", "letter-navigation", "deep-anchor", "empty-result"], "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
-    "interactionCapabilities": ["mouse", "keyboard", "search", "anchor-navigation", "url-state"], "visualTestIds": [],
+    "legacyUrl": "/glossary.html", "productionUrl": "/glossary.html", "nextUrl": "/glossary", "kind": "glossary", "status": "visual-verified", "fixture": "site/glossary.html",
+    "states": ["default-light", "default-dark", "search", "category", "letter-navigation", "deep-anchor", "empty-result"], "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
+    "interactionCapabilities": ["mouse", "keyboard", "search", "filter", "anchor-navigation", "url-state", "reduced-motion"], "visualTestIds": ["visual:glossary:default-light", "visual:glossary:default-dark", "visual:glossary:search", "visual:glossary:category", "visual:glossary:empty-result", "visual:glossary:letter-navigation", "visual:glossary:deep-anchor-synchronized"],
     "requiredTests": ["public-routes:glossary", "public-content:glossary-search"]
   },
   {

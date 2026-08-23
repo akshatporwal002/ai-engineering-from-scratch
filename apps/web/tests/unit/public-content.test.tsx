@@ -102,8 +102,8 @@ describe("public search and filters", () => {
   it("filters glossary terms without changing the source entries", () => {
     const entries = loadGlossary();
     render(<GlossaryExplorer entries={entries} />);
-    fireEvent.change(screen.getByLabelText("Search the glossary"), { target: { value: "training-memory technique" } });
+    fireEvent.change(screen.getByLabelText("Search the ledger"), { target: { value: "training-memory technique" } });
     expect(screen.getByRole("heading", { name: "Activation Checkpointing" })).toBeTruthy();
-    expect(screen.getByRole("status").textContent).toBe(`1 of ${entries.length} terms`);
+    expect(document.getElementById("glossaryCount")?.textContent).toBe(`1 of ${entries.length} terms`);
   });
 });
