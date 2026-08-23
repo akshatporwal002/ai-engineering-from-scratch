@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "canonicalOrigin": "https://learn.akshatporwal.dev",
+  "productionRevision": {
+    "buildRef": "main",
+    "buildMetaEtag": "c55b6a3010ca43473a4e753ad8d511bb",
+    "observedAt": "2026-08-23T05:44:36.000Z"
+  },
+  "browsers": ["chromium", "webkit"],
+  "viewports": {
+    "mobile": { "width": 390, "height": 844 },
+    "tablet": { "width": 768, "height": 1024 },
+    "desktop": { "width": 1440, "height": 1000 },
+    "wide": { "width": 1920, "height": 1080 }
+  },
+  "captureConditions": {
+    "locale": "en-AU",
+    "timezone": "Australia/Melbourne",
+    "deviceScaleFactor": 1,
+    "caret": "hidden",
+    "nonessentialAnimation": "paused",
+    "reducedMotion": "reduce",
+    "referencesImmutable": true
+  },
+  "capturedVisualTestIds": [
+    "visual:academy:light",
+    "visual:academy:dark"
+  ],
+  "knownBlockedStates": [
+    {
+      "surface": "account-menu",
+      "states": ["signed-in", "menu-open-signed-in"],
+      "reason": "Production authentication is disabled and no approved test account is available."
+    },
+    {
+      "surface": "cv-analysis",
+      "states": ["signed-in", "provider-model", "upload", "loading", "success", "failure", "history", "delete-confirmation"],
+      "reason": "Production authentication is disabled and no approved test account is available."
+    }
+  ]
+}

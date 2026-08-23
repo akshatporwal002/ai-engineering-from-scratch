@@ -1,7 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
-const evidenceDirectory = "../../docs/migration-evidence/overnight/visual";
 const routes = [
   { name: "academy", next: "/", legacy: "/index.html" },
   { name: "about", next: "/about", legacy: "/about.html" },
@@ -74,18 +73,13 @@ for (const viewport of [
   { name: "desktop", width: 1440, height: 1000 },
 ]) {
   for (const route of routes) {
-    test(`${route.name} paired ${viewport.name} evidence has no overflow`, async ({ page }) => {
-      let errors: string[] = [];
+    test(`${route.name} ${viewport.name} layout has no overflow`, async ({ page }) => {
+      const errors: string[] = [];
       page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
-      await page.goto(`http://127.0.0.1:4173${route.legacy}`);
-      await page.screenshot({ path: `${evidenceDirectory}/workstream-3-${route.name}-legacy-${viewport.name}.png` });
-
-      errors = [];
       await page.goto(`http://127.0.0.1:4174${route.next}`);
       const explorer = page.locator('.public-explorer[data-hydrated="true"]');
       if (await explorer.count()) await expect(explorer).toBeVisible();
-      await page.screenshot({ path: `${evidenceDirectory}/workstream-3-${route.name}-next-${viewport.name}.png` });
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
       expect(errors).toEqual([]);
     });

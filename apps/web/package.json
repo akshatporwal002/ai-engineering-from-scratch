@@ -10,6 +10,8 @@
     "build:migration-dashboard": "node scripts/build-migration-dashboard.mjs",
     "test": "vitest run",
     "test:e2e": "playwright test",
+    "test:visual": "playwright test --config playwright.visual.config.ts",
+    "capture:visual-reference": "node scripts/capture-production-references.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

@@ -1,0 +1,20 @@
+{
+  "productionUrl": "https://learn.akshatporwal.dev/",
+  "capturedAt": "2026-08-23T05:53:42.456Z",
+  "browserProject": "webkit",
+  "viewport": {
+    "name": "desktop",
+    "width": 1440,
+    "height": 1000
+  },
+  "theme": "light",
+  "routeState": "light",
+  "visualTestId": "academy",
+  "migrationCommit": "c0a7da8b422af19b830f435aa9ce5c194f7b8ba8",
+  "migrationTree": "23ef5ab940765824106365dc2ab8f55a2cc1a84d",
+  "productionRevision": {
+    "buildRef": "main",
+    "buildMetaEtag": "c55b6a3010ca43473a4e753ad8d511bb",
+    "observedAt": "2026-08-23T05:44:36.000Z"
+  }
+}
