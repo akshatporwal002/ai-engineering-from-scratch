@@ -3,6 +3,8 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 
+type BrowserName = "chromium" | "firefox" | "webkit";
+
 const repositoryRoot = path.resolve(process.cwd(), "../..");
 const lessonPath = "phases/01-math-foundations/08-optimization";
 const legacyUrl = `http://127.0.0.1:4173/lesson.html?path=${lessonPath}`;
@@ -39,8 +41,21 @@ test("reference lesson is accessible and exposes every reader mechanism", async 
   expect(errors).toEqual([]);
 });
 
-test("toc, figure, copy, and quiz are keyboard-operable", async ({ page, context }) => {
-  await context.grantPermissions(["clipboard-read", "clipboard-write"], { origin: "http://127.0.0.1:4174" });
+async function allowClipboard(page: Page, browserName: BrowserName) {
+  if (browserName === "chromium") {
+    await page.context().grantPermissions(["clipboard-read", "clipboard-write"], { origin: "http://127.0.0.1:4174" });
+    return;
+  }
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText: async () => undefined },
+    });
+  });
+}
+
+test("toc, figure, copy, and quiz are keyboard-operable", async ({ page, browserName }) => {
+  await allowClipboard(page, browserName);
   await page.goto(nextUrl);
   const buildLink = page.getByRole("navigation", { name: "On this page" }).getByRole("link", { name: "Build It" });
   await buildLink.focus();

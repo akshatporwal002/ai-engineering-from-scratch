@@ -3,6 +3,7 @@ import { defineConfig, devices } from "@playwright/test";
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: false,
+  workers: 1,
   forbidOnly: true,
   retries: 0,
   reporter: [["list"]],
@@ -11,7 +12,10 @@ export default defineConfig({
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    { name: "webkit", use: { ...devices["Desktop Safari"] } },
+  ],
   webServer: [
     {
       command: "python3 -m uvicorn app.main:app --app-dir ../api --host 127.0.0.1 --port 8000",
@@ -26,10 +30,10 @@ export default defineConfig({
       timeout: 30_000,
     },
     {
-      command: "npm run dev -- --hostname 127.0.0.1 --port 4174",
+      command: "CODEOLOGY_ENABLE_FIXTURES=1 npm run build && npm run start -- --hostname 127.0.0.1 --port 4174",
       url: "http://127.0.0.1:4174/components",
       reuseExistingServer: true,
-      timeout: 60_000,
+      timeout: 90_000,
     },
   ],
 });

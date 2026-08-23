@@ -74,10 +74,10 @@ for (const viewport of [
     if (viewport.name === "mobile") {
       const navigation = page.getByRole("navigation", { name: "Primary" });
       await expect(navigation).toBeHidden();
-      await page.getByRole("button", { name: "Menu", exact: true }).click();
+      await page.getByRole("button", { name: "Open navigation" }).click();
       await expect(navigation).toBeVisible();
       const links = navigation.getByRole("link");
-      expect(await links.count()).toBe(5);
+      expect(await links.count()).toBe(7);
       for (const link of await links.all()) {
         const box = await link.boundingBox();
         expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);

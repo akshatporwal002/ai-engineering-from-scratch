@@ -12,7 +12,9 @@ async function localOnly(page: Page) {
 
 async function connect(page: Page, outcome: string) {
   await page.getByLabel("Fixture outcome").selectOption(outcome);
-  await page.getByRole("button", { name: "Connect opaque fixture" }).click();
+  const button = page.getByRole("button", { name: "Connect opaque fixture" });
+  await button.click();
+  await expect(button).toBeEnabled();
 }
 
 async function analyze(page: Page) {
@@ -86,6 +88,7 @@ for (const viewport of [{ name: "mobile", width: 390, height: 844 }, { name: "de
     await page.goto("http://127.0.0.1:4174/cv-analysis");
     if (viewport.name === "desktop") {
       await connect(page, "success");
+      await expect(page.getByRole("status")).toContainText("Fixture provider connected");
       await analyze(page);
       await expect(page.getByRole("status")).toContainText("Mock analysis complete");
     }

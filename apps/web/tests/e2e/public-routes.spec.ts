@@ -40,12 +40,14 @@ for (const route of routes) {
 
 test("catalog and glossary search states are keyboard-operable", async ({ page }) => {
   await page.goto("/catalog");
+  await expect(page.locator('.public-explorer[data-hydrated="true"]')).toBeVisible();
   const catalogSearch = page.getByRole("searchbox", { name: "Search lessons" });
   await catalogSearch.fill("Dev Environment");
   await expect(page.getByRole("status")).toContainText("1 of 503 lessons");
   await expect(page.getByRole("heading", { name: "Dev Environment" })).toBeVisible();
 
   await page.goto("/glossary");
+  await expect(page.locator('.public-explorer[data-hydrated="true"]')).toBeVisible();
   const glossarySearch = page.getByRole("searchbox", { name: "Search the glossary" });
   await glossarySearch.fill("training-memory technique");
   await expect(page.getByRole("status")).toContainText("1 of");
