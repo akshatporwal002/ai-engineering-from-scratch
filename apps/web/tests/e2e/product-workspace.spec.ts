@@ -2,7 +2,6 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
 const fixtureText = "Synthetic candidate profile for local browser testing only. Built deterministic evaluation services, measured reliability, documented decisions, and improved system observability without using any real person's information.";
-const evidenceDirectory = "../../docs/migration-evidence/overnight/visual";
 
 async function localOnly(page: Page) {
   await page.route("**/*", async (route) => {
@@ -80,17 +79,15 @@ test("upload, reopen, delete cancellation, and confirmed deletion work", async (
 });
 
 for (const viewport of [{ name: "mobile", width: 390, height: 844 }, { name: "desktop", width: 1440, height: 1000 }]) {
-  test(`paired ${viewport.name} product evidence has no secret, CV text, or overflow`, async ({ page }) => {
+  test(`${viewport.name} product layout has no secret, CV text, or overflow`, async ({ page }) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
     await page.goto("http://127.0.0.1:4173/cv-analysis.html");
-    await page.screenshot({ path: `${evidenceDirectory}/workstream-7-cv-analysis-legacy-${viewport.name}.png` });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await page.goto("http://127.0.0.1:4174/cv-analysis");
-    await page.screenshot({ path: `${evidenceDirectory}/workstream-7-cv-analysis-next-${viewport.name}.png` });
     if (viewport.name === "desktop") {
       await connect(page, "success");
       await analyze(page);
       await expect(page.getByRole("status")).toContainText("Mock analysis complete");
-      await page.locator(".product-result").screenshot({ path: `${evidenceDirectory}/workstream-7-cv-analysis-next-result-desktop.png` });
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     expect(await page.locator("body").innerText()).not.toContain(fixtureText);

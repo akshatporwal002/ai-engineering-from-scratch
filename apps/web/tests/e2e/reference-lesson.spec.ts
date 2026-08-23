@@ -3,7 +3,6 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 
-const evidenceDirectory = "../../docs/migration-evidence/overnight/visual";
 const repositoryRoot = path.resolve(process.cwd(), "../..");
 const lessonPath = "phases/01-math-foundations/08-optimization";
 const legacyUrl = `http://127.0.0.1:4173/lesson.html?path=${lessonPath}`;
@@ -87,27 +86,26 @@ for (const viewport of [
   { name: "mobile", width: 390, height: 844 },
   { name: "desktop", width: 1440, height: 1000 },
 ]) {
-  test(`reference lesson paired ${viewport.name} evidence has no Next.js overflow`, async ({ page }) => {
+  test(`reference lesson ${viewport.name} layout has no overflow`, async ({ page }) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
     await page.goto(legacyUrl);
     await expect(page.getByRole("heading", { level: 1, name: "Optimization" })).toBeVisible();
-    await page.screenshot({ path: `${evidenceDirectory}/workstream-5-optimization-legacy-${viewport.name}.png` });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await page.goto(nextUrl);
     await expect(page.locator('.lesson-quiz[data-hydrated="true"]')).toBeAttached();
     await expect(page.getByRole("heading", { level: 1, name: "Optimization" })).toBeVisible();
-    await page.screenshot({ path: `${evidenceDirectory}/workstream-5-optimization-next-${viewport.name}.png` });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   });
 }
 
-test("captures interactive figure and completed quiz evidence", async ({ page }) => {
+test("interactive figure and completed quiz states remain functional", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto(nextUrl);
   const figure = page.getByRole("figure", { name: "Interactive figure: gradient-descent" });
   await figure.locator('input[type="range"]').first().fill("1.2");
-  await figure.screenshot({ path: `${evidenceDirectory}/workstream-5-optimization-next-figure-desktop.png` });
+  await expect(figure).toBeVisible();
   const fieldsets = page.locator(".lesson-quiz fieldset");
   for (const [index, answer] of [0, 1, 3, 1, 1].entries()) await fieldsets.nth(index).locator('input[type="radio"]').nth(answer).check();
   await page.getByRole("button", { name: "Check answers" }).click();
-  await page.locator(".lesson-quiz").screenshot({ path: `${evidenceDirectory}/workstream-5-optimization-next-quiz-desktop.png` });
+  await expect(page.getByRole("status")).toContainText("5 of 5 correct");
 });

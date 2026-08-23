@@ -1,7 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
-const evidenceDirectory = "../../docs/migration-evidence/overnight/visual";
 const consoleErrors = new WeakMap<Page, string[]>();
 
 async function keepNavigationLocal(page: Page) {
@@ -42,7 +41,6 @@ test("dialog and dropdown contain and restore keyboard focus", async ({ page }) 
   await page.keyboard.press("Enter");
   await expect(page.getByRole("dialog", { name: "Confirm local fixture" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Close dialog" })).toBeFocused();
-  await page.screenshot({ path: `${evidenceDirectory}/workstream-2-next-dialog-desktop.png` });
   await page.keyboard.press("Shift+Tab");
   await expect(page.getByRole("button", { name: "Confirm fixture" })).toBeFocused();
   await page.keyboard.press("Escape");
@@ -62,17 +60,15 @@ for (const viewport of [
   { name: "mobile", width: 390, height: 844 },
   { name: "desktop", width: 1440, height: 1000 },
 ]) {
-  test(`captures paired ${viewport.name} evidence without overflow`, async ({ page }) => {
+  test(`${viewport.name} component layouts have no overflow`, async ({ page }) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
 
     await page.goto("http://127.0.0.1:4173/index.html");
-    await page.screenshot({ path: `${evidenceDirectory}/workstream-2-legacy-${viewport.name}.png`, fullPage: true });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 
     await page.goto("http://127.0.0.1:4174/components");
     consoleErrors.get(page)?.splice(0);
     await expect(page.locator("#main-content")).toHaveAttribute("data-hydrated", "true");
-    await page.screenshot({ path: `${evidenceDirectory}/workstream-2-next-${viewport.name}.png`, fullPage: true });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 
     if (viewport.name === "mobile") {
@@ -80,7 +76,6 @@ for (const viewport of [
       await expect(navigation).toBeHidden();
       await page.getByRole("button", { name: "Menu", exact: true }).click();
       await expect(navigation).toBeVisible();
-      await page.screenshot({ path: `${evidenceDirectory}/workstream-2-next-navigation-mobile.png` });
       const links = navigation.getByRole("link");
       expect(await links.count()).toBe(5);
       for (const link of await links.all()) {
