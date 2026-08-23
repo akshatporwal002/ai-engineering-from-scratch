@@ -37,7 +37,14 @@
     "visual:glossary:category",
     "visual:glossary:empty-result",
     "visual:glossary:letter-navigation",
-    "visual:glossary:deep-anchor-synchronized"
+    "visual:glossary:deep-anchor-synchronized",
+    "visual:roadmap:default-graph-light",
+    "visual:roadmap:default-graph-dark",
+    "visual:roadmap:selected-node-synchronized-v2",
+    "visual:roadmap:inspector-flow-synchronized",
+    "visual:roadmap:zoomed-synchronized",
+    "visual:roadmap:url-hash-flow-synchronized",
+    "visual:roadmap:mobile-warmed"
   ],
   "knownBlockedStates": [
     {

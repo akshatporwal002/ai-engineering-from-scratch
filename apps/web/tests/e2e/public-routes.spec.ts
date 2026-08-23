@@ -76,7 +76,9 @@ for (const route of [
     page.on("requestfailed", (request) => {
       const url = new URL(request.url());
       const failure = request.failure()?.errorText;
-      if ((url.hostname === "127.0.0.1" || url.hostname === "localhost") && failure !== "net::ERR_ABORTED") {
+      if ((url.hostname === "127.0.0.1" || url.hostname === "localhost")
+        && failure !== "net::ERR_ABORTED"
+        && failure !== "cancelled") {
         errors.push(`${request.method()} ${url.pathname}: ${failure}`);
       }
     });
@@ -134,7 +136,9 @@ test("public-routes:glossary preserves interactions and accessibility across mot
   page.on("requestfailed", (request) => {
     const url = new URL(request.url());
     const failure = request.failure()?.errorText;
-    if ((url.hostname === "127.0.0.1" || url.hostname === "localhost") && failure !== "net::ERR_ABORTED") {
+    if ((url.hostname === "127.0.0.1" || url.hostname === "localhost")
+      && failure !== "net::ERR_ABORTED"
+      && failure !== "cancelled") {
       errors.push(`${request.method()} ${url.pathname}: ${failure}`);
     }
   });
@@ -195,6 +199,116 @@ test("public-routes:glossary preserves interactions and accessibility across mot
       await expect(page).toHaveURL(/#gradient$/);
       await expect(page.locator("#gradient")).toBeFocused();
 
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+      await expectNoBlockingAxeFindings(page);
+      expect(errors).toEqual([]);
+    }
+  }
+});
+
+test("public-routes:roadmap preserves graph interactions and accessibility across motion preferences", async ({ page }) => {
+  test.setTimeout(120_000);
+  const errors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error" && !message.text().includes("ERR_BLOCKED_BY_CLIENT.Inspector")) errors.push(message.text());
+  });
+  page.on("pageerror", (error) => errors.push(error.message));
+  page.on("requestfailed", (request) => {
+    const url = new URL(request.url());
+    const failure = request.failure()?.errorText;
+    if ((url.hostname === "127.0.0.1" || url.hostname === "localhost")
+      && failure !== "net::ERR_ABORTED"
+      && failure !== "cancelled") {
+      errors.push(`${request.method()} ${url.pathname}: ${failure}`);
+    }
+  });
+
+  for (const reducedMotion of ["no-preference", "reduce"] as const) {
+    await page.emulateMedia({ reducedMotion });
+    for (const surface of [
+      { url: "http://127.0.0.1:4173/prereqs.html", mainId: "main" },
+      { url: "http://127.0.0.1:4174/roadmap", mainId: "main-content" },
+    ]) {
+      await page.setViewportSize({ width: 1440, height: 1000 });
+      await page.goto(surface.url);
+      await expect(page.locator(".roadmap-node")).toHaveCount(20);
+      await expect(page.locator(`main#${surface.mainId}`)).toHaveCount(1);
+      await expect(page.getByRole("heading", { level: 1, name: "Map your route through AI engineering." })).toHaveCount(1);
+
+      const skip = page.getByRole("link", { name: "Skip to content" });
+      await skip.focus();
+      await expect(skip).toBeFocused();
+      await expect(skip).not.toHaveCSS("outline-style", "none");
+
+      const firstNode = page.locator('.roadmap-node[data-phase="0"]');
+      await firstNode.focus();
+      await expect(firstNode).toBeFocused();
+      await page.keyboard.press("ArrowDown");
+      const focusedNode = page.locator(".roadmap-node:focus");
+      await expect(focusedNode).toHaveCount(1);
+      await page.keyboard.press("Enter");
+      await expect(focusedNode).toHaveAttribute("aria-pressed", "true");
+      const selectedPhase = await focusedNode.getAttribute("data-phase");
+      await expect(page).toHaveURL(new RegExp(`#phase-${String(selectedPhase).padStart(2, "0")}$`));
+      await expect(page.locator("#roadmapInspector h2")).toBeVisible();
+
+      await page.locator('.roadmap-node[data-phase="7"]').click();
+      await expect(page).toHaveURL(/#phase-07$/);
+      await page.locator('.roadmap-node[data-phase="14"]').click();
+      await expect(page).toHaveURL(/#phase-14$/);
+      await page.goBack();
+      await expect(page.locator('.roadmap-node[data-phase="7"]')).toHaveAttribute("aria-pressed", "true");
+
+      const initialZoom = await page.locator("#roadmapZoomValue").textContent();
+      await page.getByRole("button", { name: "Zoom in" }).click();
+      await expect(page.locator("#roadmapZoomValue")).not.toHaveText(initialZoom ?? "100%");
+      await page.getByRole("button", { name: "Zoom out" }).click();
+
+      const phaseSelect = page.getByRole("combobox", { name: "Find a phase" });
+      await phaseSelect.focus();
+      await page.keyboard.press("ArrowDown");
+      await expect(page.getByRole("listbox")).toBeVisible();
+      await page.keyboard.press("End");
+      await page.keyboard.press("Enter");
+      await expect(page).toHaveURL(/#phase-19$/);
+
+      const graphWrap = page.locator("#roadmapGraphWrap");
+      await graphWrap.scrollIntoViewIfNeeded();
+      await graphWrap.evaluate((element) => { element.scrollLeft = 180; element.scrollTop = 180; });
+      const beforePan = await graphWrap.evaluate((element) => ({ left: element.scrollLeft, top: element.scrollTop }));
+      const box = await graphWrap.boundingBox();
+      expect(box).not.toBeNull();
+      const dragStart = await graphWrap.evaluate((element) => {
+        const rect = element.getBoundingClientRect();
+        const left = Math.max(rect.left + 8, 8);
+        const right = Math.min(rect.right - 8, window.innerWidth - 8);
+        const top = Math.max(rect.top + 8, 8);
+        const bottom = Math.min(rect.bottom - 8, window.innerHeight - 8);
+        for (let y = top; y <= bottom; y += 12) {
+          for (let x = left; x <= right; x += 12) {
+            const target = document.elementFromPoint(x, y);
+            if (target && element.contains(target) && !target.closest(".roadmap-node")) return { x, y };
+          }
+        }
+        throw new Error("No blank graph point available for the pan smoke path");
+      });
+      await page.mouse.move(dragStart.x, dragStart.y);
+      await page.mouse.down();
+      await page.mouse.move(dragStart.x - 60, dragStart.y - 60, { steps: 4 });
+      await page.mouse.up();
+      const afterPan = await graphWrap.evaluate((element) => ({ left: element.scrollLeft, top: element.scrollTop }));
+      expect(afterPan).not.toEqual(beforePan);
+
+      await page.goto(`${surface.url}#phase-14`);
+      await expect(page.locator('.roadmap-node[data-phase="14"]')).toHaveAttribute("aria-pressed", "true");
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+      await expectNoBlockingAxeFindings(page);
+
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto(surface.url);
+      await expect(page.locator(".roadmap-node")).toHaveCount(20);
+      await page.locator('.roadmap-node[data-phase="7"]').click();
+      await expect(page.locator("#roadmapInspector h2")).toBeVisible();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
       await expectNoBlockingAxeFindings(page);
       expect(errors).toEqual([]);

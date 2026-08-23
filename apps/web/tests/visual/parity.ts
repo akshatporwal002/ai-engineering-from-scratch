@@ -26,7 +26,7 @@ function artifactParts(testInfo: TestInfo, visual: VisualState, suffix: "viewpor
   return [browserName, viewportName, visual.id, `${visual.state}-${suffix}.png`];
 }
 
-function artifactPath(kind: "reference-production" | "candidate-next" | "diffs", parts: string[]) {
+function artifactPath(kind: "reference-production" | "candidate-next" | "diffs" | "accessibility-pre-correction-projection", parts: string[]) {
   return path.join(evidenceRoot, kind, ...parts);
 }
 
@@ -94,7 +94,11 @@ function writeReference(buffer: Buffer, target: string, page: Page, testInfo: Te
   writeFileSync(`${target}.json`, `${JSON.stringify(metadata, null, 2)}\n`, { flag: "wx" });
 }
 
-export async function compareVisualPage(page: Page, testInfo: TestInfo, visual: VisualState, options: { fullPage?: boolean; maxViewportDiffPixels?: number } = {}) {
+export async function compareVisualPage(page: Page, testInfo: TestInfo, visual: VisualState, options: {
+  fullPage?: boolean;
+  maxViewportDiffPixels?: number;
+  referenceProjectionCss?: string;
+} = {}) {
   const captures = [
     { suffix: "viewport" as const, fullPage: false },
     { suffix: "full-page" as const, fullPage: true },
@@ -115,12 +119,21 @@ export async function compareVisualPage(page: Page, testInfo: TestInfo, visual: 
     const candidate = artifactPath("candidate-next", parts);
     mkdirSync(path.dirname(candidate), { recursive: true });
     writeFileSync(candidate, buffer);
+    let comparisonBuffer = buffer;
+    if (options.referenceProjectionCss) {
+      const projectionStyle = await page.addStyleTag({ content: options.referenceProjectionCss });
+      comparisonBuffer = await page.screenshot({ fullPage: capture.fullPage, animations: "disabled", caret: "hide" });
+      await projectionStyle.evaluate((node) => (node as HTMLElement).remove());
+      const projection = artifactPath("accessibility-pre-correction-projection", parts);
+      mkdirSync(path.dirname(projection), { recursive: true });
+      writeFileSync(projection, comparisonBuffer);
+    }
     testInfo.annotations.push({
       type: "visual-artifact",
       description: JSON.stringify({ diff: artifactPath("diffs", parts), suffix: capture.suffix }),
     });
     const { browserName } = projectMetadata(testInfo);
     const maxDiffPixels = browserName === "chromium" && capture.suffix === "viewport" ? (options.maxViewportDiffPixels ?? 4) : 0;
-    expect.soft(buffer).toMatchSnapshot(parts, { maxDiffPixels, threshold: 0 });
+    expect.soft(comparisonBuffer).toMatchSnapshot(parts, { maxDiffPixels, threshold: 0 });
   }
 }

@@ -67,9 +67,10 @@
     "requiredTests": ["reference-lesson:reader", "reference-lesson:paired-evidence"]
   },
   {
-    "legacyUrl": "/prereqs.html", "productionUrl": "/prereqs.html", "nextUrl": "/roadmap", "kind": "roadmap", "status": "implemented", "fixture": "site/prereqs.html",
+    "legacyUrl": "/prereqs.html", "productionUrl": "/prereqs.html", "nextUrl": "/roadmap", "kind": "roadmap", "status": "visual-verified", "fixture": "site/prereqs.html",
     "states": ["default-graph", "selected-node", "inspector", "zoomed", "url-hash", "mobile"], "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
-    "interactionCapabilities": ["mouse", "keyboard", "pan", "zoom", "node-selection", "url-state", "history-navigation"], "visualTestIds": [],
+    "interactionCapabilities": ["mouse", "keyboard", "pan", "zoom", "node-selection", "url-state", "history-navigation", "reduced-motion"],
+    "visualTestIds": ["visual:roadmap:default-graph-light", "visual:roadmap:default-graph-dark", "visual:roadmap:selected-node-synchronized-v2", "visual:roadmap:inspector-flow-synchronized", "visual:roadmap:zoomed-synchronized", "visual:roadmap:url-hash-flow-synchronized", "visual:roadmap:mobile-warmed"],
     "requiredTests": ["public-routes:roadmap", "public-content:prerequisites"]
   }
 ]

@@ -48,6 +48,12 @@ export default defineConfig({
   projects,
   webServer: captureProduction ? undefined : [
     {
+      command: "python3 -m http.server 4173 --bind 127.0.0.1 --directory ../../site",
+      url: "http://127.0.0.1:4173/prereqs.html",
+      reuseExistingServer: true,
+      timeout: 30_000,
+    },
+    {
       command: "CODEOLOGY_ENABLE_FIXTURES=1 npm run build && npm run start -- --hostname 127.0.0.1 --port 4174",
       url: "http://127.0.0.1:4174/components",
       reuseExistingServer: true,

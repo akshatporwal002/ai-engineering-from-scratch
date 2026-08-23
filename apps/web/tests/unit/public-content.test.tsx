@@ -11,6 +11,7 @@ import {
   loadGlossary,
   loadLessonQuiz,
   loadPhases,
+  loadRoadmapLegacyPage,
   publicRouteMetadata,
   validateContent,
 } from "../../lib/content/public-content";
@@ -66,6 +67,20 @@ describe("public content loaders", () => {
     expect(page.styles).toContain(".about-page");
     expect(page.styles).toContain(".site-header");
     expect(page.html).toContain("Learn the foundations.");
+  });
+
+  it("loads the maintained interactive roadmap source without duplicating it", () => {
+    const page = loadRoadmapLegacyPage();
+    expect(page.styles).toContain(".roadmap-graph-wrap");
+    expect(page.styles).toContain(".roadmap-assurance-note");
+    expect(page.styles).toContain(".roadmap-page :where(button, input, select, textarea)");
+    expect(page.styles).toContain("font: revert");
+    expect(page.styles).toContain("--roadmap-footer-ink: #696969");
+    expect(page.styles).toContain("--roadmap-footer-ink: var(--ink-mute)");
+    expect(page.styles).toContain("--roadmap-recommendation-ink: #c23a00");
+    expect(page.styles).toContain("--roadmap-recommendation-ink: var(--blueprint)");
+    expect(page.runtime).toContain("validateRoadmapData()");
+    expect(page.runtime).toContain("history.pushState");
   });
 });
 

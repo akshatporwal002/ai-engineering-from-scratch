@@ -59,7 +59,8 @@
   var draggedSincePointerDown = false;
   var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  document.addEventListener('DOMContentLoaded', init);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
+  else init();
 
   function init() {
     if (typeof PHASES === 'undefined' || !Array.isArray(PHASES) || !PREREQS || !validateRoadmapData()) {

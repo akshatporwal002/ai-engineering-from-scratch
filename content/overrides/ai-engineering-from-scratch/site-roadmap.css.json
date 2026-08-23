@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "ai-engineering-from-scratch",
+  "canonicalPath": "site/roadmap.css",
+  "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f",
+  "adapted": true,
+  "adaptationSummary": "Applies a narrowly scoped WCAG AA light-theme contrast correction to Skill Map legend and graph-hint text while preserving dark-theme colors, layout, motion and interactions."
+}

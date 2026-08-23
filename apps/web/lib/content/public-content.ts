@@ -55,6 +55,19 @@ export type GlossaryLegacyPage = {
   categories: string[];
 };
 
+export type RoadmapLegacyPage = {
+  styles: string;
+  html: string;
+  runtime: string;
+};
+
+// Tailwind's form-control reset is global in the experiment. The maintained
+// static page intentionally starts from each browser's native control metrics,
+// so restore that baseline before its route stylesheet is applied.
+const roadmapControlBaseline = `.roadmap-page :where(button, input, select, textarea) {
+  font: revert;
+}`;
+
 function readRepositoryFile(relativePath: string) {
   const resolved = path.resolve(repositoryRoot, relativePath);
   if (!resolved.startsWith(repositoryRoot + path.sep)) throw new ContentValidationError(relativePath, "path escapes repository root");
@@ -133,6 +146,19 @@ export function loadRoadmapPrerequisites(): Record<string, number[]> {
     extractJsonConstant<unknown>(generatedData(), "ROADMAP_PREREQS"),
     "site/data.js#ROADMAP_PREREQS",
   ));
+}
+
+export function loadRoadmapLegacyPage(): RoadmapLegacyPage {
+  return cached("roadmap-legacy-page", () => {
+    const source = readRepositoryFile("site/prereqs.html");
+    const main = source.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)?.[1];
+    if (!main) throw new Error("Legacy roadmap page is missing its main content");
+    return {
+      styles: `${readRepositoryFile("site/style.css")}\n${roadmapControlBaseline}\n${readRepositoryFile("site/roadmap.css")}\n${readRepositoryFile("site/codeology.css")}`,
+      html: rewriteLegacyLinks(main),
+      runtime: readRepositoryFile("site/roadmap.js"),
+    };
+  });
 }
 
 export function loadGlossary(): GlossaryEntry[] {

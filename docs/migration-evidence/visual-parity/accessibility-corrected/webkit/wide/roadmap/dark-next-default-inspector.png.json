@@ -1,0 +1,33 @@
+{
+  "evidenceLabel": "accessibility-corrected",
+  "capturedAt": "2026-08-23T13:02:52.943Z",
+  "pairedSurface": "next",
+  "pairedPreCorrectionProjection": "docs/migration-evidence/visual-parity/accessibility-pre-correction-projection/webkit/wide/roadmap/dark-next-default-inspector.png",
+  "immutableProductionReference": "docs/migration-evidence/visual-parity/reference-production/webkit/wide/roadmap/default-graph-dark-full-page.png",
+  "correctedCapture": "docs/migration-evidence/visual-parity/accessibility-corrected/webkit/wide/roadmap/dark-next-default-inspector.png",
+  "diff": "docs/migration-evidence/visual-parity/accessibility-corrected-diffs/webkit/wide/roadmap/dark-next-default-inspector.png",
+  "browserProject": "webkit",
+  "viewport": {
+    "name": "wide",
+    "width": 1920,
+    "height": 1080
+  },
+  "theme": "dark",
+  "motion": "reduced",
+  "capture": "default-inspector-component",
+  "changedPixels": 0,
+  "outsideApprovedRegions": 0,
+  "approvedRegions": [
+    {
+      "name": "approved-1",
+      "x": 37,
+      "y": 232,
+      "width": 266,
+      "height": 25
+    }
+  ],
+  "changedPixelsByRegion": {
+    "approved-1": 0
+  },
+  "classification": "Approved: minimally darkened the light-theme Skill Map recommendation label only; maintained legacy and Next share the correction."
+}

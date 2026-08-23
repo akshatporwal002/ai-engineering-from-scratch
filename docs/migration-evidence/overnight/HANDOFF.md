@@ -331,3 +331,63 @@ canonical reference tree has no diff and the Catalog page remains unchanged.
   becomes `reviewed`.
 - Other unreviewed route families remain active migration work.
 - Catalog legacy restyling remains excluded by explicit user preference.
+
+---
+
+## Skill Map parity continuation — 2026-08-23
+
+### Scope and status
+
+- Skill Map is now `visual-verified`; independent human review remains required.
+- The Next route consumes the maintained `site/prereqs.html`, roadmap stylesheet,
+  graph data, and runtime through an isolated adapter, preserving all 20 phases,
+  graph navigation, zoom, pan, selection, history, phase finder, responsive
+  layout, themes, focus, URLs, attribution, and the route-specific footer.
+- The current Next Catalog design was explicitly preserved. No Catalog
+  implementation, stylesheet, route state, or visual reference was changed.
+- No push, merge, deployment, account, provider, database, secret, CV, or other
+  external-state action occurred.
+
+### Accessibility and synchronization
+
+- Axe was rerun only after fonts, graph construction, and motion state settled.
+  The failures remained, proving they were static contrast issues rather than
+  reveal/intersection timing defects.
+- The maintained shared stylesheet minimally darkens the light-theme legend and
+  graph hint from `#707070` (4.15:1) to `#696969` (4.60:1), and the recommendation
+  label from `#c43b00` (4.42:1) to `#c23a00` (4.51:1). Dark mode is unchanged.
+- No Axe exclusion or WCAG/parity exception was added. Legacy and Next pass in
+  Chromium and WebKit under normal and reduced motion with zero serious or
+  critical findings.
+- Smooth-scroll timing audits are retained separately. Active captures wait for
+  fonts and stable layout and align flow anchors deterministically without
+  changing application motion.
+
+### Evidence and validation
+
+- Report: `docs/migration-evidence/visual-parity/reports/roadmap.md`.
+- The production tree preserves 412 images and sidecars, including timing-audit
+  captures; 112 active references cover seven states, two capture sizes, four
+  viewports, and both browser engines. Canonical captures were not overwritten.
+- The corrected-only matrix has 64 corrected captures, 64 same-run projections,
+  64 diffs, and 64 sidecars. All 35,464 changed text pixels are inside approved
+  legend, hint, or recommendation-label rectangles; outside count is zero.
+- Complete Skill Map visual matrix: 72/72 passed. Focused interaction,
+  keyboard, history, pan, zoom, responsive, console/network, Axe, and
+  normal/reduced-motion checks: 8/8 passed across Chromium and WebKit.
+- Catalog freeze regression: 8/8 passed for landmarks, Axe, keyboard search,
+  and mobile/desktop overflow, without changing Catalog.
+- Full migration validation passed 32/32 API tests and 25/25 unit tests. The
+  browser run passed 117/118; its only unrelated WebKit lesson-fallback timeout
+  passed 1/1 on immediate isolation. Every Skill Map and Catalog case passed.
+- Typecheck, the 21-route production build, route-parity validation, and the
+  complete pre-commit gate passed. Root `npm run ci` again stopped only at the
+  pre-existing translation-workflow commit-failure contract (expected nonzero,
+  observed zero), after all preceding checks passed.
+
+### Remaining gates
+
+- A human reviewer must inspect the Skill Map paired evidence before its status
+  becomes `reviewed`.
+- Other unreviewed route families remain active migration work.
+- Catalog legacy restyling remains excluded by explicit user preference.
