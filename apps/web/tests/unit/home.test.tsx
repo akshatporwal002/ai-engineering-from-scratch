@@ -7,7 +7,7 @@ describe("HomePage", () => {
   it("renders the source-backed academy proposition and totals", () => {
     render(<HomePage />);
     expect(screen.getByRole("heading", { name: "Learn freely. Build for real." })).toBeTruthy();
-    expect(screen.getByLabelText("Academy summary").textContent).toContain("503");
-    expect(screen.getByText(/Rohit Ghumare and contributors/i)).toBeTruthy();
+    expect(screen.getByText("AI Engineering Foundations · 20 phases · 503 lessons")).toBeTruthy();
+    expect(screen.getByText(/featured AI Engineering pathway remains free, attributed/i)).toBeTruthy();
   });
 });

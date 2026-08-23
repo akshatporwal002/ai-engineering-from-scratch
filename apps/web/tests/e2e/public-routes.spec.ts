@@ -1,6 +1,8 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
+import { settleFiniteMotion } from "./motion";
+
 const routes = [
   { name: "academy", next: "/", legacy: "/index.html" },
   { name: "about", next: "/about", legacy: "/about.html" },
@@ -22,6 +24,12 @@ async function keepNavigationLocal(page: Page) {
   });
 }
 
+async function expectNoBlockingAxeFindings(page: Page) {
+  const results = await new AxeBuilder({ page }).analyze();
+  const blocking = results.violations.filter((violation) => ["serious", "critical"].includes(violation.impact ?? ""));
+  expect(blocking, blocking.map((item) => `${item.id}: ${item.help}`).join("\n")).toEqual([]);
+}
+
 test.beforeEach(async ({ page }) => keepNavigationLocal(page));
 
 for (const route of routes) {
@@ -31,12 +39,26 @@ for (const route of routes) {
     await page.goto(route.next);
     await expect(page.locator("main#main-content")).toHaveCount(1);
     await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
-    const results = await new AxeBuilder({ page }).analyze();
-    const blocking = results.violations.filter((violation) => ["serious", "critical"].includes(violation.impact ?? ""));
-    expect(blocking, blocking.map((item) => `${item.id}: ${item.help}`).join("\n")).toEqual([]);
+    await settleFiniteMotion(page);
+    await expectNoBlockingAxeFindings(page);
     expect(errors).toEqual([]);
   });
 }
+
+test("legacy and Next Academy corrections pass Axe with normal and reduced motion", async ({ page }) => {
+  for (const reducedMotion of ["no-preference", "reduce"] as const) {
+    await page.emulateMedia({ reducedMotion });
+    for (const academyUrl of ["http://127.0.0.1:4173/index.html", "http://127.0.0.1:4174/"]) {
+      await page.goto(academyUrl, { waitUntil: "load" });
+      if (reducedMotion === "no-preference") await expect(page.locator("body")).toHaveClass(/js-anim/);
+      else await expect(page.locator("body")).not.toHaveClass(/js-anim/);
+      await settleFiniteMotion(page);
+      await expect(page.locator(".books-note a")).toHaveCount(2);
+      await expect(page.locator(".books-note a").first()).toHaveCSS("text-decoration-line", "underline");
+      await expectNoBlockingAxeFindings(page);
+    }
+  }
+});
 
 test("catalog and glossary search states are keyboard-operable", async ({ page }) => {
   await page.goto("/catalog");
@@ -52,6 +74,31 @@ test("catalog and glossary search states are keyboard-operable", async ({ page }
   await glossarySearch.fill("training-memory technique");
   await expect(page.getByRole("status")).toContainText("1 of");
   await expect(page.getByRole("heading", { name: "Activation Checkpointing" })).toBeVisible();
+});
+
+test("academy phase dialog is keyboard-operable and restores focus", async ({ page }) => {
+  await page.goto("/");
+  const firstPhase = page.getByRole("button", { name: /Open Phase 00:/ });
+  await firstPhase.focus();
+  await page.keyboard.press("Enter");
+
+  const dialog = page.getByRole("dialog", { name: /Setup & Tooling/i });
+  await expect(dialog).toBeVisible();
+  await expect(page.getByRole("button", { name: "Close phase details" })).toBeFocused();
+  await expect(dialog.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "0");
+
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(firstPhase).toBeFocused();
+});
+
+test("academy local progress updates without creating external state", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: /Open Phase 00:/ }).click();
+  const markDone = page.getByRole("button", { name: "Mark complete" }).first();
+  await markDone.click();
+  await expect(page.getByRole("button", { name: "Mark as not done" }).first()).toBeVisible();
+  expect(await page.evaluate(() => Boolean(localStorage.getItem("aifs:progress:v1")))).toBe(true);
 });
 
 test("legacy inbound paths redirect to public routes", async ({ page }) => {

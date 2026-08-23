@@ -177,6 +177,7 @@
     if (!overlay || !modal || !closeBtn) return;
 
     overlay.setAttribute('aria-hidden', 'true');
+    overlay.inert = true;
     modal.setAttribute('role', 'dialog');
     modal.setAttribute('aria-modal', 'true');
     modal.setAttribute('aria-labelledby', 'modalTitle');
@@ -252,6 +253,7 @@
     overlay.classList.toggle('no-motion', !!fromKeyboard);
     overlay.classList.add('open');
     overlay.setAttribute('aria-hidden', 'false');
+    overlay.inert = false;
     document.body.style.overflow = 'hidden';
     requestAnimationFrame(function () {
       var close = document.getElementById('modalClose');
@@ -356,6 +358,7 @@
     overlay.classList.toggle('no-motion', !!fromKeyboard);
     overlay.classList.remove('open');
     overlay.setAttribute('aria-hidden', 'true');
+    overlay.inert = true;
     document.body.style.overflow = '';
     if (modalReturnFocus && modalReturnFocus.isConnected && typeof modalReturnFocus.focus === 'function') {
       modalReturnFocus.focus();

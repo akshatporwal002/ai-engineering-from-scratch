@@ -4,5 +4,5 @@
   "canonicalPath": "site/index.html",
   "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f",
   "adapted": true,
-  "adaptationSummary": "Reframes the imported academy homepage as the Codeology product entry point, removes the language selector, and preserves the source curriculum as an explicitly credited free pathway."
+  "adaptationSummary": "Reframes the imported academy homepage as the Codeology product entry point, preserves the source curriculum as an explicitly credited free pathway, and adds minimal WCAG corrections for hidden dialog focus, book-note link distinction, and certification disclaimer contrast."
 }

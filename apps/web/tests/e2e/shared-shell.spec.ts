@@ -1,6 +1,8 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
+import { settleFiniteMotion } from "./motion";
+
 async function keepNavigationLocal(page: Page) {
   await page.route("**/*", async (route) => {
     const url = new URL(route.request().url());
@@ -82,6 +84,7 @@ test("desktop shell matches navigation, theme, search, login, and accessibility 
   await page.keyboard.press("Escape");
   await expect(login).toBeFocused();
 
+  await settleFiniteMotion(page);
   const results = await new AxeBuilder({ page }).analyze();
   expect(results.violations.filter((violation) => ["serious", "critical"].includes(violation.impact ?? ""))).toEqual([]);
 });

@@ -34,6 +34,24 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/jetbrains-mono-greek.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/jetbrains-mono-latin-ext.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
 :root {
   --canvas: #ffffff;
   --ink: #111111;
@@ -898,6 +916,7 @@ a { color: inherit; text-underline-offset: 0.2em; }
   border-radius: var(--radius-pill);
   background: transparent;
   color: var(--ink);
+  line-height: normal;
   cursor: pointer;
 }
 
@@ -928,7 +947,7 @@ a { color: inherit; text-underline-offset: 0.2em; }
   background: var(--accent);
   color: var(--canvas);
   cursor: pointer;
-  font: 700 0.72rem/1 var(--font-mono);
+  font: 700 0.72rem var(--font-mono);
   letter-spacing: 0.07em;
   text-transform: uppercase;
 }
@@ -939,7 +958,7 @@ a { color: inherit; text-underline-offset: 0.2em; }
 .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
 .footer-inner p { margin: 0; color: var(--muted); font: 400 0.78rem/1.62 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; }
 .footer-links { display: flex; gap: 24px; }
-.footer-links a { display: inline-flex; align-items: center; border: 0; color: var(--muted); font: 500 0.78rem/1.2 var(--font-mono); letter-spacing: 0.06em; text-decoration: none; text-transform: uppercase; }
+.footer-links a { display: block; border: 0; color: var(--muted); font: 400 0.78rem/1.62 var(--font-mono); letter-spacing: 0.06em; text-decoration: none; text-transform: uppercase; }
 .footer-links a:hover { border: 0; color: var(--accent); }
 
 .skip-link {
@@ -1026,6 +1045,10 @@ body[data-palette-open] { overflow: hidden; }
   .header-mobile-tools { display: flex; flex-wrap: wrap; margin-top: 8px; padding: 8px 4px 4px; border-top: 1px solid var(--line); }
   .header-mobile-tools .search-toggle, .header-mobile-tools .theme-toggle { width: 44px; height: 44px; flex-basis: 44px; }
   .header-mobile-tools .codeology-login-button { min-height: 44px; }
+}
+
+@media (min-width: 1440px) {
+  .shell-container { max-width: 1240px; }
 }
 
 @media (max-width: 768px) {

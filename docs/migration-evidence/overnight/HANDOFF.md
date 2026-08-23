@@ -101,3 +101,102 @@ No test was observed to be flaky. Repeated Chromium captures can produce byte-le
 ## Recommended next action
 
 Review the highest-risk API/proxy/privacy boundaries and paired visual evidence, then resolve the unrelated root-CI translation failure before considering selective integration. Assessment migration remains a separately scoped follow-up.
+
+---
+
+## Academy parity and accessibility continuation — 2026-08-23
+
+This continuation supersedes the earlier Academy accessibility and
+nondeterminism notes where they conflict.
+
+### Scope and commit
+
+- Continuation base: `9158783491cca2482a17e8a127f926c9fa65635b`.
+- Ending commit: `fix(web): restore Academy parity and accessibility`; this
+  handoff is part of that commit and cannot self-reference its final SHA.
+- Workstreams 1–8 remain complete. This continuation finishes the Academy
+  vertical slice within Workstreams 3 and 8; no workstream is partial or newly
+  unstarted.
+- The existing Next Catalog design was explicitly preserved and not changed.
+- No push, merge, deployment, database, Supabase, provider, account, secret,
+  CV, or other external-service action occurred.
+
+### Implemented correction
+
+- The Next Academy now renders the maintained `site/index.html` content and
+  stylesheet stack through a client behavior adapter, preserving source
+  attribution, curriculum totals, local progress, phase dialog behavior,
+  responsive layout, typography, animation, and URLs.
+- Investigation proved the `.reveal` contrast report was Axe sampling the
+  finite hero title/entrance animation. The test now awaits finite Web
+  Animations promises; it does not disable, shorten, restyle, or exclude the
+  animation.
+- Both maintained legacy and Next Academy surfaces give the two book-note links
+  persistent 1px underlines with `0.2em` offset.
+- The certification disclaimer receives a 2% ink mix, moving the observed
+  light-theme ratio from 4.42:1 above 4.5:1 with no layout change.
+- The legacy phase overlay is inert while closed, matching Next and preventing
+  hidden controls from receiving focus. Required imported-source adaptation
+  records cover both changed legacy files.
+- No Axe rule, node, route, or region is excluded. Normal and reduced motion
+  both produce zero serious or critical findings in Chromium and WebKit.
+
+### Evidence and difference classification
+
+- Report: `docs/migration-evidence/visual-parity/reports/academy.md`.
+- Immutable canonical references remain under
+  `docs/migration-evidence/visual-parity/reference-production/` and were not
+  modified.
+- Preserved pre-correction candidates remain under
+  `docs/migration-evidence/visual-parity/candidate-next/`.
+- Same-run paired before projections, corrected captures, JSON sidecars, and
+  diffs are separately labelled under
+  `accessibility-pre-correction-projection/`, `accessibility-corrected/`, and
+  `accessibility-corrected-diffs/`.
+- The corrected evidence covers both browsers, four viewports, two themes, and
+  viewport/full-page captures: 32 paired screenshots and 32 diff images.
+- The matrix contains 3,148 changed pixels, all in the full-page book-link
+  rectangles; every sidecar reports `outsideApprovedRegions: 0`. All 16
+  initial viewport captures are exact. The two-step disclaimer correction
+  clears Axe but rounds to identical antialiased screenshot pixels. Inert state
+  and test synchronization are non-visual.
+
+### Continuation validation record
+
+| Command | Exit | Result |
+|---|---:|---|
+| Focused legacy/Next normal and reduced-motion Axe matrix | 0 | 4/4 passed in Chromium and WebKit with zero serious/critical findings. |
+| Accessibility-corrected visual matrix | 0 | 16/16 cases passed; 32 paired captures, zero changed pixels outside approved regions. |
+| `npm run check:precommit` | 0 | All provenance, product, accessibility, lesson, and certification gates passed after adding the required `site/app.js` sidecar. |
+| First `npm run test:migration` | 1 | 107/108 browser cases passed; one unrelated Chromium lesson-fallback lookup timed out. The isolated rerun passed 1/1. |
+| Final `npm run test:migration` | 0 | 32 API tests, 23 Vitest tests, and 108 Chromium/WebKit E2E tests passed. |
+| `npm run typecheck:migration` | 0 | Standalone rerun passed. An earlier parallel run raced with `build:migration` recreating `.next/types`; no source error was involved. |
+| `npm run build:migration` | 0 | Next production build compiled and generated 21 routes; Python compilation passed. |
+| `npm run ci` | 1 | The pre-existing translation-workflow contract still reports success where its commit-failure fixture expects failure. This remains outside the migration slice and prevents claiming root CI is green. |
+| `git diff --check` | 0 | No whitespace errors before final staging. |
+
+The single lesson-fallback timeout was observed once in the first complete run,
+then passed in an isolated rerun and in the final 108-case run. No retry setting
+was added and no lesson behavior was changed.
+
+### Dependency and architecture note
+
+`sharp` `0.35.3` is now a pinned direct development dependency for exact RGBA
+pixel-boundary classification. The same version was already installed by
+Next.js, so no package installation or lockfile was created. The test rejects
+any changed pixel outside the approved DOM rectangles rather than using a
+percentage tolerance or mask. No runtime dependency or application trust
+boundary changed.
+
+### Remaining review gates
+
+- Root CI's unrelated translation-workflow failure must be resolved before
+  integration.
+- Mobile-menu, deterministic initial-animation, primary-hover, and
+  primary-focus visual states still need their specified evidence captures.
+- A human reviewer must inspect the corrected paired evidence before marking
+  Academy `visual-verified` or `reviewed`.
+
+Reviewer priority: inspect the Academy report and a desktop/mobile full-page
+corrected sidecar first, run the final migration command, then verify the
+canonical reference tree has no diff and the Catalog page remains unchanged.

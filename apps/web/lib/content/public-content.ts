@@ -44,6 +44,11 @@ export type EditorialPage = {
   html: string;
 };
 
+export type AcademyLegacyPage = {
+  styles: string;
+  html: string;
+};
+
 function readRepositoryFile(relativePath: string) {
   const resolved = path.resolve(repositoryRoot, relativePath);
   if (!resolved.startsWith(repositoryRoot + path.sep)) throw new ContentValidationError(relativePath, "path escapes repository root");
@@ -173,6 +178,25 @@ export function loadAcademyProvenance(): SourceProvenance {
       attribution: `${config.academySource.name} by ${config.academySource.author}`,
       license: config.academySource.license,
     }, `${source}#academySource`);
+  });
+}
+
+export function loadAcademyLegacyPage(): AcademyLegacyPage {
+  return cached("academy-legacy-page", () => {
+    const source = readRepositoryFile("site/index.html");
+    const styles = source.match(/<style>([\s\S]*?)<\/style>/)?.[1];
+    const main = source.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)?.[1];
+    if (!styles || !main) throw new Error("Legacy academy page is missing its route styles or main content");
+
+    return {
+      styles: `${readRepositoryFile("site/style.css")}\n${readRepositoryFile("site/codeology.css")}\n${styles}`,
+      html: rewriteLegacyLinks(main)
+        .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "")
+        .replace(
+          /src="https:\/\/images\.credly\.com\/[^\"]+"/,
+          'src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="',
+        ),
+    };
   });
 }
 
