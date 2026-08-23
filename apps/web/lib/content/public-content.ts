@@ -61,10 +61,32 @@ export type RoadmapLegacyPage = {
   runtime: string;
 };
 
+export type CertificationLegacyPage = {
+  styles: string;
+  html: string;
+  runtime: string;
+  progressRuntime: string;
+  certificationProgressRuntime: string;
+};
+
+export type CertificationRuntimeData = {
+  program: CertificationProgram;
+  tracks: CertificationTrack[];
+  lessonsByPath: Record<string, unknown>;
+  assessmentsById: Record<string, unknown>;
+};
+
 // Tailwind's form-control reset is global in the experiment. The maintained
 // static page intentionally starts from each browser's native control metrics,
 // so restore that baseline before its route stylesheet is applied.
 const roadmapControlBaseline = `.roadmap-page :where(button, input, select, textarea) {
+  font: revert;
+}`;
+
+const certificationControlBaseline = `.cert-page :where(ul, ol) {
+  list-style: revert;
+}
+.search-toggle:has(> span) {
   font: revert;
 }`;
 
@@ -198,6 +220,35 @@ export function loadCertificationTracks(): CertificationTrack[] {
 
 export function loadCertificationTrack(slug: string): CertificationTrack | undefined {
   return loadCertificationTracks().find((track) => track.slug === slug || track.id === slug);
+}
+
+export function loadCertificationRuntimeData(): CertificationRuntimeData {
+  return cached("certification-runtime-data", () => validateContent(
+    z.object({
+      program: certificationProgramSchema,
+      tracks: certificationTrackSchema.array(),
+      lessonsByPath: z.record(z.string(), z.unknown()),
+      assessmentsById: z.record(z.string(), z.unknown()),
+    }),
+    extractJsonConstant<unknown>(readRepositoryFile("site/certification-data.js"), "CERTIFICATIONS"),
+    "site/certification-data.js#CERTIFICATIONS",
+  ));
+}
+
+export function loadCertificationLegacyPage(kind: "catalog" | "track"): CertificationLegacyPage {
+  return cached(`certification-legacy-page:${kind}`, () => {
+    const sourcePath = kind === "catalog" ? "site/certifications.html" : "site/certification.html";
+    const source = readRepositoryFile(sourcePath);
+    const main = source.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)?.[1];
+    if (!main) throw new Error(`Legacy certification page is missing its main content: ${sourcePath}`);
+    return {
+      styles: `${readRepositoryFile("site/style.css")}\n${readRepositoryFile("site/certifications.css")}\n${readRepositoryFile("site/codeology.css")}\n${certificationControlBaseline}`,
+      html: rewriteLegacyLinks(main),
+      runtime: readRepositoryFile("site/certifications.js"),
+      progressRuntime: readRepositoryFile("site/progress.js"),
+      certificationProgressRuntime: readRepositoryFile("site/certification-progress.js"),
+    };
+  });
 }
 
 export function loadAssessment(relativePath: string): Assessment {

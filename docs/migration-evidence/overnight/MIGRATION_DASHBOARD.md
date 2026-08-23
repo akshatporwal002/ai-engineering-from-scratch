@@ -5,9 +5,9 @@
 ## Coverage
 
 - Legacy HTML routes: 12
-- Implemented: 6
+- Implemented: 4
 - Interaction verified: 0
-- Visual verified: 5
+- Visual verified: 7
 - Human reviewed: 0
 - Planned: 1
 - Excluded: 0
@@ -22,8 +22,8 @@
 | `/assessment.html` | `/assessments/[assessment]` | assessment | planned | `mock-product:assessment` |
 | `/assurance.html` | `/assurance` | editorial | visual-verified | `public-routes:assurance`<br>`public-content:editorial-source` |
 | `/catalog.html` | `/catalog` | catalog | implemented | `public-routes:catalog`<br>`public-content:lesson-search` |
-| `/certification.html?id=claude-ccao-f` | `/certifications/[track]` | certification-track | implemented | `public-routes:certification-track`<br>`public-content:certification-validation` |
-| `/certifications.html` | `/certifications` | certification-program | implemented | `public-routes:certifications`<br>`public-content:certification-validation` |
+| `/certification.html?id=claude-ccao-f` | `/certifications/[track]` | certification-track | visual-verified | `public-routes:certification-track`<br>`public-content:certification-validation` |
+| `/certifications.html` | `/certifications` | certification-program | visual-verified | `public-routes:certifications`<br>`public-content:certification-validation` |
 | `/credits.html` | `/credits` | editorial | visual-verified | `public-routes:credits`<br>`public-content:provenance` |
 | `/cv-analysis.html` | `/cv-analysis` | presentation-only | implemented | `public-routes:cv-analysis`<br>`public-content:presentation-boundary` |
 | `/glossary.html` | `/glossary` | glossary | visual-verified | `public-routes:glossary`<br>`public-content:glossary-search` |

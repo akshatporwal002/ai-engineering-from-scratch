@@ -30,13 +30,14 @@ function artifactPath(kind: "reference-production" | "candidate-next" | "diffs" 
   return path.join(evidenceRoot, kind, ...parts);
 }
 
-export async function prepareVisualPage(page: Page, visual: VisualState) {
-  await page.addInitScript((theme) => {
+export async function prepareVisualPage(page: Page, visual: VisualState, options: { localStorage?: Record<string, string> } = {}) {
+  await page.addInitScript(({ theme, storage }) => {
     localStorage.clear();
     sessionStorage.clear();
     localStorage.setItem("theme", theme);
+    for (const [key, value] of Object.entries(storage)) localStorage.setItem(key, value);
     document.documentElement.dataset.theme = theme;
-  }, visual.theme);
+  }, { theme: visual.theme, storage: options.localStorage ?? {} });
   await page.goto(visual.route, { waitUntil: "load" });
   await page.waitForFunction(() => {
     const wordmark = document.querySelector<HTMLElement>(".site-header .logo .codeology-wordmark");
@@ -122,6 +123,9 @@ export async function compareVisualPage(page: Page, testInfo: TestInfo, visual: 
     let comparisonBuffer = buffer;
     if (options.referenceProjectionCss) {
       const projectionStyle = await page.addStyleTag({ content: options.referenceProjectionCss });
+      await page.evaluate(() => new Promise<void>((resolve) => {
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+      }));
       comparisonBuffer = await page.screenshot({ fullPage: capture.fullPage, animations: "disabled", caret: "hide" });
       await projectionStyle.evaluate((node) => (node as HTMLElement).remove());
       const projection = artifactPath("accessibility-pre-correction-projection", parts);

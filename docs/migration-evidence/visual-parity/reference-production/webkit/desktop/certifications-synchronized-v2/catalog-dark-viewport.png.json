@@ -1,0 +1,20 @@
+{
+  "productionUrl": "https://learn.akshatporwal.dev/certifications.html",
+  "capturedAt": "2026-08-23T13:45:17.921Z",
+  "browserProject": "webkit",
+  "viewport": {
+    "name": "desktop",
+    "width": 1440,
+    "height": 1000
+  },
+  "theme": "dark",
+  "routeState": "catalog-dark",
+  "visualTestId": "certifications-synchronized-v2",
+  "migrationCommit": "1082386d8b7854e01e2837382154a5ddccae7b0e",
+  "migrationTree": "6ca0873e3fbcc6f10f13bb57641ca27dd6c37f9e",
+  "productionRevision": {
+    "buildRef": "main",
+    "buildMetaEtag": "c55b6a3010ca43473a4e753ad8d511bb",
+    "observedAt": "2026-08-23T05:44:36.000Z"
+  }
+}

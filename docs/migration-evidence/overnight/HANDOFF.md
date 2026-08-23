@@ -391,3 +391,66 @@ canonical reference tree has no diff and the Catalog page remains unchanged.
   becomes `reviewed`.
 - Other unreviewed route families remain active migration work.
 - Catalog legacy restyling remains excluded by explicit user preference.
+
+---
+
+## Certifications parity continuation — 2026-08-23
+
+### Scope and status
+
+- The certification programme index and track route are now
+  `visual-verified`; independent human review remains required.
+- Next consumes the maintained certification HTML, CSS, data, and progress
+  runtime through isolated adapters, preserving four tracks, nine selected
+  track lessons, two assessments, optional deep dives, progress, clean URLs,
+  themes, responsive behavior, attribution, and disclaimer text.
+- The main `/catalog` route was not changed. Its current Next design remains
+  frozen by explicit user direction.
+- No push, merge, deployment, account, provider, database, secret, CV, or other
+  external-state action occurred.
+
+### Accessibility and synchronization
+
+- Axe was rerun after fonts, certification data, and motion had settled. The
+  optional-extension badge/link remained at approximately 3.70:1, proving a
+  real static contrast failure rather than reveal/intersection test timing.
+- The shared maintained stylesheet minimally changes only those light-theme
+  roles from `#c43b00` to `#a73b00` (4.51:1). Dark mode is unchanged and Next
+  consumes the same source; no exception or Axe exclusion was introduced.
+- The first immutable programme-index references remain preserved. Because a
+  remote lazy credential badge produced cache-dependent initial states, the
+  active `certifications-synchronized-v2` evidence uses a transparent in-memory
+  image in the capture harness only. Normal application badge loading remains
+  unchanged.
+
+### Evidence and validation
+
+- Report: `docs/migration-evidence/visual-parity/reports/certifications.md`.
+- The active matrix passes 40/40 comparisons across Chromium and WebKit, four
+  viewports, programme-index light/dark, track light/dark, and deterministic
+  2-of-9 progress state.
+- Separately labelled corrected evidence passes 8/8 projects and confines every
+  changed pixel to the approved badge or book-note link element. Canonical
+  production screenshots were not overwritten.
+- Focused legacy/Next interaction, keyboard, responsive, progress, normal and
+  reduced motion, and Axe checks pass in both engines with zero serious or
+  critical findings.
+- Certification content tests passed 12/12. The focused certification and
+  frozen-Catalog browser gate passed 4/4 across Chromium and WebKit. The
+  complete migration run passed 32/32 API tests and 26/26 unit tests; browser
+  tests passed 119/120, with every certification and Catalog case green. Its
+  sole unrelated WebKit Skill Map speculative-prefetch console error passed
+  1/1 on immediate isolation.
+- Typecheck, the 21-route production build, route-parity validation, diff
+  checks, and the complete pre-commit gate passed.
+- Root `npm run ci` again stopped only at the pre-existing translation-workflow
+  commit-failure contract (expected nonzero, observed zero), after all preceding
+  checks passed. No out-of-scope correction was attempted.
+
+### Remaining gates
+
+- A human reviewer must inspect certification paired evidence before either
+  route becomes `reviewed`.
+- Certification lesson and assessment destinations retain their own route-family
+  acceptance work.
+- Catalog legacy restyling remains excluded by explicit user preference.

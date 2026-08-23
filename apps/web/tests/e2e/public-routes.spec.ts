@@ -341,6 +341,57 @@ test("academy local progress updates without creating external state", async ({ 
   expect(await page.evaluate(() => Boolean(localStorage.getItem("aifs:progress:v1")))).toBe(true);
 });
 
+test("certification catalog and track preserve interactions and accessibility across motion preferences", async ({ page }) => {
+  test.setTimeout(120_000);
+  const errors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error" && !message.text().includes("ERR_BLOCKED_BY_CLIENT.Inspector")) errors.push(message.text());
+  });
+  page.on("pageerror", (error) => errors.push(error.message));
+  page.on("requestfailed", (request) => {
+    const url = new URL(request.url());
+    const failure = request.failure()?.errorText;
+    if ((url.hostname === "127.0.0.1" || url.hostname === "localhost")
+      && failure !== "net::ERR_ABORTED"
+      && failure !== "cancelled") errors.push(`${request.method()} ${url.pathname}: ${failure}`);
+  });
+
+  for (const reducedMotion of ["no-preference", "reduce"] as const) {
+    await page.emulateMedia({ reducedMotion });
+    for (const surface of [
+      { origin: "http://127.0.0.1:4173", main: "main", catalog: "/certifications.html", track: "/certification.html?id=claude-ccao-f", next: false },
+      { origin: "http://127.0.0.1:4174", main: "main-content", catalog: "/certifications", track: "/certifications/ccao-f", next: true },
+    ]) {
+      await page.goto(surface.origin + surface.catalog, { waitUntil: "load" });
+      await expect(page.locator(".cert-track-card")).toHaveCount(4);
+      await settleFiniteMotion(page);
+      const firstCard = page.locator(".cert-track-card").first();
+      await firstCard.focus();
+      await expect(firstCard).toBeFocused();
+      await expect(firstCard).not.toHaveCSS("outline-style", "none");
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+      await expectNoBlockingAxeFindings(page);
+
+      await page.goto(surface.origin + surface.track, { waitUntil: "load" });
+      await expect(page.locator(".cert-lesson-row")).toHaveCount(9);
+      await expect(page.locator(".cert-assessment-card")).toHaveCount(2);
+      await settleFiniteMotion(page);
+      const skip = page.getByRole("link", { name: "Skip to content" });
+      await skip.focus();
+      await page.keyboard.press("Enter");
+      await expect(page.locator(`main#${surface.main}`)).toBeFocused();
+      await expect(page.locator("#trackProgress [role=progressbar]")).toHaveAttribute("aria-valuenow", "0");
+      if (surface.next) {
+        await expect(page.locator(".cert-lesson-open").first()).toHaveAttribute("href", /^\/lessons\//);
+        await expect(page.locator(".cert-assessment-card .cert-action").first()).toHaveAttribute("href", /^\/assessments\//);
+      }
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+      await expectNoBlockingAxeFindings(page);
+      expect(errors).toEqual([]);
+    }
+  }
+});
+
 test("legacy inbound paths redirect to public routes", async ({ page }) => {
   for (const [legacy, destination] of [
     ["/index.html", "/"],

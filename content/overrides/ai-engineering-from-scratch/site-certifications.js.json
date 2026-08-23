@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "ai-engineering-from-scratch",
+  "canonicalPath": "site/certifications.js",
+  "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f",
+  "adapted": true,
+  "adaptationSummary": "Preserves the maintained certification renderer while allowing the isolated Next shell to supply a track ID and emit clean internal certification, lesson, and assessment URLs."
+}

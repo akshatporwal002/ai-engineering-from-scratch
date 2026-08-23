@@ -31,15 +31,15 @@
     "requiredTests": ["public-routes:catalog", "public-content:lesson-search"]
   },
   {
-    "legacyUrl": "/certification.html?id=claude-ccao-f", "productionUrl": "/certification.html?id=claude-ccao-f", "nextUrl": "/certifications/[track]", "kind": "certification-track", "status": "implemented", "fixture": "site/certification.html",
+    "legacyUrl": "/certification.html?id=claude-ccao-f", "productionUrl": "/certification.html?id=claude-ccao-f", "nextUrl": "/certifications/[track]", "kind": "certification-track", "status": "visual-verified", "fixture": "site/certification.html",
     "states": ["default", "progress", "lesson-links", "assessment-links", "mobile"], "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
-    "interactionCapabilities": ["mouse", "keyboard", "progress", "internal-navigation"], "visualTestIds": [],
+    "interactionCapabilities": ["mouse", "keyboard", "progress", "internal-navigation"], "visualTestIds": ["visual:certification-track:default:light", "visual:certification-track:default:dark", "visual:certification-track:progress:light"],
     "requiredTests": ["public-routes:certification-track", "public-content:certification-validation"]
   },
   {
-    "legacyUrl": "/certifications.html", "productionUrl": "/certifications.html", "nextUrl": "/certifications", "kind": "certification-program", "status": "implemented", "fixture": "site/certifications.html",
+    "legacyUrl": "/certifications.html", "productionUrl": "/certifications.html", "nextUrl": "/certifications", "kind": "certification-program", "status": "visual-verified", "fixture": "site/certifications.html",
     "states": ["listing", "progress", "mobile", "desktop"], "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
-    "interactionCapabilities": ["mouse", "keyboard", "progress", "internal-navigation"], "visualTestIds": [],
+    "interactionCapabilities": ["mouse", "keyboard", "progress", "internal-navigation"], "visualTestIds": ["visual:certifications:catalog-synchronized-v2:light", "visual:certifications:catalog-synchronized-v2:dark"],
     "requiredTests": ["public-routes:certifications", "public-content:certification-validation"]
   },
   {

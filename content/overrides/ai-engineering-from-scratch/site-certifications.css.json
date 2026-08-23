@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "ai-engineering-from-scratch",
+  "canonicalPath": "site/certifications.css",
+  "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f",
+  "adapted": true,
+  "adaptationSummary": "Uses one minimally darker light-theme ink token for optional-extension labels and links so the shared legacy and Next presentation meets WCAG AA contrast without changing layout or motion."
+}

@@ -44,7 +44,12 @@
     "visual:roadmap:inspector-flow-synchronized",
     "visual:roadmap:zoomed-synchronized",
     "visual:roadmap:url-hash-flow-synchronized",
-    "visual:roadmap:mobile-warmed"
+    "visual:roadmap:mobile-warmed",
+    "visual:certifications:catalog-synchronized-v2:light",
+    "visual:certifications:catalog-synchronized-v2:dark",
+    "visual:certification-track:default:light",
+    "visual:certification-track:default:dark",
+    "visual:certification-track:progress:light"
   ],
   "knownBlockedStates": [
     {

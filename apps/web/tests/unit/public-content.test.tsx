@@ -7,6 +7,8 @@ import {
   loadAssessment,
   loadAcademyProvenance,
   loadCertificationTracks,
+  loadCertificationLegacyPage,
+  loadCertificationRuntimeData,
   loadEditorialPage,
   loadGlossary,
   loadLessonQuiz,
@@ -32,6 +34,22 @@ describe("public content loaders", () => {
     expect(loadCertificationTracks().map((track) => track.slug).sort()).toEqual(["ccao-f", "ccar-f", "ccar-p", "ccdv-f"]);
     expect(loadCertificationTracks()).toBe(loadCertificationTracks());
     expect(loadAssessment("certifications/claude/assessments/ccao-f/diagnostic.json").questions.length).toBeGreaterThan(0);
+  });
+
+  it("loads the maintained certification pages and generated runtime data", () => {
+    const catalog = loadCertificationLegacyPage("catalog");
+    const track = loadCertificationLegacyPage("track");
+    const runtimeData = loadCertificationRuntimeData();
+
+    expect(catalog.styles).toContain(".cert-track-grid");
+    expect(catalog.styles).toContain("list-style: revert");
+    expect(catalog.html).toContain('id="certTrackGrid"');
+    expect(track.html).toContain('id="trackLessons"');
+    expect(track.html).toContain('id="trackAssessments"');
+    expect(catalog.runtime).toContain("renderCatalog()");
+    expect(runtimeData.tracks.map((item) => item.slug).sort()).toEqual(["ccao-f", "ccar-f", "ccar-p", "ccdv-f"]);
+    expect(Object.keys(runtimeData.lessonsByPath).length).toBeGreaterThan(0);
+    expect(Object.keys(runtimeData.assessmentsById).length).toBeGreaterThan(0);
   });
 
   it("reports the source path and invalid field at runtime boundaries", () => {

@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 
-const assets = new Set(["progress.js", "roadmap.js", "ui-controls.js"]);
+const assets = new Set(["certification-progress.js", "certifications.js", "progress.js", "roadmap.js", "ui-controls.js"]);
 
 export async function GET(_request: Request, { params }: { params: Promise<{ asset: string }> }) {
   const { asset } = await params;

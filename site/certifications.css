@@ -1,6 +1,11 @@
 .cert-page {
+  --cert-deep-dive-ink: #a73b00;
   min-height: 100vh;
   padding: 112px 0 88px;
+}
+
+[data-theme="dark"] .cert-page {
+  --cert-deep-dive-ink: var(--blueprint);
 }
 
 .cert-container {
@@ -597,7 +602,11 @@
   font-family: var(--font-mono);
   font-size: 0.6rem;
   letter-spacing: 0.08em;
-  color: var(--blueprint);
+  color: var(--cert-deep-dive-ink);
+}
+
+.cert-deep-dive-row .cert-lesson-open {
+  color: var(--cert-deep-dive-ink);
 }
 
 .cert-assessment-card {

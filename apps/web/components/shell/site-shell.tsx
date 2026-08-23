@@ -242,7 +242,7 @@ function Header() {
 
   const headerActions = (mobile = false) => (
       <div className={mobile ? "header-mobile-tools" : "header-actions"} role="group" aria-label={mobile ? "Site tools" : "Site actions"}>
-        <button ref={searchButtonRef} className="search-toggle" type="button" aria-label="Search (⌘K)" title="Search (⌘K)" onClick={() => setSearchOpen(true)}><SearchIcon /></button>
+        <button ref={searchButtonRef} className="search-toggle" type="button" aria-label="Search (⌘K)" title="Search (⌘K)" onClick={() => setSearchOpen(true)}>{pathname.startsWith("/certifications") ? <span aria-hidden="true">⌕</span> : <SearchIcon />}</button>
         <button className="theme-toggle" aria-label="Toggle theme" type="button" onClick={toggleTheme}><span className="theme-icon">{theme === "light" ? "N" : "D"}</span></button>
         <button ref={loginButtonRef} className="codeology-login-button" type="button" aria-label="Log in to Codeology" onClick={() => setLoginOpen(true)}>Log in</button>
       </div>
@@ -307,6 +307,20 @@ function Footer() {
       <Link href="/catalog">Catalog</Link>
       <Link href="/glossary">Glossary</Link>
       <a href="https://github.com/akshatporwal002/ai-engineering-from-scratch/issues/new/choose" target="_blank" rel="noopener">Report / Suggest</a>
+      <Link href="/credits">Credits</Link>
+    </>
+  ) : pathname === "/certifications" ? (
+    <>
+      <Link href="/">Home</Link>
+      <Link href="/catalog">Course catalog</Link>
+      <a href="https://github.com/akshatporwal002/ai-engineering-from-scratch" target="_blank" rel="noopener">GitHub</a>
+      <Link href="/credits">Credits</Link>
+    </>
+  ) : pathname.startsWith("/certifications/") ? (
+    <>
+      <Link href="/certifications">All certifications</Link>
+      <Link href="/catalog">Course catalog</Link>
+      <a href="https://github.com/akshatporwal002/ai-engineering-from-scratch" target="_blank" rel="noopener">GitHub</a>
       <Link href="/credits">Credits</Link>
     </>
   ) : null;
