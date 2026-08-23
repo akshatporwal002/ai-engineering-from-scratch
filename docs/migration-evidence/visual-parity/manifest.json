@@ -24,7 +24,13 @@
   },
   "capturedVisualTestIds": [
     "visual:academy:light",
-    "visual:academy:dark"
+    "visual:academy:dark",
+    "visual:editorial:about:light",
+    "visual:editorial:about:dark",
+    "visual:editorial:credits:light",
+    "visual:editorial:credits:dark",
+    "visual:editorial:assurance:light",
+    "visual:editorial:assurance:dark"
   ],
   "knownBlockedStates": [
     {

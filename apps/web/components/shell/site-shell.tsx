@@ -268,15 +268,43 @@ function Header() {
 }
 
 function Footer() {
+  const pathname = usePathname();
+  const editorialLinks = pathname === "/about" ? (
+    <>
+      <a href="https://github.com/akshatporwal002/ai-engineering-from-scratch" target="_blank" rel="noopener">GitHub</a>
+      <Link href="/about" aria-current="page">About</Link>
+      <Link href="/catalog">Catalog</Link>
+      <Link href="/glossary">Glossary</Link>
+      <a href="https://github.com/akshatporwal002/ai-engineering-from-scratch/issues/new/choose" target="_blank" rel="noopener">Report</a>
+      <Link href="/credits">Credits</Link>
+    </>
+  ) : pathname === "/credits" ? (
+    <>
+      <Link href="/">Home</Link>
+      <Link href="/about">About</Link>
+      <Link href="/credits" aria-current="page">Credits</Link>
+      <a href="https://github.com/akshatporwal002/ai-engineering-from-scratch" target="_blank" rel="noopener">GitHub</a>
+    </>
+  ) : pathname === "/assurance" ? (
+    <>
+      <Link href="/">Home</Link>
+      <Link href="/about">About</Link>
+      <a href="https://github.com/akshatporwal002/ai-engineering-from-scratch" target="_blank" rel="noopener">GitHub</a>
+      <Link href="/credits">Credits</Link>
+    </>
+  ) : null;
+
   return (
     <footer className="site-footer">
       <div className="shell-container footer-inner">
         <p>Codeology · Learn freely. Build for real. Prove what you can do.</p>
         <div className="footer-links">
-          <a href="https://github.com/akshatporwal002/ai-engineering-from-scratch" target="_blank" rel="noopener">GitHub</a>
-          <Link href="/about">About</Link><Link href="/certifications">Certifications</Link><Link href="/catalog">Catalog</Link><Link href="/glossary">Glossary</Link>
-          <a href="https://github.com/akshatporwal002/ai-engineering-from-scratch/issues/new/choose" target="_blank" rel="noopener">Report</a>
-          <Link href="/credits">Credits</Link>
+          {editorialLinks ?? <>
+            <a href="https://github.com/akshatporwal002/ai-engineering-from-scratch" target="_blank" rel="noopener">GitHub</a>
+            <Link href="/about">About</Link><Link href="/certifications">Certifications</Link><Link href="/catalog">Catalog</Link><Link href="/glossary">Glossary</Link>
+            <a href="https://github.com/akshatporwal002/ai-engineering-from-scratch/issues/new/choose" target="_blank" rel="noopener">Report</a>
+            <Link href="/credits">Credits</Link>
+          </>}
         </div>
       </div>
     </footer>
@@ -284,5 +312,13 @@ function Footer() {
 }
 
 export function SiteShell({ children }: { children: ReactNode }) {
-  return <><a className="skip-link" href="#main-content">Skip to content</a><Header />{children}<Footer /></>;
+  return <><a className="skip-link" href="#main-content" onClick={(event) => {
+    const target = document.getElementById("main-content");
+    if (!target) return;
+    event.preventDefault();
+    target.tabIndex = -1;
+    history.pushState(null, "", "#main-content");
+    target.focus();
+    target.scrollIntoView();
+  }}>Skip to content</a><Header />{children}<Footer /></>;
 }

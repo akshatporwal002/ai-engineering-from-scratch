@@ -8,9 +8,9 @@
     "requiredTests": ["public-routes:academy", "public-routes:paired-evidence"]
   },
   {
-    "legacyUrl": "/about.html", "productionUrl": "/about.html", "nextUrl": "/about", "kind": "editorial", "status": "implemented", "fixture": "site/about.html",
+    "legacyUrl": "/about.html", "productionUrl": "/about.html", "nextUrl": "/about", "kind": "editorial", "status": "visual-verified", "fixture": "site/about.html",
     "states": ["light", "dark", "mobile", "desktop"], "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
-    "interactionCapabilities": ["mouse", "keyboard", "theme", "reduced-motion"], "visualTestIds": [],
+    "interactionCapabilities": ["mouse", "keyboard", "theme", "reduced-motion"], "visualTestIds": ["visual:editorial:about:light", "visual:editorial:about:dark"],
     "requiredTests": ["public-routes:about", "public-content:editorial-source"]
   },
   {
@@ -19,9 +19,9 @@
     "interactionCapabilities": ["mouse", "keyboard", "assessment"], "visualTestIds": [], "requiredTests": ["mock-product:assessment"]
   },
   {
-    "legacyUrl": "/assurance.html", "productionUrl": "/assurance.html", "nextUrl": "/assurance", "kind": "editorial", "status": "implemented", "fixture": "site/assurance.html",
+    "legacyUrl": "/assurance.html", "productionUrl": "/assurance.html", "nextUrl": "/assurance", "kind": "editorial", "status": "visual-verified", "fixture": "site/assurance.html",
     "states": ["light", "dark", "mobile", "desktop"], "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
-    "interactionCapabilities": ["mouse", "keyboard", "theme", "reduced-motion"], "visualTestIds": [],
+    "interactionCapabilities": ["mouse", "keyboard", "theme", "reduced-motion"], "visualTestIds": ["visual:editorial:assurance:light", "visual:editorial:assurance:dark"],
     "requiredTests": ["public-routes:assurance", "public-content:editorial-source"]
   },
   {
@@ -43,9 +43,9 @@
     "requiredTests": ["public-routes:certifications", "public-content:certification-validation"]
   },
   {
-    "legacyUrl": "/credits.html", "productionUrl": "/credits.html", "nextUrl": "/credits", "kind": "editorial", "status": "implemented", "fixture": "site/credits.html",
+    "legacyUrl": "/credits.html", "productionUrl": "/credits.html", "nextUrl": "/credits", "kind": "editorial", "status": "visual-verified", "fixture": "site/credits.html",
     "states": ["light", "dark", "mobile", "desktop"], "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
-    "interactionCapabilities": ["mouse", "keyboard", "theme", "reduced-motion"], "visualTestIds": [],
+    "interactionCapabilities": ["mouse", "keyboard", "theme", "reduced-motion"], "visualTestIds": ["visual:editorial:credits:light", "visual:editorial:credits:dark"],
     "requiredTests": ["public-routes:credits", "public-content:provenance"]
   },
   {

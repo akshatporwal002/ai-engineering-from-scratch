@@ -1,14 +1,20 @@
 import { execFileSync, spawnSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const webRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const repositoryRoot = path.resolve(webRoot, "../..");
 const evidenceRoot = path.join(repositoryRoot, "docs/migration-evidence/visual-parity");
-const referenceRoot = path.join(evidenceRoot, "reference-production");
 const manifest = JSON.parse(readFileSync(path.join(evidenceRoot, "manifest.json"), "utf8"));
 const expectedEtag = `"${manifest.productionRevision.buildMetaEtag}"`;
+const requestedTests = process.argv.slice(2);
+
+for (const requestedTest of requestedTests) {
+  if (requestedTest.startsWith("-") || !requestedTest.endsWith(".visual.spec.ts")) {
+    throw new Error(`Reference capture accepts only explicit *.visual.spec.ts test files: ${requestedTest}`);
+  }
+}
 
 async function productionRevision() {
   const response = await fetch(`${manifest.canonicalOrigin}/build-meta.js`, { cache: "no-store" });
@@ -23,17 +29,13 @@ function assertRevision(revision, phase) {
   }
 }
 
-if (existsSync(referenceRoot)) {
-  throw new Error(`Immutable reference directory already exists: ${path.relative(repositoryRoot, referenceRoot)}`);
-}
-
 const before = await productionRevision();
 assertRevision(before, "before");
 
 const migrationCommit = execFileSync("git", ["rev-parse", "HEAD"], { cwd: repositoryRoot, encoding: "utf8" }).trim();
 const migrationTree = execFileSync("git", ["write-tree"], { cwd: repositoryRoot, encoding: "utf8" }).trim();
 const cli = path.join(webRoot, "node_modules/@playwright/test/cli.js");
-const result = spawnSync(process.execPath, [cli, "test", "--config", "playwright.visual.config.ts"], {
+const result = spawnSync(process.execPath, [cli, "test", "--config", "playwright.visual.config.ts", ...requestedTests], {
   cwd: webRoot,
   env: {
     ...process.env,

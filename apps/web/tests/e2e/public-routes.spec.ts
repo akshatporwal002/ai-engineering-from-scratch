@@ -35,7 +35,9 @@ test.beforeEach(async ({ page }) => keepNavigationLocal(page));
 for (const route of routes) {
   test(`${route.name} renders with valid landmarks and accessibility`, async ({ page }) => {
     const errors: string[] = [];
-    page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+    page.on("console", (message) => {
+      if (message.type() === "error" && !message.text().includes("ERR_BLOCKED_BY_CLIENT.Inspector")) errors.push(message.text());
+    });
     await page.goto(route.next);
     await expect(page.locator("main#main-content")).toHaveCount(1);
     await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
@@ -59,6 +61,59 @@ test("legacy and Next Academy corrections pass Axe with normal and reduced motio
     }
   }
 });
+
+for (const route of [
+  { name: "about", next: "/about", legacy: "http://127.0.0.1:4173/about.html" },
+  { name: "credits", next: "/credits", legacy: "http://127.0.0.1:4173/credits.html" },
+  { name: "assurance", next: "/assurance", legacy: "http://127.0.0.1:4173/assurance.html" },
+]) {
+  test(`${route.name} legacy and Next preserve focus and accessibility across motion preferences`, async ({ page }) => {
+    const errors: string[] = [];
+    page.on("console", (message) => {
+      if (message.type() === "error" && !message.text().includes("ERR_BLOCKED_BY_CLIENT.Inspector")) errors.push(message.text());
+    });
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("requestfailed", (request) => {
+      const url = new URL(request.url());
+      const failure = request.failure()?.errorText;
+      if ((url.hostname === "127.0.0.1" || url.hostname === "localhost") && failure !== "net::ERR_ABORTED") {
+        errors.push(`${request.method()} ${url.pathname}: ${failure}`);
+      }
+    });
+    for (const reducedMotion of ["no-preference", "reduce"] as const) {
+      await page.emulateMedia({ reducedMotion });
+      for (const surface of [
+        { url: route.next, hash: "main-content" },
+        { url: route.legacy, hash: "main" },
+      ]) {
+        await page.goto(surface.url);
+        await settleFiniteMotion(page);
+
+        const skip = page.getByRole("link", { name: "Skip to content" });
+        await skip.focus();
+        await expect(skip).toBeFocused();
+        await page.keyboard.press("Enter");
+        await expect(page).toHaveURL(new RegExp(`#${surface.hash}$`));
+        await expect(page.locator(`main#${surface.hash}`)).toBeFocused();
+
+        const footerLink = page.locator(".site-footer a").first();
+        await footerLink.focus();
+        await expect(footerLink).toBeFocused();
+        await expect(footerLink).not.toHaveCSS("outline-style", "none");
+
+        const themeToggle = page.getByRole("button", { name: "Toggle theme" });
+        const initialTheme = await page.locator("html").getAttribute("data-theme");
+        await themeToggle.click();
+        await expect(page.locator("html")).not.toHaveAttribute("data-theme", initialTheme ?? "light");
+        await themeToggle.click();
+        await expect(page.locator("html")).toHaveAttribute("data-theme", initialTheme ?? "light");
+        await settleFiniteMotion(page);
+        await expectNoBlockingAxeFindings(page);
+        expect(errors).toEqual([]);
+      }
+    }
+  });
+}
 
 test("catalog and glossary search states are keyboard-operable", async ({ page }) => {
   await page.goto("/catalog");

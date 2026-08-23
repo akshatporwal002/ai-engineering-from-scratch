@@ -200,3 +200,64 @@ boundary changed.
 Reviewer priority: inspect the Academy report and a desktop/mobile full-page
 corrected sidecar first, run the final migration command, then verify the
 canonical reference tree has no diff and the Catalog page remains unchanged.
+
+---
+
+## Editorial parity continuation — 2026-08-23
+
+### Scope and status
+
+- About, Credits, and Assurance now render the maintained legacy source and
+  stylesheet stack with route-correct structure and footers.
+- All three routes are `visual-verified`; none is `reviewed` because independent
+  human inspection is still required.
+- The current Next Catalog design was explicitly preserved. No Catalog
+  implementation or style was changed to match the legacy page.
+- No push, merge, deployment, account, database, Supabase, provider, secret,
+  real CV, or other external-state action occurred.
+
+### Accessibility and interaction corrections
+
+- Assurance exposed real static light-theme contrast failures in Chromium and
+  WebKit: 2.86:1 for its large hero and 4.45:1 for verified-state labels.
+- The maintained stylesheet now uses route-scoped colors measuring 3.19:1 and
+  4.66:1 respectively. Dark theme and all non-Assurance colors are unchanged.
+- Shared legacy and Next skip links now move keyboard focus to the main region
+  instead of changing only the URL fragment.
+- No Axe exclusion or parity exception was added. Legacy and Next pass normal
+  and reduced motion with zero serious/critical findings in both engines.
+
+### Evidence and validation
+
+- Report: `docs/migration-evidence/visual-parity/reports/editorial.md`.
+- Canonical production references contain 96 images plus 96 sidecars across
+  both engines, four viewports, two themes, three routes, and two capture sizes.
+- The invalid first editorial capture is preserved separately as
+  `reference-production-unsynchronized-editorial`; the settled capture helper
+  prevents recurrence. Academy references were not overwritten.
+- Assurance has 32 corrected captures, pre-correction projections, diffs, and
+  sidecars. The 312,316 light-theme changed pixels are all inside the approved
+  hero/verified-label rectangles; every sidecar reports zero outside pixels.
+- Full visual matrix: 64/64 passed across Chromium and WebKit, including the
+  approved Academy and editorial accessibility corrections.
+- Focused legacy/Next accessibility and focus matrix: 6/6 passed.
+- Editorial landmark/Axe and responsive matrix: 24/24 passed.
+- Final `npm run test:migration`: 32 API tests, 24 Vitest tests, and 114
+  Chromium/WebKit end-to-end tests passed.
+- Final `npm run typecheck:migration` and `npm run build:migration` passed; the
+  production build generated 21 routes and Python compilation passed.
+- `npm run check:precommit` passed all validators for 503 lessons, 33
+  certification lessons, and 8 assessments.
+- Root `npm run ci` stopped only at the known, unrelated
+  `TranslateWorkflowContractTest.test_commit_failure_never_reports_publish_success`
+  failure (expected nonzero, observed zero). No out-of-scope correction was
+  attempted.
+
+### Remaining gates
+
+- Human review is required before About, Credits, or Assurance becomes
+  `reviewed`.
+- Other route families remain unreviewed and the overall visual-parity goal is
+  still active.
+- Catalog legacy restyling is excluded by explicit user direction; preserve its
+  current Next appearance while continuing functional/accessibility checks.

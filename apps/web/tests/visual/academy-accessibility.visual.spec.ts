@@ -8,7 +8,9 @@ import { prepareVisualPage, type VisualState } from "./parity";
 const repositoryRoot = path.resolve(__dirname, "../../../..");
 const evidenceRoot = path.join(repositoryRoot, "docs/migration-evidence/visual-parity");
 const states: VisualState[] = [
+  // @visual-id visual:academy:light
   { id: "academy", route: "/", state: "light", theme: "light" },
+  // @visual-id visual:academy:dark
   { id: "academy", route: "/", state: "dark", theme: "dark" },
 ];
 

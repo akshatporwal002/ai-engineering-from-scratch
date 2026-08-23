@@ -1,0 +1,20 @@
+{
+  "productionUrl": "https://learn.akshatporwal.dev/assurance.html",
+  "capturedAt": "2026-08-23T08:51:34.699Z",
+  "browserProject": "chromium",
+  "viewport": {
+    "name": "tablet",
+    "width": 768,
+    "height": 1024
+  },
+  "theme": "dark",
+  "routeState": "dark",
+  "visualTestId": "assurance",
+  "migrationCommit": "1bafc023910848ed897fafa91dd1ea9c0289028d",
+  "migrationTree": "c3896d33d0ed317b6c0e6de77ed055b23a53ad93",
+  "productionRevision": {
+    "buildRef": "main",
+    "buildMetaEtag": "c55b6a3010ca43473a4e753ad8d511bb",
+    "observedAt": "2026-08-23T05:44:36.000Z"
+  }
+}

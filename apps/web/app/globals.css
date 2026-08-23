@@ -674,13 +674,10 @@ a { color: inherit; text-underline-offset: 0.2em; }
 .legacy-content [class*="eyebrow"] { color: var(--accent); font: 700 0.67rem var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
 .legacy-content [class*="actions"] { display: flex; flex-wrap: wrap; gap: 0.65rem; margin-top: 1.2rem; }
 .legacy-content [class*="action"] { display: inline-flex; align-items: center; min-height: 44px; padding: 0.6rem 1rem; border: 1px solid var(--accent); border-radius: var(--radius-pill); color: var(--accent); font: 700 0.68rem var(--font-mono); text-decoration: none; text-transform: uppercase; }
-.about-principles, .assurance-state-grid, .assurance-axis-grid, .assurance-rubric { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
-.about-principle, .assurance-state, .assurance-axis-grid > article, .assurance-rubric > article, .credits-note, .cv-privacy-card { padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); }
-.credits-ledger { display: grid; gap: 0; }
-.credits-ledger > div { display: grid; grid-template-columns: 12rem 1fr; gap: 1rem; padding: 0.85rem; border-top: 1px solid var(--line); }
-.credits-ledger dt { font: 700 0.68rem var(--font-mono); text-transform: uppercase; }
-.credits-ledger dd { margin: 0; overflow-wrap: anywhere; }
 .cv-analysis-hero { display: grid; grid-template-columns: 1fr minmax(16rem, 0.4fr); gap: 2rem; align-items: end; }
+.assurance-limit ul,
+.assurance-axis-grid ul { list-style-type: disc; }
+.assurance-axis-grid ol { list-style-type: decimal; }
 
 .lesson-page {
   --rule-soft: var(--line);
@@ -814,14 +811,13 @@ a { color: inherit; text-underline-offset: 0.2em; }
   .public-page *,
   .academy-page * { min-width: 0; }
   .public-filters { top: 72px; grid-template-columns: 1fr; }
-  .public-list, .glossary-grid, .roadmap-list, .cert-grid > div, .cert-plans > div, .about-principles, .assurance-state-grid, .assurance-axis-grid, .assurance-rubric { grid-template-columns: 1fr; }
+  .public-list, .glossary-grid, .roadmap-list, .cert-grid > div, .cert-plans > div { grid-template-columns: 1fr; }
   .academy-phases > div { grid-template-columns: 1fr; }
   .cert-facts { grid-template-columns: repeat(2, 1fr); }
   .cert-facts div { min-width: 0; padding-inline: 0.5rem; }
   .cert-facts strong { font-size: 1.7rem; overflow-wrap: anywhere; }
   .cert-domains article { grid-template-columns: 4.5rem 1fr; }
   .glossary-entry h2 { font-size: 1.75rem; overflow-wrap: anywhere; }
-  .credits-ledger > div { grid-template-columns: 1fr; gap: 0.2rem; }
   .legacy-content [class*="action"] { justify-content: center; text-align: center; white-space: normal; }
 }
 

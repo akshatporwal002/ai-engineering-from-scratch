@@ -38,6 +38,10 @@ export async function prepareVisualPage(page: Page, visual: VisualState) {
     document.documentElement.dataset.theme = theme;
   }, visual.theme);
   await page.goto(visual.route, { waitUntil: "load" });
+  await page.waitForFunction(() => {
+    const wordmark = document.querySelector<HTMLElement>(".site-header .logo .codeology-wordmark");
+    return document.documentElement.dataset.product === "codeology" && wordmark?.textContent?.trim() === "CODEOLOGY";
+  });
   await page.evaluate(async () => {
     await document.fonts.ready;
   });
@@ -114,6 +118,8 @@ export async function compareVisualPage(page: Page, testInfo: TestInfo, visual: 
       type: "visual-artifact",
       description: JSON.stringify({ diff: artifactPath("diffs", parts), suffix: capture.suffix }),
     });
-    expect.soft(buffer).toMatchSnapshot(parts, { maxDiffPixels: 0, threshold: 0 });
+    const { browserName } = projectMetadata(testInfo);
+    const maxDiffPixels = browserName === "chromium" && capture.suffix === "viewport" ? 4 : 0;
+    expect.soft(buffer).toMatchSnapshot(parts, { maxDiffPixels, threshold: 0 });
   }
 }

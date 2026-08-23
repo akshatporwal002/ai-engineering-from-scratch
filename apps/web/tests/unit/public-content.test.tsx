@@ -60,6 +60,13 @@ describe("public content loaders", () => {
     expect(page.html).not.toContain("<form");
     expect(page.html).not.toContain("cvAccountWorkspace");
   });
+
+  it("loads the maintained legacy stylesheet with editorial source markup", () => {
+    const page = loadEditorialPage("about");
+    expect(page.styles).toContain(".about-page");
+    expect(page.styles).toContain(".site-header");
+    expect(page.html).toContain("Learn the foundations.");
+  });
 });
 
 describe("public search and filters", () => {

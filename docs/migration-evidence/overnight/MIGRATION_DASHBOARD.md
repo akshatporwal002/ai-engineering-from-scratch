@@ -5,9 +5,9 @@
 ## Coverage
 
 - Legacy HTML routes: 12
-- Implemented: 11
+- Implemented: 8
 - Interaction verified: 0
-- Visual verified: 0
+- Visual verified: 3
 - Human reviewed: 0
 - Planned: 1
 - Excluded: 0
@@ -18,13 +18,13 @@
 | Legacy route | Next.js target | Kind | Status | Required evidence |
 |---|---|---|---|---|
 | `/index.html` | `/` | academy | implemented | `public-routes:academy`<br>`public-routes:paired-evidence` |
-| `/about.html` | `/about` | editorial | implemented | `public-routes:about`<br>`public-content:editorial-source` |
+| `/about.html` | `/about` | editorial | visual-verified | `public-routes:about`<br>`public-content:editorial-source` |
 | `/assessment.html` | `/assessments/[assessment]` | assessment | planned | `mock-product:assessment` |
-| `/assurance.html` | `/assurance` | editorial | implemented | `public-routes:assurance`<br>`public-content:editorial-source` |
+| `/assurance.html` | `/assurance` | editorial | visual-verified | `public-routes:assurance`<br>`public-content:editorial-source` |
 | `/catalog.html` | `/catalog` | catalog | implemented | `public-routes:catalog`<br>`public-content:lesson-search` |
 | `/certification.html?id=claude-ccao-f` | `/certifications/[track]` | certification-track | implemented | `public-routes:certification-track`<br>`public-content:certification-validation` |
 | `/certifications.html` | `/certifications` | certification-program | implemented | `public-routes:certifications`<br>`public-content:certification-validation` |
-| `/credits.html` | `/credits` | editorial | implemented | `public-routes:credits`<br>`public-content:provenance` |
+| `/credits.html` | `/credits` | editorial | visual-verified | `public-routes:credits`<br>`public-content:provenance` |
 | `/cv-analysis.html` | `/cv-analysis` | presentation-only | implemented | `public-routes:cv-analysis`<br>`public-content:presentation-boundary` |
 | `/glossary.html` | `/glossary` | glossary | implemented | `public-routes:glossary`<br>`public-content:glossary-search` |
 | `/lesson.html` | `/lessons/[...slug]` | lesson | implemented | `reference-lesson:reader`<br>`reference-lesson:paired-evidence` |

@@ -252,8 +252,25 @@
     syncLayout();
   }
 
+  function setupSkipLinks() {
+    var links = document.querySelectorAll('.skip-link[href^="#"]');
+    for (var i = 0; i < links.length; i++) {
+      links[i].addEventListener('click', function (event) {
+        var id = this.getAttribute('href').slice(1);
+        var target = document.getElementById(id);
+        if (!target) return;
+        event.preventDefault();
+        target.setAttribute('tabindex', '-1');
+        history.pushState(null, '', '#' + id);
+        target.focus();
+        target.scrollIntoView();
+      });
+    }
+  }
+
   function load() {
     ensureCodeologyShell();
+    setupSkipLinks();
     var headers = document.querySelectorAll('.site-header');
     for (var i = 0; i < headers.length; i++) setupNavigation(headers[i]);
   }

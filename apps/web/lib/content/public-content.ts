@@ -41,6 +41,7 @@ export type EditorialPage = {
   slug: "about" | "credits" | "assurance" | "cv-analysis";
   title: string;
   description: string;
+  styles: string;
   html: string;
 };
 
@@ -228,5 +229,11 @@ export function loadEditorialPage(slug: EditorialPage["slug"]): EditorialPage {
   const safeMain = slug === "cv-analysis"
     ? main.match(/<header class="cv-analysis-hero">[\s\S]*?<\/header>/)?.[0] ?? main
     : main;
-  return { slug, title, description, html: rewriteLegacyLinks(safeMain) };
+  return {
+    slug,
+    title,
+    description,
+    styles: `${readRepositoryFile("site/style.css")}\n${readRepositoryFile("site/codeology.css")}`,
+    html: rewriteLegacyLinks(safeMain),
+  };
 }
