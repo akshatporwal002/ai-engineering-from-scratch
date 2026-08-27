@@ -24,7 +24,7 @@ export default defineConfig({
       timeout: 30_000,
     },
     {
-      command: "python3 -m http.server 4173 --bind 127.0.0.1 --directory ../../site",
+      command: "node scripts/legacy-static-server.mjs",
       url: "http://127.0.0.1:4173/index.html",
       reuseExistingServer: true,
       timeout: 30_000,

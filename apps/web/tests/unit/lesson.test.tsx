@@ -3,7 +3,8 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import { MermaidDiagram } from "../../components/lesson/mermaid-diagram";
 import { QuizPanel } from "../../components/lesson/quiz-panel";
-import { loadReferenceLesson, REFERENCE_LESSON } from "../../lib/content/lesson-content";
+import { loadCurriculumLesson, loadCurriculumLessons, loadReferenceLesson, REFERENCE_LESSON } from "../../lib/content/lesson-content";
+import { internalLessonUrl } from "../../lib/content/query";
 import { parseLessonMarkdown } from "../../lib/content/lesson-markdown";
 import { lessonQuizSchema } from "../../lib/content/schemas";
 import { validateContent } from "../../lib/content/public-content";
@@ -11,6 +12,16 @@ import { validateContent } from "../../lib/content/public-content";
 afterEach(cleanup);
 
 describe("reference lesson source", () => {
+  it("discovers every authoritative curriculum lesson and resolves its internal route", () => {
+    const lessons = loadCurriculumLessons();
+    expect(lessons.length).toBeGreaterThan(400);
+    expect(new Set(lessons.map((lesson) => lesson.sourcePath)).size).toBe(lessons.length);
+    for (const lesson of lessons) {
+      expect(loadCurriculumLesson(lesson.routeSlug)?.sourcePath).toBe(lesson.sourcePath);
+      expect(internalLessonUrl(lesson.sourceUrl)).toBe(`/lessons/${lesson.routeSlug.join("/")}`);
+    }
+  });
+
   it("loads the preferred optimization lesson and preserves its contracts", () => {
     const lesson = loadReferenceLesson();
     expect(lesson.title).toBe("Optimization");

@@ -81,6 +81,12 @@ export type CertificationRuntimeData = {
   assessmentsById: Record<string, unknown>;
 };
 
+export type LessonLegacyPage = {
+  styles: string;
+  html: string;
+  runtime: string;
+};
+
 // Tailwind's form-control reset is global in the experiment. The maintained
 // static page intentionally starts from each browser's native control metrics,
 // so restore that baseline before its route stylesheet is applied.

@@ -203,6 +203,84 @@ canonical reference tree has no diff and the Catalog page remains unchanged.
 
 ---
 
+## Reference lesson reader continuation — 2026-08-24
+
+### Status
+
+- The reference-reader implementation is intentionally **uncommitted** and
+  blocked by the strict visual deterioration gate. No push, merge, deployment,
+  account, database, provider, credential, CV, Supabase, or external write
+  occurred.
+- The user’s Catalog direction remains explicit: the current Next `/catalog`
+  design was not changed, restyled, or compared back to the legacy Catalog.
+
+### Completed safe work
+
+- Replaced the bespoke reference lesson page with the maintained lesson
+  reader shell and runtime adapter: phase navigation, article/TOC responsive
+  layout, attribution, Markdown, Mermaid SVGs, real interactive figure,
+  code-copy controls, two quizzes, clean internal URLs, and safe fallbacks.
+- Corrected maintained legacy and inherited Next lesson accessibility without
+  a WCAG exception: light-theme lesson accent contrast, range/select names,
+  and keyboard access to horizontally scrollable code.
+- Focused Chromium and WebKit functional/keyboard/Axe checks passed with zero
+  serious or critical findings under both normal and reduced motion.
+- Preserved the original `reference-lesson` production captures and created a
+  separately labelled `reference-lesson-synchronized-v2` 64-case production
+  matrix using deterministic in-memory directory-list fixtures.
+
+### Blocking evidence
+
+- The strict candidate comparison found and corrected an inherited experiment
+  reset that added a top border and 19.2px padding to lesson `h2` elements.
+- After that repair, the full-page matrix still has unexplained cumulative
+  vertical drift (Chromium mobile synchronized top light: reference
+  704×20424, candidate 704×20869). The work stopped here: no tolerance,
+  masking, full-page exclusion, or visual-parity exception was added.
+- Full details and exact artifact locations are in
+  `docs/migration-evidence/visual-parity/reports/reference-lesson.md`.
+
+### Required next action
+
+Identify the remaining inherited vertical geometry difference against the
+synchronized production fixture and rerun the entire strict matrix before
+creating `fix(web): restore reference lesson reader parity`.
+
+## Full curriculum route continuation — 2026-08-27
+
+- The Next lesson route now discovers every authoritative `phases/*/*/docs/en.md`
+  source and statically generates 503 internal lesson pages. The loader preserves
+  published object and legacy array quiz contracts, metadata, source attribution,
+  deterministic code/output listings, and legacy `lesson.html?path=` redirects.
+- Catalog search results now link to internal lesson routes; the current Catalog
+  styling and interaction design were intentionally not changed.
+- Evidence: `npx vitest run tests/unit/lesson.test.tsx` passed 7/7 (including
+  all-curriculum discovery); `npm run build` generated 523 pages, including 503
+  lesson routes; focused Chromium tests passed for an ordinary published lesson,
+  legacy redirect, unknown route, and Catalog internal navigation.
+
+## Assessment route continuation — 2026-08-27
+
+- Added static `/assessments/<id>` routes for every existing certification
+  manifest, using the maintained assessment shell, progress storage, timer,
+  multi/single-answer scoring, remediation, result refresh, and independent
+  practice disclaimer through the existing isolated runtime.
+- Focused Chromium and WebKit browser coverage passes direct load, keyboard
+  answer, submit, persisted result refresh, and zero serious/critical Axe
+  findings for `claude-ccao-f-diagnostic`.
+
+### Committed assessment slice — 2026-08-28
+
+- `bb7b1d61 feat(web): migrate assessment journeys` commits the static Next
+  assessment routes, maintained runtime bridge, direct-link compatibility,
+  parity manifest/dashboard update, and focused journey coverage.
+- `npx playwright test tests/e2e/assessments.spec.ts` passed in Chromium and
+  WebKit. The commit pre-hook ran the complete repository pre-commit gate
+  successfully. No external state, account, credential, CV, or deployment was
+  used.
+
+---
+
 ## Editorial parity continuation — 2026-08-23
 
 ### Scope and status
@@ -334,6 +412,77 @@ canonical reference tree has no diff and the Catalog page remains unchanged.
 
 ---
 
+## Migration continuation — 2026-08-27
+
+### Completed local slices
+
+- `32a5008f test(ci): isolate translation hook fixture` makes the translation
+  publisher contract fixture independent of contributor-global Git hook
+  configuration. It also ignores transient `.playwright-mcp/` output and adds
+  the required imported-source provenance record. The previously failing
+  `python3 scripts/run_translation_workflow_tests.py` now passes (5/5).
+- `da135ba9 fix(web): preserve CV Analysis signed-out surface` restores the
+  maintained CV Analysis hero, privacy notice, and sign-in gate when fixtures
+  are not explicitly enabled. The in-memory CV workspace is now visible only
+  when `CODEOLOGY_ENABLE_FIXTURES=1`; it is not a normal development or
+  production-facing account state.
+
+### Validation recorded this continuation
+
+- `npm --prefix apps/web run typecheck`: passed.
+- `npx vitest run tests/unit/public-content.test.tsx` from `apps/web`: passed
+  (12/12).
+- `npm --prefix apps/web run build`: passed, generating 531 static pages,
+  including all 503 curriculum lesson routes and CV Analysis.
+- `python3 scripts/run_translation_workflow_tests.py`: passed (5/5).
+- Both local commits passed `npm run check:precommit` before creation.
+- `npm run ci`: passed end to end after the translation, About, and Credits
+  fixture repairs. Its generated `site/data.js` timestamp was restored before
+  staging, in accordance with the generated-file contract.
+
+### Evidence not yet counted as green
+
+- A full `npm --prefix apps/web run test:e2e` was started with its local
+  deterministic servers; output showed the assessment and first Chromium
+  checks passing, but the runner did not produce a completion summary or
+  `.last-run.json`. Treat that run as inconclusive and rerun it from a clean
+  local server state before using it as migration evidence.
+- Reference-lesson strict visual comparison remains open. The underlying
+  layout mismatch has been narrowed to the inherited Tailwind SVG baseline
+  behavior; no tolerance, masking, reference overwrite, or parity exception
+  was introduced. The remaining light-theme contrast difference belongs in the
+  separately labelled accessibility-corrected evidence path.
+
+### Public-route browser rerun — 2026-08-28
+
+- The complete `tests/e2e/public-routes.spec.ts` matrix passed from a clean
+  local loopback-server state in both engines: **44/44 WebKit** and **44/44
+  Chromium**. This includes the legacy and Next certification programme and
+  track under normal and reduced-motion preferences, keyboard interaction,
+  responsive overflow assertions, console/network checks, and zero
+  serious/critical Axe findings.
+- The legacy static test host now uses the checked-in Node standard-library
+  server at `apps/web/scripts/legacy-static-server.mjs`. It serves only files
+  below `site/` on `127.0.0.1:4173`, with no caching and no external traffic.
+  The browser suite continues to abort every non-loopback request.
+- Earlier incomplete WebKit runs are not counted as evidence: one execution
+  host interrupted a parent runner after local servers were started, and a
+  subsequent diagnostic run was invalidated when those exact temporary servers
+  were stopped. The clean reruns above are the authoritative result.
+- The strict reference-lesson canonical screenshot residual remains open and
+  is unaffected by these public-route checks. No visual-parity exception has
+  been created.
+
+### External-infrastructure boundary
+
+- `apps/api/AGENTS.md` continues to prohibit Supabase, provider, storage,
+  account, CV, and deployment integrations in this isolated experiment. Real
+  infrastructure work required by the completion runbook cannot be implemented
+  without resolving that authoritative local-contract conflict. No credentials,
+  production services, or user data were accessed.
+
+---
+
 ## Skill Map parity continuation — 2026-08-23
 
 ### Scope and status
@@ -454,3 +603,86 @@ canonical reference tree has no diff and the Catalog page remains unchanged.
 - Certification lesson and assessment destinations retain their own route-family
   acceptance work.
 - Catalog legacy restyling remains excluded by explicit user preference.
+
+---
+
+## Reference reader accessibility correction — 2026-08-27
+
+### Applied shared-source correction
+
+- The reference reader’s serious Axe findings were not animation timing issues:
+  they persisted after the page had rendered its fonts, diagrams, figures, and
+  quizzes. The affected controls were the light-theme code-card file-size
+  metadata (4.42:1) and two horizontally scrollable run-command regions.
+- `site/lesson.html`, consumed by both the maintained legacy reader and the
+  Next compatibility reader, now uses `#6b6b6b` for the file-size metadata and
+  gives every run-command region `tabindex="0"`. The visible colour adjustment
+  is deliberately limited to the low-emphasis metadata; keyboard focus is
+  non-visual until used.
+- No Axe rule, node, route, selector, or finding was excluded. Canonical
+  production references under `reference-production/` were not modified.
+
+### Validation and remaining visual gate
+
+- Focused `reference-lesson.spec.ts` checks produced no Playwright failure
+  artifacts in Chromium and WebKit, including the maintained legacy and Next
+  readers under normal and reduced-motion preferences. The assessment direct
+  load, keyboard answer, score, and refresh check also passed in Chromium.
+- The strict canonical mobile Chromium reader comparison remains open for a
+  pre-existing Mermaid compatibility geometry difference: the Next full-page
+  capture is 20426px tall against the immutable 20424px reference, with 206
+  viewport pixels different. The scoped block-SVG compatibility rule is needed
+  to avoid the larger Tailwind baseline drift. Reducing its 8px margin by 2px
+  made the page 20416px tall, confirming a fractional pixel adjustment would
+  be required; that brittle pixel tuning was rejected.
+- The residual is not attributed to the accessibility correction. No tolerance,
+  mask, snapshot overwrite, or parity exception was introduced. A separately
+  labelled pre-correction projection remains in
+  `visual-parity/accessibility-pre-correction-projection/`; corrected evidence
+  must still be captured and classified before this reader can be marked
+  visual-verified.
+
+### Curriculum build and assessment follow-up
+
+- Static curriculum generation originally reloaded and serialized the full
+  phase catalogue for every lesson page. It reached all 531 pages only after
+  roughly 18 minutes and emitted repeated 60-second static-generation retries.
+  The reader now discovers the complete lesson-path index for static params but
+  loads only the requested lesson per route; its maintained runtime loads the
+  checked-in local `data.js` asset before executing. This preserves the legacy
+  phase navigation contract without embedding the entire catalogue in every
+  lesson page.
+- `CODEOLOGY_ENABLE_FIXTURES=1 npm run build` now completes 531 static pages in
+  3.9 seconds with no retries. The focused Chromium reader mechanism/Axe check
+  passes after the change.
+- The assessment manifest and dashboard now describe `/assessments/[id]` as
+  `interaction-verified`, rather than planned. Its direct-load, keyboard,
+  scoring, refresh, and serious/critical Axe journey passes in both Chromium
+  and WebKit. It remains short of `visual-verified` until its immutable visual
+  comparison matrix is captured and reviewed.
+- The full Chromium migration run exposed a real TOC keyboard-state defect:
+  keyboard activation updated the `#build-it` hash but did not immediately
+  apply the active-state class until an observer later fired. The maintained
+  `site/lesson.html` handler now updates the selected TOC link at activation.
+  The focused reader keyboard journey passes in Chromium and WebKit.
+- The same run also exposed that an unknown static lesson path returned a blank
+  generated 404 rather than the route's safe lesson-unavailable UI. The lesson
+  route now explicitly enables dynamic parameter fallback so unknown paths
+  enter the tested `notFound()` branch. The focused Chromium legacy-redirect
+  and unavailable-lesson journey passes.
+- The complete browser run found WebKit-only timeouts while Python's legacy
+  static-server process was serving the full asset matrix. A bounded Node
+  stdlib host now serves the unchanged `site/` source at the same URLs. The
+  certification source's blocked remote decorative badge is waited through
+  `domcontentloaded`, while all functional, interaction, focus, overflow, and
+  Axe assertions remain. Three safe host variants (streaming, closed
+  connections, and buffered responses) were tested. The two legacy
+  certification states pass together in isolation, but the reduced-motion
+  legacy state still times out after earlier full-suite traffic. This remains a
+  failed browser-harness gate, not a product pass or a waived acceptance
+  criterion.
+- Final migration compilation and static-build gates pass: `npm run
+  typecheck:migration` and `npm run build:migration` both completed cleanly;
+  the latter generated all 531 static pages in 3.3 seconds.
+- `npm run check:precommit` passes after the synchronization changes, including
+  503 curriculum lessons and all 33 certification lessons / 8 assessments.

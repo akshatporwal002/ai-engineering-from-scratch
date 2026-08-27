@@ -124,6 +124,8 @@ test("catalog search is keyboard-operable", async ({ page }) => {
   await catalogSearch.fill("Dev Environment");
   await expect(page.getByRole("status")).toContainText("1 of 503 lessons");
   await expect(page.getByRole("heading", { name: "Dev Environment" })).toBeVisible();
+  const lesson = page.getByRole("article").filter({ has: page.getByRole("heading", { name: "Dev Environment" }) });
+  await expect(lesson.getByRole("link", { name: /Open lesson/ })).toHaveAttribute("href", "/lessons/00-setup-and-tooling/01-dev-environment");
 });
 
 test("public-routes:glossary preserves interactions and accessibility across motion preferences", async ({ page }) => {
@@ -341,28 +343,32 @@ test("academy local progress updates without creating external state", async ({ 
   expect(await page.evaluate(() => Boolean(localStorage.getItem("aifs:progress:v1")))).toBe(true);
 });
 
-test("certification catalog and track preserve interactions and accessibility across motion preferences", async ({ page }) => {
-  test.setTimeout(120_000);
-  const errors: string[] = [];
-  page.on("console", (message) => {
-    if (message.type() === "error" && !message.text().includes("ERR_BLOCKED_BY_CLIENT.Inspector")) errors.push(message.text());
-  });
-  page.on("pageerror", (error) => errors.push(error.message));
-  page.on("requestfailed", (request) => {
-    const url = new URL(request.url());
-    const failure = request.failure()?.errorText;
-    if ((url.hostname === "127.0.0.1" || url.hostname === "localhost")
-      && failure !== "net::ERR_ABORTED"
-      && failure !== "cancelled") errors.push(`${request.method()} ${url.pathname}: ${failure}`);
-  });
+const certificationSurfaces = [
+  { id: "legacy", origin: "http://127.0.0.1:4173", main: "main", catalog: "/certifications.html", track: "/certification.html?id=claude-ccao-f", next: false },
+  { id: "next", origin: "http://127.0.0.1:4174", main: "main-content", catalog: "/certifications", track: "/certifications/ccao-f", next: true },
+] as const;
 
-  for (const reducedMotion of ["no-preference", "reduce"] as const) {
-    await page.emulateMedia({ reducedMotion });
-    for (const surface of [
-      { origin: "http://127.0.0.1:4173", main: "main", catalog: "/certifications.html", track: "/certification.html?id=claude-ccao-f", next: false },
-      { origin: "http://127.0.0.1:4174", main: "main-content", catalog: "/certifications", track: "/certifications/ccao-f", next: true },
-    ]) {
-      await page.goto(surface.origin + surface.catalog, { waitUntil: "load" });
+for (const reducedMotion of ["no-preference", "reduce"] as const) {
+  for (const surface of certificationSurfaces) {
+    test(`certification ${surface.id} preserves interactions with ${reducedMotion} motion`, async ({ page }) => {
+      const errors: string[] = [];
+      page.on("console", (message) => {
+        if (message.type() === "error" && !message.text().includes("ERR_BLOCKED_BY_CLIENT.Inspector")) errors.push(message.text());
+      });
+      page.on("pageerror", (error) => errors.push(error.message));
+      page.on("requestfailed", (request) => {
+        const url = new URL(request.url());
+        const failure = request.failure()?.errorText;
+        if ((url.hostname === "127.0.0.1" || url.hostname === "localhost")
+          && failure !== "net::ERR_ABORTED"
+          && failure !== "cancelled") errors.push(`${request.method()} ${url.pathname}: ${failure}`);
+      });
+
+      await page.emulateMedia({ reducedMotion });
+      // The legacy page has a remote decorative badge that this suite blocks;
+      // its document and all asserted certification controls are ready at DOM
+      // content load, before that intentionally aborted asset can hold `load`.
+      await page.goto(surface.origin + surface.catalog, { waitUntil: surface.next ? "load" : "domcontentloaded" });
       await expect(page.locator(".cert-track-card")).toHaveCount(4);
       await settleFiniteMotion(page);
       const firstCard = page.locator(".cert-track-card").first();
@@ -372,7 +378,7 @@ test("certification catalog and track preserve interactions and accessibility ac
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
       await expectNoBlockingAxeFindings(page);
 
-      await page.goto(surface.origin + surface.track, { waitUntil: "load" });
+      await page.goto(surface.origin + surface.track, { waitUntil: surface.next ? "load" : "domcontentloaded" });
       await expect(page.locator(".cert-lesson-row")).toHaveCount(9);
       await expect(page.locator(".cert-assessment-card")).toHaveCount(2);
       await settleFiniteMotion(page);
@@ -388,9 +394,9 @@ test("certification catalog and track preserve interactions and accessibility ac
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
       await expectNoBlockingAxeFindings(page);
       expect(errors).toEqual([]);
-    }
+    });
   }
-});
+}
 
 test("legacy inbound paths redirect to public routes", async ({ page }) => {
   for (const [legacy, destination] of [

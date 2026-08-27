@@ -48,7 +48,7 @@ export default defineConfig({
   projects,
   webServer: captureProduction ? undefined : [
     {
-      command: "python3 -m http.server 4173 --bind 127.0.0.1 --directory ../../site",
+      command: "node scripts/legacy-static-server.mjs",
       url: "http://127.0.0.1:4173/prereqs.html",
       reuseExistingServer: true,
       timeout: 30_000,

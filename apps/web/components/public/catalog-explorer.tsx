@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { PhaseSummary } from "../../lib/content/public-content";
-import { allLessons, searchLessons } from "../../lib/content/query";
+import { allLessons, internalLessonUrl, searchLessons } from "../../lib/content/query";
 
 export function CatalogExplorer({ phases, initialPhase = "all" }: { phases: PhaseSummary[]; initialPhase?: string }) {
   const [query, setQuery] = useState("");
@@ -28,7 +28,7 @@ export function CatalogExplorer({ phases, initialPhase = "all" }: { phases: Phas
             <div><span>{String(lesson.phase.id).padStart(2, "0")} · {lesson.phase.name}</span><span>{lesson.type} · {lesson.lang}</span></div>
             <h2>{lesson.name}</h2>
             {lesson.summary && <p>{lesson.summary}</p>}
-            <a href={lesson.url} target="_blank" rel="noopener">Open source lesson <span aria-hidden="true">↗</span></a>
+            <a href={internalLessonUrl(lesson.url)}>Open lesson <span aria-hidden="true">→</span></a>
           </article>
         ))}
       </div>

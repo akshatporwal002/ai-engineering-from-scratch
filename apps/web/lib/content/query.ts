@@ -2,6 +2,11 @@ import type { GlossaryEntry, LessonSummary, PhaseSummary } from "./schemas";
 
 export type LessonWithPhase = LessonSummary & { phase: PhaseSummary };
 
+export function internalLessonUrl(url: string) {
+  const match = url.match(/(?:^|\/)phases\/([^/]+)\/([^/]+)\/?$/);
+  return match ? `/lessons/${match[1]}/${match[2]}` : url;
+}
+
 function normalized(value: string) {
   return value.trim().toLocaleLowerCase("en-US");
 }

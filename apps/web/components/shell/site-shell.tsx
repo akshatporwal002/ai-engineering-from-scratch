@@ -269,6 +269,7 @@ function Header() {
 
 function Footer() {
   const pathname = usePathname();
+  if (pathname.startsWith("/lessons/")) return null;
   const editorialLinks = pathname === "/about" ? (
     <>
       <a href="https://github.com/akshatporwal002/ai-engineering-from-scratch" target="_blank" rel="noopener">GitHub</a>
@@ -343,8 +344,10 @@ function Footer() {
 }
 
 export function SiteShell({ children }: { children: ReactNode }) {
-  return <><a className="skip-link" href="#main-content" onClick={(event) => {
-    const target = document.getElementById("main-content");
+  const pathname = usePathname();
+  const mainId = pathname.startsWith("/lessons/") ? "main" : "main-content";
+  return <><a className="skip-link" href={`#${mainId}`} onClick={(event) => {
+    const target = document.getElementById(mainId);
     if (!target) return;
     event.preventDefault();
     target.tabIndex = -1;

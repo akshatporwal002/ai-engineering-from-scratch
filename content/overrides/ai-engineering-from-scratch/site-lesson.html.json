@@ -4,5 +4,5 @@
   "canonicalPath": "site/lesson.html",
   "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f",
   "adapted": true,
-  "adaptationSummary": "Adds Codeology lesson metadata and branch-aware fork loading, removes the language-selection runtime, and preserves imported lesson attribution, rendering, quizzes, figures, navigation and progress behavior."
+  "adaptationSummary": "Adds Codeology lesson metadata and branch-aware fork loading, removes the language-selection runtime, preserves imported lesson behavior, explicitly neutralizes the experiment reset for lesson typography, and applies scoped WCAG contrast and keyboard-scroll access corrections shared by the legacy and Next readers."
 }

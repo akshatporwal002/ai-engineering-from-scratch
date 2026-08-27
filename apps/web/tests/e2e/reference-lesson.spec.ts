@@ -20,6 +20,11 @@ async function isolateLesson(page: Page) {
   });
   await page.route(`**/${lessonPath}/docs/en.md`, (route) => route.fulfill({ status: 200, contentType: "text/markdown", body: markdown }));
   await page.route(`**/${lessonPath}/quiz.json`, (route) => route.fulfill({ status: 200, contentType: "application/json", body: quiz }));
+  await page.route("https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs", (route) => route.fulfill({
+    status: 200,
+    contentType: "text/javascript",
+    body: `export default { initialize() {}, render(id, source) { const label = source.split("\\n").find((line) => line.includes("[")) || "Mermaid diagram"; return Promise.resolve({ svg: '<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagram flow" viewBox="0 0 640 80"><rect width="640" height="80" fill="transparent"/><text x="16" y="44" fill="currentColor">' + label.replace(/[<>&]/g, "") + '</text></svg>' }); } };`,
+  }));
 }
 
 test.beforeEach(async ({ page }) => isolateLesson(page));
@@ -28,18 +33,37 @@ test("reference lesson is accessible and exposes every reader mechanism", async 
   const errors: string[] = [];
   page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
   await page.goto(nextUrl);
-  await expect(page.locator('.lesson-quiz[data-hydrated="true"]')).toBeVisible();
+  await expect(page.locator(".quiz-section").first()).toBeVisible();
   await expect(page.getByRole("heading", { level: 1, name: "Optimization" })).toBeVisible();
   await expect(page.getByRole("navigation", { name: "On this page" })).toBeVisible();
-  await expect(page.locator(".lesson-code")).toHaveCount(11);
-  await expect(page.getByRole("img", { name: /Diagram flow/ })).toHaveCount(5);
+  await expect(page.locator(".code-copy")).toHaveCount(11);
+  await expect(page.locator(".mermaid-render svg")).toHaveCount(5);
   await expect(page.getByRole("figure", { name: "Interactive figure: gradient-descent" }).locator('input[type="range"]')).toHaveCount(3);
-  await expect(page.getByRole("heading", { name: "Check your understanding" })).toBeVisible();
+  await expect(page.locator(".quiz-title").first()).toContainText("Pre-Lesson Check");
+  await expect(page.locator(".quiz-title").nth(1)).toContainText("Post-Lesson Quiz");
   const results = await new AxeBuilder({ page }).analyze();
   const blocking = results.violations.filter((violation) => ["serious", "critical"].includes(violation.impact ?? ""));
   expect(blocking, blocking.map((item) => `${item.id}: ${item.help}`).join("\n")).toEqual([]);
   expect(errors).toEqual([]);
 });
+
+for (const reducedMotion of ["no-preference", "reduce"] as const) {
+  for (const surface of [
+    { name: "maintained legacy", url: legacyUrl },
+    { name: "Next.js", url: nextUrl },
+  ]) {
+    test(`${surface.name} lesson has no blocking Axe findings with ${reducedMotion} motion`, async ({ page }) => {
+      await page.emulateMedia({ reducedMotion });
+      await page.goto(surface.url);
+      await expect(page.locator(".quiz-section").first()).toBeVisible();
+      await expect(page.locator(".mermaid-render svg")).toHaveCount(5);
+      await expect(page.locator('.lesson-figure[data-figure="gradient-descent"] input[type="range"]')).toHaveCount(3);
+      const results = await new AxeBuilder({ page }).analyze();
+      const blocking = results.violations.filter((violation) => ["serious", "critical"].includes(violation.impact ?? ""));
+      expect(blocking, blocking.map((item) => `${item.id}: ${item.help}`).join("\n")).toEqual([]);
+    });
+  }
+}
 
 async function allowClipboard(page: Page, browserName: BrowserName) {
   if (browserName === "chromium") {
@@ -61,7 +85,7 @@ test("toc, figure, copy, and quiz are keyboard-operable", async ({ page, browser
   await buildLink.focus();
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/#build-it$/);
-  await expect(buildLink).toHaveAttribute("aria-current", "location");
+  await expect(buildLink).toHaveClass(/active/);
 
   const learningRate = page.getByRole("figure", { name: "Interactive figure: gradient-descent" }).locator('input[type="range"]').first();
   await learningRate.focus();
@@ -69,25 +93,37 @@ test("toc, figure, copy, and quiz are keyboard-operable", async ({ page, browser
   await page.keyboard.press("ArrowRight");
   expect(await learningRate.inputValue()).not.toBe(before);
 
-  const copy = page.getByRole("button", { name: "Copy python code" }).first();
+  const copy = page.locator(".code-copy").first();
+  await expect(copy).toHaveAccessibleName("Copy");
   await copy.focus();
   await page.keyboard.press("Enter");
-  await expect(copy).toHaveText("Copied");
+  await expect(copy).toHaveText("Copied!");
 
-  const fieldsets = page.locator(".lesson-quiz fieldset");
+  const questions = page.locator(".quiz-section .quiz-question");
   const answers = [0, 1, 3, 1, 1];
-  for (const [index, answer] of answers.entries()) await fieldsets.nth(index).locator('input[type="radio"]').nth(answer).check();
-  const check = page.getByRole("button", { name: "Check answers" });
-  await check.focus();
-  await page.keyboard.press("Enter");
-  await expect(page.getByRole("status")).toContainText("5 of 5 correct");
+  for (const [index, answer] of answers.entries()) {
+    const option = questions.nth(index).locator(".quiz-option").nth(answer);
+    await option.focus();
+    await page.keyboard.press("Enter");
+  }
+  await expect(page.locator(".quiz-score-result").first()).toContainText("2/2 correct");
+  await expect(page.locator(".quiz-score-result").nth(1)).toContainText("3/3 correct");
 });
 
 test("legacy lesson URL redirects and unavailable lessons fail safely", async ({ page }) => {
   await page.goto(`http://127.0.0.1:4174/lesson.html?path=${lessonPath}`);
   await expect(page).toHaveURL(nextUrl);
   await page.goto("http://127.0.0.1:4174/lessons/01-math-foundations/not-migrated");
-  await expect(page.getByRole("heading", { name: "This lesson is not in the local migration." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "We could not find that lesson." })).toBeVisible();
+});
+
+test("published non-reference lessons load internally and legacy URLs redirect", async ({ page }) => {
+  const route = "/lessons/02-ml-fundamentals/01-what-is-machine-learning";
+  await page.goto(`http://127.0.0.1:4174${route}`);
+  await expect(page.getByRole("heading", { level: 1, name: "What Is Machine Learning" })).toBeVisible();
+  await expect(page.locator(".lesson-article")).toBeVisible();
+  await page.goto("http://127.0.0.1:4174/lesson.html?path=phases/02-ml-fundamentals/01-what-is-machine-learning");
+  await expect(page).toHaveURL(new RegExp(`${route}$`));
 });
 
 test("an unavailable compatibility figure leaves an accessible fallback", async ({ page }) => {
@@ -103,13 +139,30 @@ for (const viewport of [
 ]) {
   test(`reference lesson ${viewport.name} layout has no overflow`, async ({ page }) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await page.addInitScript(() => {
+      localStorage.clear();
+      sessionStorage.clear();
+      localStorage.setItem("theme", "light");
+      document.documentElement.dataset.theme = "light";
+    });
+    await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto(legacyUrl);
     await expect(page.getByRole("heading", { level: 1, name: "Optimization" })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-    await page.goto(nextUrl);
-    await expect(page.locator('.lesson-quiz[data-hydrated="true"]')).toBeAttached();
+    await page.goto(`http://127.0.0.1:4174/lesson.html?path=${lessonPath}`);
+    await expect(page.locator(".quiz-section").first()).toBeAttached();
     await expect(page.getByRole("heading", { level: 1, name: "Optimization" })).toBeVisible();
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    await expect(page.locator(".code-card")).toHaveCount(2);
+    await page.addStyleTag({ content: "*, *::before, *::after { caret-color: transparent !important; animation-play-state: paused !important; transition-duration: 0s !important; transition-delay: 0s !important; }" });
+    const overflow = await page.evaluate(() => ({
+      width: window.innerWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+      offenders: Array.from(document.querySelectorAll<HTMLElement>("body *"))
+        .filter((element) => element.getBoundingClientRect().right > window.innerWidth + 1)
+        .slice(0, 8)
+        .map((element) => ({ selector: `${element.tagName}.${element.className}`, right: Math.round(element.getBoundingClientRect().right) })),
+    }));
+    expect(overflow, JSON.stringify(overflow)).toMatchObject({ scrollWidth: overflow.width });
   });
 }
 
@@ -119,8 +172,8 @@ test("interactive figure and completed quiz states remain functional", async ({ 
   const figure = page.getByRole("figure", { name: "Interactive figure: gradient-descent" });
   await figure.locator('input[type="range"]').first().fill("1.2");
   await expect(figure).toBeVisible();
-  const fieldsets = page.locator(".lesson-quiz fieldset");
-  for (const [index, answer] of [0, 1, 3, 1, 1].entries()) await fieldsets.nth(index).locator('input[type="radio"]').nth(answer).check();
-  await page.getByRole("button", { name: "Check answers" }).click();
-  await expect(page.getByRole("status")).toContainText("5 of 5 correct");
+  const questions = page.locator(".quiz-section .quiz-question");
+  for (const [index, answer] of [0, 1, 3, 1, 1].entries()) await questions.nth(index).locator(".quiz-option").nth(answer).click();
+  await expect(page.locator(".quiz-score-result").first()).toContainText("2/2 correct");
+  await expect(page.locator(".quiz-score-result").nth(1)).toContainText("3/3 correct");
 });
