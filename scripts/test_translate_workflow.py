@@ -208,6 +208,9 @@ class TranslateWorkflowContractTest(unittest.TestCase):
             hook = source / ".git/hooks/pre-commit"
             hook.write_text("#!/bin/sh\nexit 1\n", encoding="utf-8")
             hook.chmod(hook.stat().st_mode | stat.S_IXUSR)
+            # Do not inherit a contributor's global core.hooksPath. The
+            # fixture must exercise the intentionally failing hook it owns.
+            run("git", "config", "core.hooksPath", str(hook.parent), cwd=source)
 
             result = run(
                 "bash",

@@ -89,5 +89,6 @@ site/langs.js
 .gitnexus
 apps/web/test-results/
 apps/web/playwright-report/
+.playwright-mcp/
 docs/migration-evidence/visual-parity/candidate-next/
 docs/migration-evidence/visual-parity/diffs/
