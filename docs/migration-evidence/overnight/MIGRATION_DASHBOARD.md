@@ -6,12 +6,12 @@
 
 - Legacy HTML routes: 12
 - Implemented: 4
-- Interaction verified: 0
+- Interaction verified: 1
 - Visual verified: 7
 - Human reviewed: 0
-- Planned: 1
+- Planned: 0
 - Excluded: 0
-- Accounted for: 11 implemented or explicitly classified; 1 planned
+- Accounted for: 12 implemented or explicitly classified; 0 planned
 
 ## Route matrix
 
@@ -19,7 +19,7 @@
 |---|---|---|---|---|
 | `/index.html` | `/` | academy | implemented | `public-routes:academy`<br>`public-routes:paired-evidence` |
 | `/about.html` | `/about` | editorial | visual-verified | `public-routes:about`<br>`public-content:editorial-source` |
-| `/assessment.html` | `/assessments/[assessment]` | assessment | planned | `mock-product:assessment` |
+| `/assessment.html` | `/assessments/[assessment]` | assessment | interaction-verified | `assessments:journey` |
 | `/assurance.html` | `/assurance` | editorial | visual-verified | `public-routes:assurance`<br>`public-content:editorial-source` |
 | `/catalog.html` | `/catalog` | catalog | implemented | `public-routes:catalog`<br>`public-content:lesson-search` |
 | `/certification.html?id=claude-ccao-f` | `/certifications/[track]` | certification-track | visual-verified | `public-routes:certification-track`<br>`public-content:certification-validation` |

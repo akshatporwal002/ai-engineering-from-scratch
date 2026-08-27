@@ -14,9 +14,9 @@
     "requiredTests": ["public-routes:about", "public-content:editorial-source"]
   },
   {
-    "legacyUrl": "/assessment.html", "productionUrl": "/assessment.html", "nextUrl": "/assessments/[assessment]", "kind": "assessment", "status": "planned", "fixture": "site/assessment.html",
+    "legacyUrl": "/assessment.html", "productionUrl": "/assessment.html", "nextUrl": "/assessments/[assessment]", "kind": "assessment", "status": "interaction-verified", "fixture": "site/assessment.html",
     "states": ["default", "question", "result"], "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
-    "interactionCapabilities": ["mouse", "keyboard", "assessment"], "visualTestIds": [], "requiredTests": ["mock-product:assessment"]
+    "interactionCapabilities": ["mouse", "keyboard", "assessment"], "visualTestIds": [], "requiredTests": ["assessments:journey"]
   },
   {
     "legacyUrl": "/assurance.html", "productionUrl": "/assurance.html", "nextUrl": "/assurance", "kind": "editorial", "status": "visual-verified", "fixture": "site/assurance.html",

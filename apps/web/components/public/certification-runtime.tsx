@@ -26,11 +26,13 @@ function loadScript(source: string, marker: string) {
 export function CertificationRuntime({
   kind,
   track,
+  assessmentId,
   data,
   phases,
 }: {
-  kind: "catalog" | "track";
+  kind: "catalog" | "track" | "assessment";
   track?: string;
+  assessmentId?: string;
   data: CertificationRuntimeData;
   phases: PhaseSummary[];
 }) {
@@ -42,6 +44,11 @@ export function CertificationRuntime({
     document.body.dataset.certPage = kind;
     document.body.dataset.certNext = "true";
     if (track) document.body.dataset.certTrack = track;
+    if (assessmentId) {
+      const params = new URLSearchParams(window.location.search);
+      params.set("id", assessmentId);
+      window.history.replaceState(null, "", `${window.location.pathname}?${params.toString()}${window.location.hash}`);
+    }
 
     async function start() {
       if (!window.AIFSProgress) await loadScript("/legacy-assets/progress.js", "progress");

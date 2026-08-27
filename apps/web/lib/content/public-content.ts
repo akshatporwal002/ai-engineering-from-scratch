@@ -69,6 +69,11 @@ export type CertificationLegacyPage = {
   certificationProgressRuntime: string;
 };
 
+export type AssessmentLegacyPage = {
+  styles: string;
+  html: string;
+};
+
 export type CertificationRuntimeData = {
   program: CertificationProgram;
   tracks: CertificationTrack[];
@@ -247,6 +252,43 @@ export function loadCertificationLegacyPage(kind: "catalog" | "track"): Certific
       runtime: readRepositoryFile("site/certifications.js"),
       progressRuntime: readRepositoryFile("site/progress.js"),
       certificationProgressRuntime: readRepositoryFile("site/certification-progress.js"),
+    };
+  });
+}
+
+export function loadAssessmentLegacyPage(): AssessmentLegacyPage {
+  return cached("assessment-legacy-page", () => {
+    const source = readRepositoryFile("site/assessment.html");
+    const main = source.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)?.[1];
+    if (!main) throw new Error("Legacy assessment page is missing its main content");
+    return {
+      styles: `${readRepositoryFile("site/style.css")}\n${readRepositoryFile("site/certifications.css")}\n${certificationControlBaseline}`,
+      html: rewriteLegacyLinks(main),
+    };
+  });
+}
+
+export function loadLessonLegacyPage(): LessonLegacyPage {
+  return cached("lesson-legacy-page", () => {
+    const source = readRepositoryFile("site/lesson.html");
+    const routeStyles = source.match(/<style>([\s\S]*?)<\/style>/)?.[1];
+    const bodyStart = source.indexOf('<div class="scroll-progress"');
+    const bodyEnd = source.indexOf('<script src="build-meta.js">');
+    const inlineScripts = [...source.matchAll(/<script>([\s\S]*?)<\/script>/g)];
+    const runtime = inlineScripts.at(-1)?.[1];
+    if (!routeStyles || bodyStart < 0 || bodyEnd < 0 || !runtime) {
+      throw new Error("Legacy lesson page is missing its route styles, shell, or runtime");
+    }
+    const html = source.slice(bodyStart, bodyEnd)
+      .replace(/<header class="site-header">[\s\S]*?<\/header>/, "")
+      .trim();
+    return {
+      styles: `${readRepositoryFile("site/style.css")}\n${readRepositoryFile("site/certifications.css")}\n${readRepositoryFile("site/codeology.css")}\n${routeStyles}`,
+      html: rewriteLegacyLinks(html),
+      runtime: runtime.replace(
+        "var lessonPath = params.get('path');",
+        "var lessonPath = params.get('path') || document.body.getAttribute('data-lesson-path');",
+      ),
     };
   });
 }
