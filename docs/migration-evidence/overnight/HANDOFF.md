@@ -473,6 +473,22 @@ creating `fix(web): restore reference lesson reader parity`.
   is unaffected by these public-route checks. No visual-parity exception has
   been created.
 
+### Final local web validation — 2026-08-28
+
+- `npm run ci` passed end to end, including the translation-workflow contract
+  suite and root legacy-site build. Its only generated drift was the tracked
+  `site/data.js` build timestamp, restored immediately without staging it.
+- `npx playwright test --config playwright.visual.config.ts
+  tests/visual/reference-lesson.visual.spec.ts` passed the complete strict
+  reader matrix against the immutable production references. Candidate and
+  projection artifacts remain separately labelled and untracked.
+- The production-infrastructure workstreams cannot be started under the
+  current local contract: `apps/api/AGENTS.md` expressly prohibits Supabase,
+  provider, Storage, account, CV, and deployment integrations in this isolated
+  FastAPI experiment, while the completion runbook requires those exact
+  integrations. No credential, account, CV, live infrastructure, or external
+  state was accessed while preserving the conflict for an authorized decision.
+
 ### External-infrastructure boundary
 
 - `apps/api/AGENTS.md` continues to prohibit Supabase, provider, storage,
