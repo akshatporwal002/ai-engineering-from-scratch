@@ -92,3 +92,7 @@ apps/web/playwright-report/
 .playwright-mcp/
 docs/migration-evidence/visual-parity/candidate-next/
 docs/migration-evidence/visual-parity/diffs/
+
+# Scoped contributor contracts are source-of-truth repository documentation.
+# This explicit exception overrides developer-machine global AGENTS.md ignores.
+!apps/api/AGENTS.md

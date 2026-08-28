@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "ai-engineering-from-scratch",
+  "canonicalPath": "docs/NEXTJS_FASTAPI_COMPLETION_RUNBOOK.md",
+  "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f",
+  "adapted": true,
+  "adaptationSummary": "Records the reviewed completion runbook that supersedes the isolated overnight scope and defines the production-adapter security and validation contract."
+}
