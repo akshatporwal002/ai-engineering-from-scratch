@@ -14,6 +14,7 @@ This change prepares the existing Next.js/FastAPI migration for `dev`. It does n
 - Add an ownership regression test covering those three migration paths.
 - Install root build dependencies as well as web and API dependencies in the migration workflow; the shared authentication bundle requires the root `esbuild` package.
 - Preserve repository-root Vercel builds: expose the same pinned Next.js version in the root build package and install both dependency sets. Guard framework detection and nested output configuration with regression tests, without changing shared project settings.
+- Exclude temporary Next.js locks/caches, environment files, Git metadata, and development evidence from runtime file traces. A post-build trace audit checks that all packaged references exist and rejects development-only files before deployment.
 
 ## Validation and merge gates
 

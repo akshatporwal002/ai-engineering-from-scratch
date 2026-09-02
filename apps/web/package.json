@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build --webpack",
+    "postbuild": "node scripts/check-build-traces.mjs --prune-development",
     "start": "next start",
     "check:parity": "node scripts/check-route-parity.mjs && node scripts/build-migration-dashboard.mjs --check",
     "build:migration-dashboard": "node scripts/build-migration-dashboard.mjs",

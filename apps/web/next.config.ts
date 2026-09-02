@@ -5,6 +5,17 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   reactStrictMode: true,
   outputFileTracingRoot: path.join(__dirname, "../.."),
+  // Dynamic curriculum reads need repository content, not build locks or review captures.
+  outputFileTracingExcludes: {
+    "/*": [
+      "./.next/lock", "./.next/dev/**/*", "./.next/cache/**/*",
+      "../../.git", "../../.git/**/*", "../../**/.env*",
+      "../../docs/**/*", "../../.agents/**/*", "../../.claude/**/*",
+      "../../.github/**/*", "../../.githooks/**/*", "../../.codex*/**/*",
+      "../../book/**/*", "../../scripts/**/*", "../../supabase/**/*",
+      "../api/**/*", "./tests/**/*", "./scripts/**/*",
+    ],
+  },
   async redirects() {
     return [
       { source: "/index.html", destination: "/", permanent: true },
