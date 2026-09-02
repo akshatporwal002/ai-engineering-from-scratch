@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 
-const SAFE_FORWARD_HEADERS = ["accept", "content-type", "x-request-id"];
+const SAFE_FORWARD_HEADERS = ["accept", "authorization", "content-type", "idempotency-key", "x-request-id"];
 
 async function proxy(request: NextRequest, context: { params: Promise<{ path: string[] }> }) {
   const { path } = await context.params;

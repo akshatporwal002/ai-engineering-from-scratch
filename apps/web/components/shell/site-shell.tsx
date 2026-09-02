@@ -10,6 +10,7 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
 } from "react";
+import { AuthProvider, useAuth } from "../../lib/auth/context";
 
 const navigation = [
   { href: "/", label: "Academy" },
@@ -21,12 +22,13 @@ const navigation = [
   { href: "/credits", label: "Credits" },
 ] as const;
 
-const searchEntries = [
+const defaultSearchEntries = [
   ...navigation.map((item) => ({ ...item, kind: "Codeology" })),
   { href: "/certifications", label: "Claude certifications", kind: "Certification" },
   { href: "/lessons/01-math-foundations/08-optimization", label: "Optimization", kind: "Phase 01" },
   { href: "/assurance", label: "Assessment and evidence policy", kind: "Codeology" },
 ] as const;
+export type SearchEntry = { href: string; label: string; kind: string };
 
 type Theme = "light" | "dark";
 
@@ -44,7 +46,7 @@ function SearchIcon() {
   );
 }
 
-function CommandPalette({ open, onClose, restoreFocus }: { open: boolean; onClose: () => void; restoreFocus: () => void }) {
+function CommandPalette({ open, onClose, restoreFocus, entries }: { open: boolean; onClose: () => void; restoreFocus: () => void; entries: readonly SearchEntry[] }) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -53,8 +55,8 @@ function CommandPalette({ open, onClose, restoreFocus }: { open: boolean; onClos
   const results = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase();
     if (!normalized) return [];
-    return searchEntries.filter((entry) => `${entry.label} ${entry.kind}`.toLocaleLowerCase().includes(normalized)).slice(0, 12);
-  }, [query]);
+    return entries.filter((entry) => `${entry.label} ${entry.kind}`.toLocaleLowerCase().includes(normalized)).slice(0, 12);
+  }, [entries, query]);
 
   useEffect(() => {
     if (!open) return;
@@ -162,6 +164,7 @@ function CommandPalette({ open, onClose, restoreFocus }: { open: boolean; onClos
 
 function LoginDialog({ open, onClose, trigger }: { open: boolean; onClose: () => void; trigger: HTMLButtonElement | null }) {
   const closeRef = useRef<HTMLButtonElement>(null);
+  const auth = useAuth();
 
   useEffect(() => {
     if (open) closeRef.current?.focus();
@@ -180,9 +183,9 @@ function LoginDialog({ open, onClose, trigger }: { open: boolean; onClose: () =>
           <button ref={closeRef} className="codeology-auth-close" type="button" aria-label="Close login" onClick={close}>×</button>
           <span className="codeology-auth-eyebrow">CODEOLOGY ACCOUNT</span>
           <h2 id="codeologyAuthTitle">Keep your progress.</h2>
-          <p>Log in to carry completed lessons and quiz progress across devices.</p>
-          <div className="codeology-auth-providers"><button type="button" disabled>Continue with GitHub</button><button type="button" disabled>Continue with Google</button></div>
-          <p className="codeology-auth-status" role="status">Account sign-in is being configured. You can keep learning and your progress will remain in this browser.</p>
+          <p>{auth.user ? `Signed in as ${auth.user.email ?? "Codeology learner"}.` : "Log in to carry completed lessons and quiz progress across devices."}</p>
+          <div className="codeology-auth-providers">{auth.user ? <button type="button" onClick={() => auth.signOut().then(close)}>Sign out</button> : <><button type="button" disabled={!auth.configured || auth.loading} onClick={() => auth.signIn("github")}>Continue with GitHub</button><button type="button" disabled={!auth.configured || auth.loading} onClick={() => auth.signIn("google")}>Continue with Google</button></>}</div>
+          <p className="codeology-auth-status" role="status">{auth.configured ? (auth.loading ? "Checking your account…" : "Secure sign-in is provided by Supabase Auth.") : "Account sign-in is unavailable because this deployment is not configured."}</p>
           <p className="codeology-auth-privacy">Your account stores learning progress and any account features you choose to use, including saved CV analyses. Course content remains freely available without logging in.</p>
         </div>
       </section>
@@ -190,7 +193,8 @@ function LoginDialog({ open, onClose, trigger }: { open: boolean; onClose: () =>
   );
 }
 
-function Header() {
+function Header({ searchEntries }: { searchEntries: readonly SearchEntry[] }) {
+  const auth = useAuth();
   const pathname = usePathname();
   const headerRef = useRef<HTMLElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -244,7 +248,7 @@ function Header() {
       <div className={mobile ? "header-mobile-tools" : "header-actions"} role="group" aria-label={mobile ? "Site tools" : "Site actions"}>
         <button ref={searchButtonRef} className="search-toggle" type="button" aria-label="Search (⌘K)" title="Search (⌘K)" onClick={() => setSearchOpen(true)}>{pathname.startsWith("/certifications") ? <span aria-hidden="true">⌕</span> : <SearchIcon />}</button>
         <button className="theme-toggle" aria-label="Toggle theme" type="button" onClick={toggleTheme}><span className="theme-icon">{theme === "light" ? "N" : "D"}</span></button>
-        <button ref={loginButtonRef} className="codeology-login-button" type="button" aria-label="Log in to Codeology" onClick={() => setLoginOpen(true)}>Log in</button>
+        <button ref={loginButtonRef} className="codeology-login-button" type="button" aria-label={auth.user ? "Open Codeology account" : "Log in to Codeology"} onClick={() => setLoginOpen(true)}>{auth.user ? "Account" : "Log in"}</button>
       </div>
   );
 
@@ -261,7 +265,7 @@ function Header() {
           {!compact && headerActions()}
         </div>
       </header>
-      <CommandPalette open={searchOpen} onClose={() => setSearchOpen(false)} restoreFocus={() => searchButtonRef.current?.focus()} />
+      <CommandPalette entries={searchEntries} open={searchOpen} onClose={() => setSearchOpen(false)} restoreFocus={() => searchButtonRef.current?.focus()} />
       <LoginDialog open={loginOpen} onClose={() => setLoginOpen(false)} trigger={loginButtonRef.current} />
     </>
   );
@@ -343,7 +347,11 @@ function Footer() {
   );
 }
 
-export function SiteShell({ children }: { children: ReactNode }) {
+export function SiteShell({ children, searchEntries = defaultSearchEntries }: { children: ReactNode; searchEntries?: readonly SearchEntry[] }) {
+  return <AuthProvider><SiteShellContent searchEntries={searchEntries}>{children}</SiteShellContent></AuthProvider>;
+}
+
+function SiteShellContent({ children, searchEntries }: { children: ReactNode; searchEntries: readonly SearchEntry[] }) {
   const pathname = usePathname();
   const mainId = pathname.startsWith("/lessons/") ? "main" : "main-content";
   return <><a className="skip-link" href={`#${mainId}`} onClick={(event) => {
@@ -354,5 +362,5 @@ export function SiteShell({ children }: { children: ReactNode }) {
     history.pushState(null, "", "#main-content");
     target.focus();
     target.scrollIntoView();
-  }}>Skip to content</a><Header />{children}<Footer /></>;
+  }}>Skip to content</a><Header searchEntries={searchEntries} />{children}<Footer /></>;
 }
