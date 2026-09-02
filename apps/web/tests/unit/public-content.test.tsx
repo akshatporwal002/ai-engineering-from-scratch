@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { CatalogExplorer } from "../../components/public/catalog-explorer";
@@ -134,9 +134,14 @@ describe("public search and filters", () => {
 
   it("filters glossary terms without changing the source entries", () => {
     const entries = loadGlossary();
+    const originalEntries = JSON.stringify(entries);
     render(<GlossaryExplorer entries={entries} />);
-    fireEvent.change(screen.getByLabelText("Search the ledger"), { target: { value: "training-memory technique" } });
+    expect(document.getElementById("glossaryCount")?.textContent).toBe(`${entries.length} of ${entries.length} terms`);
+    // Keep the full corpus, but don't scan every article for a filter-rail label.
+    const filters = within(screen.getByRole("complementary", { name: "Glossary filters" }));
+    fireEvent.change(filters.getByLabelText("Search the ledger"), { target: { value: "training-memory technique" } });
     expect(screen.getByRole("heading", { name: "Activation Checkpointing" })).toBeTruthy();
     expect(document.getElementById("glossaryCount")?.textContent).toBe(`1 of ${entries.length} terms`);
+    expect(JSON.stringify(entries)).toBe(originalEntries);
   });
 });

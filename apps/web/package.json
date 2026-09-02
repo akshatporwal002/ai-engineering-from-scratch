@@ -8,6 +8,7 @@
     "start": "next start",
     "check:parity": "node scripts/check-route-parity.mjs && node scripts/build-migration-dashboard.mjs --check",
     "build:migration-dashboard": "node scripts/build-migration-dashboard.mjs",
+    "pretest": "node ../../site/build.js",
     "test": "vitest run",
     "test:e2e": "playwright test",
     "test:visual": "playwright test --config playwright.visual.config.ts",

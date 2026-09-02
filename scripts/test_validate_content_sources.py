@@ -50,6 +50,16 @@ class SourceResolutionTest(unittest.TestCase):
 
 
 class RepositoryRegistryTest(unittest.TestCase):
+    def test_migration_infrastructure_is_original_codeology_work(self) -> None:
+        sources = validator.load_registry()["sources"]
+        for path in (
+            ".github/workflows/platform.yml",
+            "docs/NEXTJS_FASTAPI_DEPLOYMENT.md",
+            "scripts/run-python.mjs",
+        ):
+            with self.subTest(path=path):
+                self.assertEqual(validator.resolve_source(path, sources), ("codeology", None))
+
     def test_repository_registry_passes(self) -> None:
         registry = validator.load_registry()
         self.assertEqual(validator.audit(registry), [])
