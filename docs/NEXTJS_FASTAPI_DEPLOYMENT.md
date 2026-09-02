@@ -3,6 +3,7 @@
 ## Architecture
 
 - Vercel builds the repository root with `npm run build:web` and serves `apps/web/.next`.
+- Keep the Vercel project Root Directory at the repository root. Install both root build tools and `apps/web` dependencies. The root build package pins the same Next.js version as the app so Vercel framework detection works before the nested build starts; `tests/unit/deployment.test.tsx` guards that contract. No shared project Root Directory change is required.
 - The browser calls same-origin `/api/v1/*`. The Next.js route handler forwards those requests to `NEXT_API_ORIGIN` and includes only the bearer token, content metadata, and request ID.
 - FastAPI runs from `apps/api/Dockerfile` on a regional container host. Supabase remains the managed Auth, PostgreSQL, private Storage, RLS, and Vault layer.
 

@@ -4,5 +4,5 @@
   "canonicalPath": "vercel.json",
   "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f",
   "adapted": true,
-  "adaptationSummary": "Runs the complete Codeology build on Vercel so generated curriculum data and the Supabase browser authentication bundle are included in each deployment."
+  "adaptationSummary": "Installs root build tools and web dependencies, then builds the nested Next.js application from the repository root, preserving generated curriculum data and the Supabase browser authentication bundle in each deployment."
 }
