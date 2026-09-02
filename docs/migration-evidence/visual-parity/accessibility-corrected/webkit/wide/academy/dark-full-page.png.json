@@ -1,0 +1,49 @@
+{
+  "evidenceLabel": "accessibility-corrected",
+  "capturedAt": "2026-08-23T08:13:06.717Z",
+  "pairedPreCorrectionProjection": "docs/migration-evidence/visual-parity/accessibility-pre-correction-projection/webkit/wide/academy/dark-full-page.png",
+  "preservedPreCorrectionCandidate": "docs/migration-evidence/visual-parity/candidate-next/webkit/wide/academy/dark-full-page.png",
+  "immutableProductionReference": "docs/migration-evidence/visual-parity/reference-production/webkit/wide/academy/dark-full-page.png",
+  "correctedCapture": "docs/migration-evidence/visual-parity/accessibility-corrected/webkit/wide/academy/dark-full-page.png",
+  "diff": "docs/migration-evidence/visual-parity/accessibility-corrected-diffs/webkit/wide/academy/dark-full-page.png",
+  "browserProject": "webkit",
+  "viewport": {
+    "name": "wide",
+    "width": 1920,
+    "height": 1080
+  },
+  "theme": "dark",
+  "motion": "reduced",
+  "capture": "full-page",
+  "changedPixels": 200,
+  "outsideApprovedRegions": 0,
+  "approvedRegions": [
+    {
+      "name": "books-note-link-1",
+      "x": 544,
+      "y": 3577,
+      "width": 108,
+      "height": 21
+    },
+    {
+      "name": "books-note-link-2",
+      "x": 1038,
+      "y": 3577,
+      "width": 100,
+      "height": 21
+    },
+    {
+      "name": "certification-disclaimer",
+      "x": 543,
+      "y": 3904,
+      "width": 433,
+      "height": 49
+    }
+  ],
+  "changedPixelsByRegion": {
+    "books-note-link-1": 104,
+    "books-note-link-2": 96,
+    "certification-disclaimer": 0
+  },
+  "classification": "Approved: persistent link underlines and minimally darkened certification disclaimer only."
+}

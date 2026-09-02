@@ -1,0 +1,89 @@
+{
+  "evidenceLabel": "accessibility-corrected",
+  "pairedSurface": "legacy",
+  "pairedPreCorrectionProjection": "docs/migration-evidence/visual-parity/accessibility-pre-correction-projection/chromium/wide/certification-track/light-legacy-optional-extensions.png",
+  "immutableProductionReference": "docs/migration-evidence/visual-parity/reference-production/chromium/wide/certification-track/default-light-full-page.png",
+  "browserProject": "chromium",
+  "viewport": {
+    "name": "wide",
+    "width": 1920,
+    "height": 1080
+  },
+  "theme": "light",
+  "motion": "reduced",
+  "changedPixels": 2735,
+  "outsideApprovedRegions": 0,
+  "approvedRegions": [
+    {
+      "name": "badge-1",
+      "x": 17,
+      "y": 217,
+      "width": 86,
+      "height": 24
+    },
+    {
+      "name": "link-2",
+      "x": 1007,
+      "y": 215,
+      "width": 96,
+      "height": 28
+    },
+    {
+      "name": "badge-3",
+      "x": 17,
+      "y": 308,
+      "width": 86,
+      "height": 24
+    },
+    {
+      "name": "link-4",
+      "x": 1007,
+      "y": 306,
+      "width": 96,
+      "height": 28
+    },
+    {
+      "name": "badge-5",
+      "x": 17,
+      "y": 399,
+      "width": 86,
+      "height": 24
+    },
+    {
+      "name": "link-6",
+      "x": 1007,
+      "y": 397,
+      "width": 96,
+      "height": 28
+    },
+    {
+      "name": "badge-7",
+      "x": 17,
+      "y": 490,
+      "width": 86,
+      "height": 24
+    },
+    {
+      "name": "link-8",
+      "x": 1007,
+      "y": 489,
+      "width": 96,
+      "height": 28
+    },
+    {
+      "name": "badge-9",
+      "x": 17,
+      "y": 581,
+      "width": 86,
+      "height": 24
+    },
+    {
+      "name": "link-10",
+      "x": 1007,
+      "y": 580,
+      "width": 96,
+      "height": 28
+    }
+  ],
+  "classification": "Approved: minimally darkened only the optional-extension badge and link ink in the maintained legacy and Next certification track."
+}

@@ -63,7 +63,7 @@
 
   function slider(state, key, label, min, max, step, fmt) {
     var val = el('b', {}, [fmt ? fmt(state[key]) : String(state[key])]);
-    var input = el('input', { type: 'range', min: min, max: max, step: step, value: state[key] });
+    var input = el('input', { type: 'range', min: min, max: max, step: step, value: state[key], 'aria-label': label });
     input.addEventListener('input', function () {
       state[key] = Number(input.value);
       val.textContent = fmt ? fmt(state[key]) : String(state[key]);
@@ -73,7 +73,7 @@
   }
 
   function select(state, key, label, options) {
-    var sel = el('select');
+    var sel = el('select', { 'aria-label': label });
     options.forEach(function (o) { sel.appendChild(el('option', { value: o[1] }, [o[0]])); });
     sel.value = state[key];
     sel.addEventListener('change', function () { state[key] = sel.value; state._render(); });

@@ -4,5 +4,5 @@
   "canonicalPath": "site/header.js",
   "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f",
   "adapted": true,
-  "adaptationSummary": "Loads the Codeology product shell, groups search, theme and login as responsive header actions, and removes automatic narration loading across imported page templates."
+  "adaptationSummary": "Loads the Codeology product shell, groups search, theme and login as responsive header actions, removes automatic narration loading, and makes shared skip links transfer keyboard focus to the maintained page main region."
 }

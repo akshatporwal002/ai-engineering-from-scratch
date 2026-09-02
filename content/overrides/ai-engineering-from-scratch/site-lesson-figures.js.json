@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "ai-engineering-from-scratch",
+  "canonicalPath": "site/lesson-figures.js",
+  "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f",
+  "adapted": true,
+  "adaptationSummary": "Adds programmatic names to the maintained interactive-figure controls so the shared legacy and Next lesson readers expose equivalent accessible form controls without changing their appearance or behavior."
+}

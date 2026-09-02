@@ -1,0 +1,78 @@
+{
+  "evidenceLabel": "accessibility-corrected",
+  "capturedAt": "2026-08-23T11:06:30.829Z",
+  "pairedPreCorrectionProjection": "docs/migration-evidence/visual-parity/accessibility-pre-correction-projection/chromium/tablet/glossary/focused-details-dark-component.png",
+  "immutableProductionReference": "docs/migration-evidence/visual-parity/reference-production/chromium/tablet/glossary/deep-anchor-viewport.png",
+  "correctedCapture": "docs/migration-evidence/visual-parity/accessibility-corrected/chromium/tablet/glossary/focused-details-dark-component.png",
+  "diff": "docs/migration-evidence/visual-parity/accessibility-corrected-diffs/chromium/tablet/glossary/focused-details-dark-component.png",
+  "browserProject": "chromium",
+  "viewport": {
+    "name": "tablet",
+    "width": 768,
+    "height": 1024
+  },
+  "theme": "dark",
+  "motion": "reduced",
+  "capture": "focused-entry-component",
+  "changedPixels": 0,
+  "outsideApprovedRegions": 0,
+  "approvedRegions": [
+    {
+      "name": "approved-contrast-1",
+      "x": 10,
+      "y": 320,
+      "width": 716,
+      "height": 40
+    },
+    {
+      "name": "approved-contrast-2",
+      "x": 36,
+      "y": 370,
+      "width": 331,
+      "height": 20
+    },
+    {
+      "name": "approved-contrast-3",
+      "x": 395,
+      "y": 370,
+      "width": 331,
+      "height": 20
+    },
+    {
+      "name": "approved-contrast-4",
+      "x": 36,
+      "y": 453,
+      "width": 331,
+      "height": 20
+    },
+    {
+      "name": "approved-contrast-5",
+      "x": 36,
+      "y": 478,
+      "width": 187,
+      "height": 34
+    },
+    {
+      "name": "approved-contrast-6",
+      "x": -2,
+      "y": 564,
+      "width": 57,
+      "height": 34
+    },
+    {
+      "name": "approved-contrast-7",
+      "x": 62,
+      "y": 564,
+      "width": 57,
+      "height": 34
+    },
+    {
+      "name": "approved-contrast-8",
+      "x": 126,
+      "y": 564,
+      "width": 63,
+      "height": 34
+    }
+  ],
+  "classification": "Approved: minimally darkened light-theme Glossary evidence labels and links only; maintained legacy and Next share the correction."
+}

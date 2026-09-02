@@ -1,0 +1,42 @@
+{
+  "name": "@codeology/web-experiment",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build --webpack",
+    "postbuild": "node scripts/check-build-traces.mjs --prune-development",
+    "start": "next start",
+    "check:parity": "node scripts/check-route-parity.mjs && node scripts/build-migration-dashboard.mjs --check",
+    "build:migration-dashboard": "node scripts/build-migration-dashboard.mjs",
+    "pretest": "node ../../site/build.js",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:visual": "playwright test --config playwright.visual.config.ts",
+    "capture:visual-reference": "node scripts/capture-production-references.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.112.3",
+    "next": "16.3.2",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "zod": "4.1.12"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.62.1",
+    "@testing-library/react": "16.3.0",
+    "@types/node": "22.18.12",
+    "@types/react": "19.1.16",
+    "@types/react-dom": "19.1.9",
+    "autoprefixer": "10.4.21",
+    "cross-env": "10.0.0",
+    "jsdom": "26.1.0",
+    "postcss": "8.5.26",
+    "sharp": "0.35.3",
+    "tailwindcss": "3.4.17",
+    "typescript": "5.9.3",
+    "vitest": "3.2.7"
+  }
+}

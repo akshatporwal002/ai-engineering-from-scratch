@@ -1,0 +1,25 @@
+# Development merge review — 2026-09-02
+
+## Acceptance and scope
+
+The repository owner reviewed the running local migration and stated: "i've checked and it seems to look fine. I approve it". The owner subsequently authorized merging into `dev` and fixing CI. This is acceptance of the appearance and behavior they inspected, not a claim that they reviewed every route, browser, viewport, or immutable image comparison. The detailed route-parity evidence retains its existing classifications.
+
+This change prepares the existing Next.js/FastAPI migration for `dev`. It does not deploy production, change hosting architecture, apply database migrations, or exercise live provider credentials.
+
+## CI corrections
+
+- Generate maintained curriculum artifacts with the web package's `pretest` lifecycle so standalone web tests work on a clean checkout without a previously built `site/certification-data.js`.
+- Scope the glossary's accessible search-control lookup to its filter rail. Keep the full corpus, existing result assertions, and unchanged timeout; add initial-count and source-immutability assertions.
+- Register the original platform workflow, deployment guide, and Python launcher under Codeology ownership. These paths do not exist in the pinned upstream baseline; fabricating imported adaptation records would misattribute them.
+- Add an ownership regression test covering those three migration paths.
+- Install root build dependencies as well as web and API dependencies in the migration workflow; the shared authentication bundle requires the root `esbuild` package.
+- Preserve repository-root Vercel builds: expose the same pinned Next.js version in the root build package and install both dependency sets. Guard framework detection and nested output configuration with regression tests, without changing shared project settings.
+- Exclude temporary Next.js locks/caches, environment files, Git metadata, and development evidence from runtime file traces. A post-build trace audit checks that all packaged references exist and rejects development-only files before deployment.
+- Confirm each quiz answer's disabled and pressed state before advancing browser journeys, including explicit scrolling for pointer interactions. Preserve failure traces in CI; keep retries and timeouts unchanged. This follows a WebKit-only incomplete-score failure in the PR run while the branch run passed all 142 browser checks.
+- Synchronize fixture connection and analysis journeys with their actual POST responses and completed UI state. The retained WebKit trace showed a skipped connection click during scrolling: no new provider POST was sent, and the previous provider was reused. Check the requested fixture outcome and HTTP status as well as the existing user-visible results.
+
+## Validation and merge gates
+
+Run `npm run ci`, `npm run ci:migration`, and the complete Chromium/WebKit browser suite, then require successful GitHub checks on the proposed merge before updating `dev`. Keep generated artifacts out of the commit. Any integration rollback should use a reviewed revert, never a force-push.
+
+Production remains a separate gate: build the API image, configure and test a non-production Supabase/OAuth/provider environment, apply the additive migration there, and obtain explicit authorization before production cutover.

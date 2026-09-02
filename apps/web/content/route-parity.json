@@ -1,0 +1,76 @@
+[
+  {
+    "legacyUrl": "/index.html", "productionUrl": "/", "nextUrl": "/", "kind": "academy", "status": "visual-verified", "fixture": "site/index.html",
+    "states": ["light", "dark", "mobile-menu", "initial-animation", "primary-hover", "primary-focus"],
+    "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
+    "interactionCapabilities": ["mouse", "keyboard", "theme", "mobile-menu", "reduced-motion"],
+    "visualTestIds": ["visual:academy:light", "visual:academy:dark"],
+    "requiredTests": ["public-routes:academy", "public-routes:paired-evidence"]
+  },
+  {
+    "legacyUrl": "/about.html", "productionUrl": "/about.html", "nextUrl": "/about", "kind": "editorial", "status": "visual-verified", "fixture": "site/about.html",
+    "states": ["light", "dark", "mobile", "desktop"], "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
+    "interactionCapabilities": ["mouse", "keyboard", "theme", "reduced-motion"], "visualTestIds": ["visual:editorial:about:light", "visual:editorial:about:dark"],
+    "requiredTests": ["public-routes:about", "public-content:editorial-source"]
+  },
+  {
+    "legacyUrl": "/assessment.html", "productionUrl": "/assessment.html", "nextUrl": "/assessments/[assessment]", "kind": "assessment", "status": "interaction-verified", "fixture": "site/assessment.html",
+    "states": ["default", "question", "result"], "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
+    "interactionCapabilities": ["mouse", "keyboard", "assessment"], "visualTestIds": [], "requiredTests": ["assessments:journey"]
+  },
+  {
+    "legacyUrl": "/assurance.html", "productionUrl": "/assurance.html", "nextUrl": "/assurance", "kind": "editorial", "status": "visual-verified", "fixture": "site/assurance.html",
+    "states": ["light", "dark", "mobile", "desktop"], "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
+    "interactionCapabilities": ["mouse", "keyboard", "theme", "reduced-motion"], "visualTestIds": ["visual:editorial:assurance:light", "visual:editorial:assurance:dark"],
+    "requiredTests": ["public-routes:assurance", "public-content:editorial-source"]
+  },
+  {
+    "legacyUrl": "/catalog.html", "productionUrl": "/catalog.html", "nextUrl": "/catalog", "kind": "catalog", "status": "interaction-verified", "fixture": "site/catalog.html",
+    "states": ["default", "search", "filter", "sort", "empty-result", "mobile-controls"], "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
+    "interactionCapabilities": ["mouse", "keyboard", "search", "filter", "sort", "url-state"], "visualTestIds": [],
+    "requiredTests": ["public-routes:catalog", "public-content:lesson-search"]
+  },
+  {
+    "legacyUrl": "/certification.html?id=claude-ccao-f", "productionUrl": "/certification.html?id=claude-ccao-f", "nextUrl": "/certifications/[track]", "kind": "certification-track", "status": "visual-verified", "fixture": "site/certification.html",
+    "states": ["default", "progress", "lesson-links", "assessment-links", "mobile"], "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
+    "interactionCapabilities": ["mouse", "keyboard", "progress", "internal-navigation"], "visualTestIds": ["visual:certification-track:default:light", "visual:certification-track:default:dark", "visual:certification-track:progress:light"],
+    "requiredTests": ["public-routes:certification-track", "public-content:certification-validation"]
+  },
+  {
+    "legacyUrl": "/certifications.html", "productionUrl": "/certifications.html", "nextUrl": "/certifications", "kind": "certification-program", "status": "visual-verified", "fixture": "site/certifications.html",
+    "states": ["listing", "progress", "mobile", "desktop"], "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
+    "interactionCapabilities": ["mouse", "keyboard", "progress", "internal-navigation"], "visualTestIds": ["visual:certifications:catalog-synchronized-v2:light", "visual:certifications:catalog-synchronized-v2:dark"],
+    "requiredTests": ["public-routes:certifications", "public-content:certification-validation"]
+  },
+  {
+    "legacyUrl": "/credits.html", "productionUrl": "/credits.html", "nextUrl": "/credits", "kind": "editorial", "status": "visual-verified", "fixture": "site/credits.html",
+    "states": ["light", "dark", "mobile", "desktop"], "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
+    "interactionCapabilities": ["mouse", "keyboard", "theme", "reduced-motion"], "visualTestIds": ["visual:editorial:credits:light", "visual:editorial:credits:dark"],
+    "requiredTests": ["public-routes:credits", "public-content:provenance"]
+  },
+  {
+    "legacyUrl": "/cv-analysis.html", "productionUrl": "/cv-analysis.html", "nextUrl": "/cv-analysis", "kind": "presentation-only", "status": "interaction-verified", "fixture": "site/cv-analysis.html",
+    "states": ["signed-out", "signed-in", "provider-model", "upload", "loading", "success", "failure", "history", "delete-confirmation"], "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
+    "interactionCapabilities": ["mouse", "keyboard", "dialog", "upload", "mock-api", "focus-restoration"], "visualTestIds": [],
+    "requiredTests": ["public-routes:cv-analysis", "public-content:presentation-boundary"]
+  },
+  {
+    "legacyUrl": "/glossary.html", "productionUrl": "/glossary.html", "nextUrl": "/glossary", "kind": "glossary", "status": "visual-verified", "fixture": "site/glossary.html",
+    "states": ["default-light", "default-dark", "search", "category", "letter-navigation", "deep-anchor", "empty-result"], "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
+    "interactionCapabilities": ["mouse", "keyboard", "search", "filter", "anchor-navigation", "url-state", "reduced-motion"], "visualTestIds": ["visual:glossary:default-light", "visual:glossary:default-dark", "visual:glossary:search", "visual:glossary:category", "visual:glossary:empty-result", "visual:glossary:letter-navigation", "visual:glossary:deep-anchor-synchronized"],
+    "requiredTests": ["public-routes:glossary", "public-content:glossary-search"]
+  },
+  {
+    "legacyUrl": "/lesson.html", "productionUrl": "/lesson.html?path=phases/01-math-foundations/08-optimization", "nextUrl": "/lessons/[...slug]", "kind": "lesson", "status": "interaction-verified", "fixture": "site/lesson.html",
+    "states": ["top", "scrolled", "code", "mermaid", "figure", "quiz", "completed-quiz", "mobile"], "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
+    "interactionCapabilities": ["mouse", "keyboard", "copy-code", "figure", "quiz", "progress", "internal-navigation"], "visualTestIds": [],
+    "requiredTests": ["reference-lesson:reader", "reference-lesson:paired-evidence"]
+  },
+  {
+    "legacyUrl": "/prereqs.html", "productionUrl": "/prereqs.html", "nextUrl": "/roadmap", "kind": "roadmap", "status": "visual-verified", "fixture": "site/prereqs.html",
+    "states": ["default-graph", "selected-node", "inspector", "zoomed", "url-hash", "mobile"], "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
+    "interactionCapabilities": ["mouse", "keyboard", "pan", "zoom", "node-selection", "url-state", "history-navigation", "reduced-motion"],
+    "visualTestIds": ["visual:roadmap:default-graph-light", "visual:roadmap:default-graph-dark", "visual:roadmap:selected-node-synchronized-v2", "visual:roadmap:inspector-flow-synchronized", "visual:roadmap:zoomed-synchronized", "visual:roadmap:url-hash-flow-synchronized", "visual:roadmap:mobile-warmed"],
+    "requiredTests": ["public-routes:roadmap", "public-content:prerequisites"]
+  }
+]

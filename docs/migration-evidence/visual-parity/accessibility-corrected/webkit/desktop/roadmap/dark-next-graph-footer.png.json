@@ -1,0 +1,49 @@
+{
+  "evidenceLabel": "accessibility-corrected",
+  "capturedAt": "2026-08-23T13:02:34.773Z",
+  "pairedSurface": "next",
+  "pairedPreCorrectionProjection": "docs/migration-evidence/visual-parity/accessibility-pre-correction-projection/webkit/desktop/roadmap/dark-next-graph-footer.png",
+  "immutableProductionReference": "docs/migration-evidence/visual-parity/reference-production/webkit/desktop/roadmap/default-graph-dark-full-page.png",
+  "correctedCapture": "docs/migration-evidence/visual-parity/accessibility-corrected/webkit/desktop/roadmap/dark-next-graph-footer.png",
+  "diff": "docs/migration-evidence/visual-parity/accessibility-corrected-diffs/webkit/desktop/roadmap/dark-next-graph-footer.png",
+  "browserProject": "webkit",
+  "viewport": {
+    "name": "desktop",
+    "width": 1440,
+    "height": 1000
+  },
+  "theme": "dark",
+  "motion": "reduced",
+  "capture": "graph-footer-component",
+  "changedPixels": 0,
+  "outsideApprovedRegions": 0,
+  "approvedRegions": [
+    {
+      "name": "approved-1",
+      "x": 9,
+      "y": 8,
+      "width": 152,
+      "height": 25
+    },
+    {
+      "name": "approved-2",
+      "x": 164,
+      "y": 8,
+      "width": 115,
+      "height": 25
+    },
+    {
+      "name": "graph-hint",
+      "x": 621,
+      "y": 8,
+      "width": 396,
+      "height": 25
+    }
+  ],
+  "changedPixelsByRegion": {
+    "approved-1": 0,
+    "approved-2": 0,
+    "graph-hint": 0
+  },
+  "classification": "Approved: minimally darkened light-theme Skill Map legend and graph-hint text only; maintained legacy and Next share the correction."
+}

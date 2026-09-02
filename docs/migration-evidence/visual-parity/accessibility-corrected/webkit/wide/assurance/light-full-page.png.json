@@ -1,0 +1,57 @@
+{
+  "evidenceLabel": "accessibility-corrected",
+  "capturedAt": "2026-08-23T09:19:02.409Z",
+  "pairedPreCorrectionProjection": "docs/migration-evidence/visual-parity/accessibility-pre-correction-projection/webkit/wide/assurance/light-full-page.png",
+  "preservedPreCorrectionCandidate": "docs/migration-evidence/visual-parity/candidate-next/webkit/wide/assurance/light-full-page.png",
+  "immutableProductionReference": "docs/migration-evidence/visual-parity/reference-production/webkit/wide/assurance/light-full-page.png",
+  "correctedCapture": "docs/migration-evidence/visual-parity/accessibility-corrected/webkit/wide/assurance/light-full-page.png",
+  "diff": "docs/migration-evidence/visual-parity/accessibility-corrected-diffs/webkit/wide/assurance/light-full-page.png",
+  "browserProject": "webkit",
+  "viewport": {
+    "name": "wide",
+    "width": 1920,
+    "height": 1080
+  },
+  "theme": "light",
+  "motion": "reduced",
+  "capture": "full-page",
+  "changedPixels": 30096,
+  "outsideApprovedRegions": 0,
+  "approvedRegions": [
+    {
+      "name": "assurance-hero-heading",
+      "x": 451,
+      "y": 222,
+      "width": 904,
+      "height": 228
+    },
+    {
+      "name": "verified-state-label-1",
+      "x": 989,
+      "y": 1381,
+      "width": 19,
+      "height": 18
+    },
+    {
+      "name": "verified-state-label-2",
+      "x": 989,
+      "y": 1535,
+      "width": 485,
+      "height": 20
+    },
+    {
+      "name": "verified-state-label-3",
+      "x": 989,
+      "y": 1622,
+      "width": 485,
+      "height": 20
+    }
+  ],
+  "changedPixelsByRegion": {
+    "assurance-hero-heading": 29684,
+    "verified-state-label-1": 61,
+    "verified-state-label-2": 193,
+    "verified-state-label-3": 158
+  },
+  "classification": "Approved: minimally darkened light-theme Assurance hero and verified-state labels only."
+}

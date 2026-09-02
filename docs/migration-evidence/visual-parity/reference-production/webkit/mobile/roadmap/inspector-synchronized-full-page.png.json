@@ -1,0 +1,20 @@
+{
+  "productionUrl": "https://learn.akshatporwal.dev/prereqs.html#phase-14",
+  "capturedAt": "2026-08-23T12:06:22.953Z",
+  "browserProject": "webkit",
+  "viewport": {
+    "name": "mobile",
+    "width": 390,
+    "height": 844
+  },
+  "theme": "light",
+  "routeState": "inspector-synchronized",
+  "visualTestId": "roadmap",
+  "migrationCommit": "8e83ec119b0c655cf1957790e3984c0f052333f2",
+  "migrationTree": "51bcee454572e3cf1cf8d9e33e3a1282f1f7afb5",
+  "productionRevision": {
+    "buildRef": "main",
+    "buildMetaEtag": "c55b6a3010ca43473a4e753ad8d511bb",
+    "observedAt": "2026-08-23T05:44:36.000Z"
+  }
+}

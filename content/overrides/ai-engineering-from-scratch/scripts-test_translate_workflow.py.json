@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "ai-engineering-from-scratch",
+  "canonicalPath": "scripts/test_translate_workflow.py",
+  "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f",
+  "adapted": true,
+  "adaptationSummary": "Makes the translation-publisher contract fixture set its own local Git hook path so contributor-global hooks cannot suppress the required commit-failure regression case."
+}

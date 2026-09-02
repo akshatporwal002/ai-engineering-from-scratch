@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "ai-engineering-from-scratch",
+  "canonicalPath": "site/app.js",
+  "baselineCommit": "7c3323508a5186739feecd76838ba1ae962c736f",
+  "adapted": true,
+  "adaptationSummary": "Keeps the imported Academy phase dialog inert while closed so hidden controls cannot receive focus, while preserving its opening animation, keyboard behavior, local progress, and source curriculum interactions."
+}

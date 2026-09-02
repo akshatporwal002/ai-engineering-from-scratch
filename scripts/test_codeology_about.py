@@ -33,8 +33,8 @@ class CodeologyAboutTest(unittest.TestCase):
 
     def test_missing_header_clearance_is_rejected(self) -> None:
         broken = self.css.replace(
-            "padding: calc(var(--header-offset) + 16px) 0 96px;",
-            "padding: 80px 0 96px;",
+            "padding: calc(var(--header-offset) + 16px) 0 112px;",
+            "padding: 80px 0 112px;",
             1,
         )
         errors = validator.audit(self.html, broken)

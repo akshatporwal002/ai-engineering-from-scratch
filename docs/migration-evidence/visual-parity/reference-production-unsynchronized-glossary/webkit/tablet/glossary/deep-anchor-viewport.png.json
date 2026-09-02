@@ -1,0 +1,20 @@
+{
+  "productionUrl": "https://learn.akshatporwal.dev/glossary.html#backpropagation",
+  "capturedAt": "2026-08-23T09:37:07.881Z",
+  "browserProject": "webkit",
+  "viewport": {
+    "name": "tablet",
+    "width": 768,
+    "height": 1024
+  },
+  "theme": "light",
+  "routeState": "deep-anchor",
+  "visualTestId": "glossary",
+  "migrationCommit": "ee48094d8d39f754e19c0e022e0576814d9ca383",
+  "migrationTree": "6bf354f885348f934f50de5f25d1bd2babf68e15",
+  "productionRevision": {
+    "buildRef": "main",
+    "buildMetaEtag": "c55b6a3010ca43473a4e753ad8d511bb",
+    "observedAt": "2026-08-23T05:44:36.000Z"
+  }
+}

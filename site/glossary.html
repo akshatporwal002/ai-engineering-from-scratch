@@ -590,6 +590,19 @@
       }
     }
 
+    html:not([data-theme="dark"]) .glossary-details summary,
+    html:not([data-theme="dark"]) .glossary-details .glossary-resource-link,
+    html:not([data-theme="dark"]) .glossary-related-link,
+    html:not([data-theme="dark"]) .glossary-details .glossary-resource-link:hover,
+    html:not([data-theme="dark"]) .glossary-related-link:hover {
+      color: #b93600;
+    }
+
+    html:not([data-theme="dark"]) .glossary-details .glossary-entry-label,
+    html:not([data-theme="dark"]) .glossary-details .glossary-resource-label {
+      color: #666;
+    }
+
     @media (max-width: 900px) {
       .glossary-masthead {
         grid-template-columns: minmax(0, 1fr);

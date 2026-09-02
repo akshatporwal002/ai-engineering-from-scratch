@@ -1,0 +1,78 @@
+{
+  "evidenceLabel": "accessibility-corrected",
+  "capturedAt": "2026-08-23T11:07:21.300Z",
+  "pairedPreCorrectionProjection": "docs/migration-evidence/visual-parity/accessibility-pre-correction-projection/chromium/wide/glossary/focused-details-dark-component.png",
+  "immutableProductionReference": "docs/migration-evidence/visual-parity/reference-production/chromium/wide/glossary/deep-anchor-viewport.png",
+  "correctedCapture": "docs/migration-evidence/visual-parity/accessibility-corrected/chromium/wide/glossary/focused-details-dark-component.png",
+  "diff": "docs/migration-evidence/visual-parity/accessibility-corrected-diffs/chromium/wide/glossary/focused-details-dark-component.png",
+  "browserProject": "chromium",
+  "viewport": {
+    "name": "wide",
+    "width": 1920,
+    "height": 1080
+  },
+  "theme": "dark",
+  "motion": "reduced",
+  "capture": "focused-entry-component",
+  "changedPixels": 0,
+  "outsideApprovedRegions": 0,
+  "approvedRegions": [
+    {
+      "name": "approved-contrast-1",
+      "x": 10,
+      "y": 351,
+      "width": 876,
+      "height": 40
+    },
+    {
+      "name": "approved-contrast-2",
+      "x": 36,
+      "y": 401,
+      "width": 411,
+      "height": 20
+    },
+    {
+      "name": "approved-contrast-3",
+      "x": 475,
+      "y": 401,
+      "width": 411,
+      "height": 20
+    },
+    {
+      "name": "approved-contrast-4",
+      "x": 36,
+      "y": 484,
+      "width": 411,
+      "height": 20
+    },
+    {
+      "name": "approved-contrast-5",
+      "x": 36,
+      "y": 509,
+      "width": 187,
+      "height": 34
+    },
+    {
+      "name": "approved-contrast-6",
+      "x": -2,
+      "y": 595,
+      "width": 57,
+      "height": 34
+    },
+    {
+      "name": "approved-contrast-7",
+      "x": 62,
+      "y": 595,
+      "width": 57,
+      "height": 34
+    },
+    {
+      "name": "approved-contrast-8",
+      "x": 126,
+      "y": 595,
+      "width": 63,
+      "height": 34
+    }
+  ],
+  "classification": "Approved: minimally darkened light-theme Glossary evidence labels and links only; maintained legacy and Next share the correction."
+}

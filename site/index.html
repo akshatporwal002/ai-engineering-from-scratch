@@ -752,7 +752,7 @@
       font-size: 0.62rem;
       line-height: 1.5;
       letter-spacing: 0.03em;
-      color: var(--ink-mute);
+      color: color-mix(in srgb, var(--ink-mute) 98%, var(--ink));
     }
 
     .certification-actions {
@@ -1228,7 +1228,12 @@
       color: var(--ink-mute);
     }
 
-    .books-note a { color: var(--blueprint); }
+    .books-note a {
+      color: var(--blueprint);
+      text-decoration-line: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.2em;
+    }
 
     @media (max-width: 900px) {
       .books-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1845,7 +1850,7 @@
       </div>
     </section>
 
-    <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-overlay" id="modalOverlay" aria-hidden="true" inert>
       <div class="modal" id="modal">
         <button class="modal-close" id="modalClose" type="button">×</button>
         <div class="modal-header">

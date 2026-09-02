@@ -502,6 +502,10 @@ html[data-product="codeology"] .roadmap-page {
   text-wrap: balance;
 }
 
+[data-theme="light"] .assurance-hero h1 {
+  color: #f45118;
+}
+
 .assurance-hero > p,
 .assurance-section-heading > p,
 .assurance-open-tool > div > p,
@@ -620,6 +624,11 @@ html[data-product="codeology"] .roadmap-page {
   font-size: 0.6rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+[data-theme="light"] .assurance-state[data-evidence-state="verified"] .assurance-state-index,
+[data-theme="light"] .assurance-state[data-evidence-state="verified"] dt {
+  color: #bf3900;
 }
 
 .assurance-state dd {

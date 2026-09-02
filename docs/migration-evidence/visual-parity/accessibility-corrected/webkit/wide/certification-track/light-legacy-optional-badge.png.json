@@ -1,0 +1,26 @@
+{
+  "evidenceLabel": "accessibility-corrected",
+  "pairedSurface": "legacy",
+  "pairedPreCorrectionProjection": "docs/migration-evidence/visual-parity/accessibility-pre-correction-projection/webkit/wide/certification-track/light-legacy-optional-badge.png",
+  "immutableProductionReference": "docs/migration-evidence/visual-parity/reference-production/webkit/wide/certification-track/default-light-full-page.png",
+  "browserProject": "webkit",
+  "viewport": {
+    "name": "wide",
+    "width": 1920,
+    "height": 1080
+  },
+  "theme": "light",
+  "motion": "reduced",
+  "changedPixels": 196,
+  "outsideApprovedRegions": 0,
+  "approvedRegions": [
+    {
+      "name": "badge",
+      "x": 0,
+      "y": 0,
+      "width": 78,
+      "height": 16
+    }
+  ],
+  "classification": "Approved: minimally darkened only the optional-extension badge and link ink in the maintained legacy and Next certification track."
+}

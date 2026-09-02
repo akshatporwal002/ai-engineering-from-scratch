@@ -40,6 +40,11 @@
       min-height: 100vh;
     }
 
+    html:not([data-theme="dark"]) .lesson-layout {
+      --blueprint: #a73b00;
+      --status-complete: #a73b00;
+    }
+
     .lesson-sidebar {
       position: fixed;
       top: 64px;
@@ -191,6 +196,11 @@
       max-width: 100%;
       overflow-wrap: break-word;
       word-wrap: break-word;
+      line-height: 1.62;
+    }
+
+    .lesson-layout button {
+      line-height: normal;
     }
 
     .lesson-loading {
@@ -262,7 +272,10 @@
       letter-spacing: 0.02em;
       color: var(--ink);
       margin-top: 56px;
+      margin-top: 56px;
       margin-bottom: 18px;
+      padding-top: 0;
+      border-top: none;
       padding-bottom: 0;
       border-bottom: none;
       line-height: 1.05;
@@ -297,7 +310,7 @@
       font-size: 1.06rem;
       line-height: 1.7;
       color: var(--ink);
-      margin-bottom: 18px;
+      margin: 0 0 18px;
       text-align: justify;
       hyphens: auto;
       -webkit-hyphens: auto;
@@ -1007,6 +1020,14 @@
       height: auto;
     }
 
+    /* Tailwind normalizes SVGs to block layout, while the maintained reader
+       retains inline SVG layout. Keep that compatibility geometry scoped to
+       the Next adapter without changing the legacy reader. */
+    body[data-lesson-next] .lesson-article .mermaid-render svg {
+      display: block;
+      margin-bottom: 8px;
+    }
+
     :where(
       .lesson-article .mermaid-render foreignObject p,
       .lesson-article .mermaid-render foreignObject span,
@@ -1291,7 +1312,7 @@
     .code-card-size {
       font-family: var(--font-mono);
       font-size: 0.7rem;
-      color: var(--ink-mute);
+      color: #6b6b6b;
       margin-bottom: 12px;
     }
 
@@ -2735,6 +2756,10 @@
             e.preventDefault();
             target.scrollIntoView({ behavior: preferredScrollBehavior(), block: 'start' });
             history.replaceState(null, '', '#' + id);
+            sidebar.querySelectorAll('.toc-link').forEach(function (link) {
+              link.classList.toggle('active', link === a);
+            });
+            sidebar._tocActiveId = id;
             if (!target.hasAttribute('tabindex')) {
               target.setAttribute('tabindex', '-1');
               target.addEventListener('blur', function blurHandler() {
@@ -3182,7 +3207,7 @@
       function renderCodeBlock(code, lang) {
         var highlighted = highlightSyntax(escapeHtml(code), lang);
         var langLabel = lang ? '<span class="code-lang">' + escapeHtml(lang) + '</span>' : '';
-        return '<pre>' + langLabel + '<button class="code-copy" data-code="' + escapeAttr(code) + '">Copy</button><code>' + highlighted + '</code></pre>';
+        return '<pre>' + langLabel + '<button class="code-copy" data-code="' + escapeAttr(code) + '">Copy</button><code tabindex="0">' + highlighted + '</code></pre>';
       }
 
       function highlightSyntax(code, lang) {
@@ -3949,7 +3974,7 @@
           html += '<div class="code-card">';
           html += '<div class="code-card-header"><span class="code-lang-icon">' + icon + '</span><span class="code-card-name">' + escapeHtml(file.name) + '</span></div>';
           html += '<div class="code-card-size">' + formatSize(Number(file.size || 0)) + '</div>';
-          html += '<div class="code-card-run">' + escapeHtml(runCmd) + '</div>';
+          html += '<div class="code-card-run" tabindex="0">' + escapeHtml(runCmd) + '</div>';
           html += '<div class="code-card-actions">';
           html += '<a class="code-card-btn" href="' + escapeAttr(lessonFileViewUrl(file)) + '" target="_blank" rel="noopener">Open file</a>';
           html += '<button class="code-card-btn code-card-copy" data-command="' + escapeAttr(runCmd) + '">Copy command</button>';

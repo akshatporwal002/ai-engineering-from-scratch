@@ -35,8 +35,8 @@ class CodeologyCreditsTest(unittest.TestCase):
 
     def test_missing_header_clearance_is_rejected(self) -> None:
         broken = self.css.replace(
-            ".credits-page {\n  display: grid;\n  width: min(1100px, calc(100% - 48px));\n  margin-inline: auto;\n  padding: calc(var(--header-offset) + 16px) 0 96px;",
-            ".credits-page {\n  display: grid;\n  width: min(1100px, calc(100% - 48px));\n  margin-inline: auto;\n  padding: 80px 0 96px;",
+            ".credits-page {\n  display: grid;\n  width: min(1120px, calc(100% - 48px));\n  margin-inline: auto;\n  padding: calc(var(--header-offset) + 16px) 0 112px;",
+            ".credits-page {\n  display: grid;\n  width: min(1120px, calc(100% - 48px));\n  margin-inline: auto;\n  padding: 80px 0 112px;",
             1,
         )
         errors = validator.audit(self.html, broken, self.config)

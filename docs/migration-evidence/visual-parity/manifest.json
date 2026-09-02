@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "canonicalOrigin": "https://learn.akshatporwal.dev",
+  "productionRevision": {
+    "buildRef": "main",
+    "buildMetaEtag": "c55b6a3010ca43473a4e753ad8d511bb",
+    "observedAt": "2026-08-23T05:44:36.000Z"
+  },
+  "browsers": ["chromium", "webkit"],
+  "viewports": {
+    "mobile": { "width": 390, "height": 844 },
+    "tablet": { "width": 768, "height": 1024 },
+    "desktop": { "width": 1440, "height": 1000 },
+    "wide": { "width": 1920, "height": 1080 }
+  },
+  "captureConditions": {
+    "locale": "en-AU",
+    "timezone": "Australia/Melbourne",
+    "deviceScaleFactor": 1,
+    "caret": "hidden",
+    "nonessentialAnimation": "paused",
+    "reducedMotion": "reduce",
+    "referencesImmutable": true
+  },
+  "capturedVisualTestIds": [
+    "visual:academy:light",
+    "visual:academy:dark",
+    "visual:editorial:about:light",
+    "visual:editorial:about:dark",
+    "visual:editorial:credits:light",
+    "visual:editorial:credits:dark",
+    "visual:editorial:assurance:light",
+    "visual:editorial:assurance:dark",
+    "visual:glossary:default-light",
+    "visual:glossary:default-dark",
+    "visual:glossary:search",
+    "visual:glossary:category",
+    "visual:glossary:empty-result",
+    "visual:glossary:letter-navigation",
+    "visual:glossary:deep-anchor-synchronized",
+    "visual:roadmap:default-graph-light",
+    "visual:roadmap:default-graph-dark",
+    "visual:roadmap:selected-node-synchronized-v2",
+    "visual:roadmap:inspector-flow-synchronized",
+    "visual:roadmap:zoomed-synchronized",
+    "visual:roadmap:url-hash-flow-synchronized",
+    "visual:roadmap:mobile-warmed",
+    "visual:certifications:catalog-synchronized-v2:light",
+    "visual:certifications:catalog-synchronized-v2:dark",
+    "visual:certification-track:default:light",
+    "visual:certification-track:default:dark",
+    "visual:certification-track:progress:light"
+  ],
+  "knownBlockedStates": [
+    {
+      "surface": "account-menu",
+      "states": ["signed-in", "menu-open-signed-in"],
+      "reason": "Production authentication is disabled and no approved test account is available."
+    },
+    {
+      "surface": "cv-analysis",
+      "states": ["signed-in", "provider-model", "upload", "loading", "success", "failure", "history", "delete-confirmation"],
+      "reason": "Production authentication is disabled and no approved test account is available."
+    }
+  ]
+}

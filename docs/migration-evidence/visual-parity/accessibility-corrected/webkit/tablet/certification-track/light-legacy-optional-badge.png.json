@@ -1,0 +1,26 @@
+{
+  "evidenceLabel": "accessibility-corrected",
+  "pairedSurface": "legacy",
+  "pairedPreCorrectionProjection": "docs/migration-evidence/visual-parity/accessibility-pre-correction-projection/webkit/tablet/certification-track/light-legacy-optional-badge.png",
+  "immutableProductionReference": "docs/migration-evidence/visual-parity/reference-production/webkit/tablet/certification-track/default-light-full-page.png",
+  "browserProject": "webkit",
+  "viewport": {
+    "name": "tablet",
+    "width": 768,
+    "height": 1024
+  },
+  "theme": "light",
+  "motion": "reduced",
+  "changedPixels": 196,
+  "outsideApprovedRegions": 0,
+  "approvedRegions": [
+    {
+      "name": "badge",
+      "x": 0,
+      "y": 0,
+      "width": 70,
+      "height": 16
+    }
+  ],
+  "classification": "Approved: minimally darkened only the optional-extension badge and link ink in the maintained legacy and Next certification track."
+}
