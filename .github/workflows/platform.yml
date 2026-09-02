@@ -30,6 +30,7 @@ jobs:
           python-version: "3.12"
       - name: Install pinned application dependencies
         run: |
+          npm install --package-lock=false
           npm --prefix apps/web install --package-lock=false
           python3 -m pip install ./apps/api
       - name: Validate contracts, tests, types, and production build

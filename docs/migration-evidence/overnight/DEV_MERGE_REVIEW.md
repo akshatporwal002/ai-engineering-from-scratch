@@ -12,6 +12,7 @@ This change prepares the existing Next.js/FastAPI migration for `dev`. It does n
 - Scope the glossary's accessible search-control lookup to its filter rail. Keep the full corpus, existing result assertions, and unchanged timeout; add initial-count and source-immutability assertions.
 - Register the original platform workflow, deployment guide, and Python launcher under Codeology ownership. These paths do not exist in the pinned upstream baseline; fabricating imported adaptation records would misattribute them.
 - Add an ownership regression test covering those three migration paths.
+- Install root build dependencies as well as web and API dependencies in the migration workflow; the shared authentication bundle requires the root `esbuild` package.
 
 ## Validation and merge gates
 
