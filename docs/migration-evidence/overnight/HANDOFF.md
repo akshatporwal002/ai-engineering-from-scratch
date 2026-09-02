@@ -702,3 +702,81 @@ creating `fix(web): restore reference lesson reader parity`.
   the latter generated all 531 static pages in 3.3 seconds.
 - `npm run check:precommit` passes after the synchronization changes, including
   503 curriculum lessons and all 33 certification lessons / 8 assessments.
+
+---
+
+## Production-adapter completion continuation — 2026-09-02
+
+This section supersedes earlier statements that the new stack is limited to
+fixtures or in-memory services. The migration now includes production-selectable
+Supabase and provider adapters while keeping the deterministic fixture mode for
+local tests.
+
+Continuation commits: `f9ae42d3` — production FastAPI/Supabase/provider
+adapters; `e6d17a86` — Next.js account, progress, search, and CV workflows;
+`911df644` — deployment, CI, route-parity, and browser gates;
+`docs(migration): record production-adapter completion` — this documentation
+commit, which cannot self-reference its final SHA.
+
+### Completed application work
+
+- FastAPI verifies Supabase JWTs from JWKS, scopes repository operations to the
+  authenticated subject, enforces production configuration, CORS, bounded
+  request sizes, request IDs, safe errors, timeouts, and hashed-session rate
+  limits without retaining bearer credentials.
+- Production repositories cover progress, provider connections, Vault-backed
+  credential rotation, private CV storage, bounded TXT/PDF/DOCX extraction,
+  saved analysis history, deletion, legacy-analysis normalization, and
+  idempotent analysis retries. The additive idempotency migration is
+  `supabase/migrations/20260902090000_add_cv_analysis_idempotency.sql`.
+- Gemini, OpenAI, and Anthropic adapters use closed provider/model allowlists,
+  validate their structured responses, and map upstream failures without
+  returning credentials or raw provider responses.
+- Next.js now provides Supabase-compatible sign-in/callback/sign-out, bearer
+  propagation through the same-origin API proxy, authenticated progress
+  reconciliation, production provider/CV workflows, full saved history and
+  deletion, and global lesson/glossary search. Fixture behavior remains an
+  explicit build mode that production configuration rejects.
+- The deployment boundary now builds `apps/web` for Vercel, provides portable
+  production Dockerfiles, forwards `/api/v1` to FastAPI, and documents preview,
+  cutover, rollback, secrets, and data-preservation procedures in
+  `docs/NEXTJS_FASTAPI_DEPLOYMENT.md`.
+- Root Python commands use `scripts/run-python.mjs`, including UTF-8 mode on
+  Windows, so the existing repository CI contract is cross-platform.
+
+### Verification completed locally
+
+- `npm run ci`: exit 0, including all curriculum/certification validators and
+  tests plus the legacy static build (503 lessons, 33 certification lessons,
+  8 assessments).
+- `npm run ci:migration`: exit 0; route parity 12/12 with zero planned routes,
+  FastAPI 45/45, Vitest 27/27, TypeScript and Python compilation, and the
+  optimized 533-page Next.js build all pass.
+- `npm run test:web:e2e`: exit 0, with 140/140 Chromium and WebKit journeys
+  passing after deterministic finite-motion settling and exact filtering of a
+  split-port-only WebKit CORS diagnostic. The certification fade/Axe path also
+  passed five consecutive focused WebKit repetitions.
+- The immutable visual suite can execute, but this checkout does not contain the
+  ignored `candidate-next` pre-correction captures required by its correction
+  tests. Ordinary comparisons also show anti-aliasing-only differences under
+  the current local browser rasterizer (for example, the About page is visibly
+  aligned while an exact-zero comparison reports a 3% pixel difference). No
+  canonical reference image or tolerance was changed. Human paired-evidence
+  review remains a genuine release gate; route metadata intentionally records
+  zero human-reviewed routes.
+- `npm audit --omit=dev --json`: zero production dependency vulnerabilities.
+  The root development install reports vulnerabilities only in Vercel CLI's
+  transitive development tree and is not shipped with either application.
+- A Docker executable was not available on this Windows host, so the portable
+  image definitions were reviewed but not locally built. Image construction is
+  still required in the preview environment before deployment approval.
+
+### External gates not performed
+
+No live Supabase, Vercel, DNS, OAuth, Vault, Storage, or provider state was
+changed. A release operator still must apply the additive migration to a
+positively identified non-production project, configure preview-only secrets
+and OAuth callbacks, run the synthetic two-user/provider/CV journey with real
+test credentials, inspect Supabase advisors, complete human visual review, and
+then explicitly authorize production cutover. The exact commands, smoke paths,
+and rollback order are in `docs/NEXTJS_FASTAPI_DEPLOYMENT.md`.

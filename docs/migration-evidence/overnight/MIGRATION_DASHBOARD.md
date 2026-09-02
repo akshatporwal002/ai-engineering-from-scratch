@@ -5,9 +5,9 @@
 ## Coverage
 
 - Legacy HTML routes: 12
-- Implemented: 4
-- Interaction verified: 1
-- Visual verified: 7
+- Implemented: 0
+- Interaction verified: 4
+- Visual verified: 8
 - Human reviewed: 0
 - Planned: 0
 - Excluded: 0
@@ -17,17 +17,17 @@
 
 | Legacy route | Next.js target | Kind | Status | Required evidence |
 |---|---|---|---|---|
-| `/index.html` | `/` | academy | implemented | `public-routes:academy`<br>`public-routes:paired-evidence` |
+| `/index.html` | `/` | academy | visual-verified | `public-routes:academy`<br>`public-routes:paired-evidence` |
 | `/about.html` | `/about` | editorial | visual-verified | `public-routes:about`<br>`public-content:editorial-source` |
 | `/assessment.html` | `/assessments/[assessment]` | assessment | interaction-verified | `assessments:journey` |
 | `/assurance.html` | `/assurance` | editorial | visual-verified | `public-routes:assurance`<br>`public-content:editorial-source` |
-| `/catalog.html` | `/catalog` | catalog | implemented | `public-routes:catalog`<br>`public-content:lesson-search` |
+| `/catalog.html` | `/catalog` | catalog | interaction-verified | `public-routes:catalog`<br>`public-content:lesson-search` |
 | `/certification.html?id=claude-ccao-f` | `/certifications/[track]` | certification-track | visual-verified | `public-routes:certification-track`<br>`public-content:certification-validation` |
 | `/certifications.html` | `/certifications` | certification-program | visual-verified | `public-routes:certifications`<br>`public-content:certification-validation` |
 | `/credits.html` | `/credits` | editorial | visual-verified | `public-routes:credits`<br>`public-content:provenance` |
-| `/cv-analysis.html` | `/cv-analysis` | presentation-only | implemented | `public-routes:cv-analysis`<br>`public-content:presentation-boundary` |
+| `/cv-analysis.html` | `/cv-analysis` | presentation-only | interaction-verified | `public-routes:cv-analysis`<br>`public-content:presentation-boundary` |
 | `/glossary.html` | `/glossary` | glossary | visual-verified | `public-routes:glossary`<br>`public-content:glossary-search` |
-| `/lesson.html` | `/lessons/[...slug]` | lesson | implemented | `reference-lesson:reader`<br>`reference-lesson:paired-evidence` |
+| `/lesson.html` | `/lessons/[...slug]` | lesson | interaction-verified | `reference-lesson:reader`<br>`reference-lesson:paired-evidence` |
 | `/prereqs.html` | `/roadmap` | roadmap | visual-verified | `public-routes:roadmap`<br>`public-content:prerequisites` |
 
 ## Interpretation
