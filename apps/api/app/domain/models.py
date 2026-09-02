@@ -56,6 +56,7 @@ class CvDocumentCreate(BaseModel):
     filename: str = Field(min_length=1, max_length=180)
     mime_type: str = Field(min_length=1, max_length=100)
     content: bytes | None = Field(default=None, max_length=10 * 1024 * 1024 + 1)
+    content_base64: str | None = Field(default=None, max_length=14 * 1024 * 1024)
     pasted_text: str | None = Field(default=None, max_length=100_001)
     extracted_text: str | None = Field(default=None, max_length=100_000)
     target_role: str = Field(min_length=1, max_length=120)
@@ -128,5 +129,10 @@ class AnalysisInput(BaseModel):
     job_description: str = Field(default="", max_length=20_000)
 
 
-class AnalysisCreate(AnalysisInput):
+class AnalysisCreate(BaseModel):
     connection_id: UUID
+    # Fixture-only compatibility fields. Production analysis always reloads the
+    # trusted document text and role context from the authenticated account.
+    cv_text: str = Field(default="", max_length=100_000)
+    target_role: str = Field(default="", max_length=120)
+    job_description: str = Field(default="", max_length=20_000)

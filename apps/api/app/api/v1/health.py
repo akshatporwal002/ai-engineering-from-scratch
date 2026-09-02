@@ -1,4 +1,4 @@
-"""Health endpoints expose no external dependency state in the experiment."""
+"""Liveness, configuration readiness, and version endpoints."""
 
 from fastapi import APIRouter, Request
 
@@ -18,7 +18,9 @@ async def health(request: Request) -> dict[str, str]:
 
 @router.get("/readiness")
 async def readiness(request: Request) -> dict[str, str]:
-    return envelope(request, "ready", request.app.state.settings)
+    settings = request.app.state.settings
+    status = "ready" if settings.adapter == "memory" or (settings.supabase_url and settings.supabase_publishable_key.get_secret_value() and settings.supabase_service_role_key.get_secret_value()) else "not_ready"
+    return envelope(request, status, settings)
 
 
 @router.get("/version")
