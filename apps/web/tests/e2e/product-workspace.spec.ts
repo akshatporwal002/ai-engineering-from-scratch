@@ -13,13 +13,27 @@ async function localOnly(page: Page) {
 async function connect(page: Page, outcome: string) {
   await page.getByLabel("Fixture outcome").selectOption(outcome);
   const button = page.getByRole("button", { name: "Connect opaque fixture" });
-  await button.click();
+  await button.scrollIntoViewIfNeeded();
+  const [response] = await Promise.all([
+    page.waitForResponse((response) => new URL(response.url()).pathname === "/api/v1/providers" && response.request().method() === "POST"),
+    button.click(),
+  ]);
+  expect(response.request().postDataJSON().credential).toBe(`fake-${outcome}`);
+  expect(response.status()).toBe(outcome === "invalid" ? 400 : 201);
+  await expect(page.getByRole("status")).toContainText(outcome === "invalid" ? "provider_request_invalid" : "Fixture provider connected");
   await expect(button).toBeEnabled();
 }
 
 async function analyze(page: Page) {
   await page.getByLabel("Or paste synthetic CV text").fill(fixtureText);
-  await page.getByRole("button", { name: "Run mock analysis" }).click();
+  const button = page.getByRole("button", { name: "Run mock analysis" });
+  await button.scrollIntoViewIfNeeded();
+  const [response] = await Promise.all([
+    page.waitForResponse((response) => /\/api\/v1\/cv\/documents\/[^/]+\/analyses$/.test(new URL(response.url()).pathname) && response.request().method() === "POST"),
+    button.click(),
+  ]);
+  expect(response.status()).toBe(201);
+  await expect(button).toBeEnabled();
 }
 
 test.beforeEach(async ({ page }) => { await localOnly(page); await page.goto("/cv-analysis"); });

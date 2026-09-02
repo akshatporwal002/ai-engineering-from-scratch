@@ -16,6 +16,7 @@ This change prepares the existing Next.js/FastAPI migration for `dev`. It does n
 - Preserve repository-root Vercel builds: expose the same pinned Next.js version in the root build package and install both dependency sets. Guard framework detection and nested output configuration with regression tests, without changing shared project settings.
 - Exclude temporary Next.js locks/caches, environment files, Git metadata, and development evidence from runtime file traces. A post-build trace audit checks that all packaged references exist and rejects development-only files before deployment.
 - Confirm each quiz answer's disabled and pressed state before advancing browser journeys, including explicit scrolling for pointer interactions. Preserve failure traces in CI; keep retries and timeouts unchanged. This follows a WebKit-only incomplete-score failure in the PR run while the branch run passed all 142 browser checks.
+- Synchronize fixture connection and analysis journeys with their actual POST responses and completed UI state. The retained WebKit trace showed a skipped connection click during scrolling: no new provider POST was sent, and the previous provider was reused. Check the requested fixture outcome and HTTP status as well as the existing user-visible results.
 
 ## Validation and merge gates
 
