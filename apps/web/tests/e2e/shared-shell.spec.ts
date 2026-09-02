@@ -72,7 +72,7 @@ test("desktop shell matches navigation, theme, search, login, and accessibility 
   const searchbox = page.getByRole("combobox", { name: "Search" });
   await expect(searchbox).toBeFocused();
   await searchbox.fill("Optimization");
-  await expect(page.getByRole("option", { name: /Optimization/ })).toBeVisible();
+  await expect(page.getByRole("option", { name: /Optimization/ }).first()).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(search).toBeFocused();
 

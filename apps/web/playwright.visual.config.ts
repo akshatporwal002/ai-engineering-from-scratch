@@ -54,7 +54,7 @@ export default defineConfig({
       timeout: 30_000,
     },
     {
-      command: "CODEOLOGY_ENABLE_FIXTURES=1 npm run build && npm run start -- --hostname 127.0.0.1 --port 4174",
+      command: "node ../../scripts/build-auth.mjs && node ../../site/build.js && cross-env CODEOLOGY_ENABLE_FIXTURES=1 npm run build && npm run start -- --hostname 127.0.0.1 --port 4174",
       url: "http://127.0.0.1:4174/components",
       reuseExistingServer: true,
       timeout: 90_000,

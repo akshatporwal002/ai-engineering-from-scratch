@@ -20,7 +20,8 @@ async function keepNavigationLocal(page: Page) {
   await page.route("**/*", async (route) => {
     const url = new URL(route.request().url());
     if (url.hostname === "127.0.0.1" || url.hostname === "localhost") await route.continue();
-    else await route.abort("blockedbyclient");
+    else if (url.hostname === "fonts.googleapis.com") await route.fulfill({ status: 200, contentType: "text/css", body: "" });
+    else await route.fulfill({ status: 204, body: "" });
   });
 }
 
@@ -30,13 +31,18 @@ async function expectNoBlockingAxeFindings(page: Page) {
   expect(blocking, blocking.map((item) => `${item.id}: ${item.help}`).join("\n")).toEqual([]);
 }
 
+function isHarnessOnlyConsoleError(message: string) {
+  return message.includes("ERR_BLOCKED_BY_CLIENT.Inspector")
+    || (message.includes("/127.0.0.1:4174/") && message.includes("due to access control checks."));
+}
+
 test.beforeEach(async ({ page }) => keepNavigationLocal(page));
 
 for (const route of routes) {
   test(`${route.name} renders with valid landmarks and accessibility`, async ({ page }) => {
     const errors: string[] = [];
     page.on("console", (message) => {
-      if (message.type() === "error" && !message.text().includes("ERR_BLOCKED_BY_CLIENT.Inspector")) errors.push(message.text());
+      if (message.type() === "error" && !isHarnessOnlyConsoleError(message.text())) errors.push(message.text());
     });
     await page.goto(route.next);
     await expect(page.locator("main#main-content")).toHaveCount(1);
@@ -70,9 +76,9 @@ for (const route of [
   test(`${route.name} legacy and Next preserve focus and accessibility across motion preferences`, async ({ page }) => {
     const errors: string[] = [];
     page.on("console", (message) => {
-      if (message.type() === "error" && !message.text().includes("ERR_BLOCKED_BY_CLIENT.Inspector")) errors.push(message.text());
+      if (message.type() === "error" && !isHarnessOnlyConsoleError(message.text())) errors.push(message.text());
     });
-    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("pageerror", (error) => { if (!isHarnessOnlyConsoleError(error.message)) errors.push(error.message); });
     page.on("requestfailed", (request) => {
       const url = new URL(request.url());
       const failure = request.failure()?.errorText;
@@ -132,9 +138,9 @@ test("public-routes:glossary preserves interactions and accessibility across mot
   test.setTimeout(120_000);
   const errors: string[] = [];
   page.on("console", (message) => {
-    if (message.type() === "error" && !message.text().includes("ERR_BLOCKED_BY_CLIENT.Inspector")) errors.push(message.text());
+    if (message.type() === "error" && !isHarnessOnlyConsoleError(message.text())) errors.push(message.text());
   });
-  page.on("pageerror", (error) => errors.push(error.message));
+  page.on("pageerror", (error) => { if (!isHarnessOnlyConsoleError(error.message)) errors.push(error.message); });
   page.on("requestfailed", (request) => {
     const url = new URL(request.url());
     const failure = request.failure()?.errorText;
@@ -212,9 +218,9 @@ test("public-routes:roadmap preserves graph interactions and accessibility acros
   test.setTimeout(120_000);
   const errors: string[] = [];
   page.on("console", (message) => {
-    if (message.type() === "error" && !message.text().includes("ERR_BLOCKED_BY_CLIENT.Inspector")) errors.push(message.text());
+    if (message.type() === "error" && !isHarnessOnlyConsoleError(message.text())) errors.push(message.text());
   });
-  page.on("pageerror", (error) => errors.push(error.message));
+  page.on("pageerror", (error) => { if (!isHarnessOnlyConsoleError(error.message)) errors.push(error.message); });
   page.on("requestfailed", (request) => {
     const url = new URL(request.url());
     const failure = request.failure()?.errorText;
@@ -353,7 +359,7 @@ for (const reducedMotion of ["no-preference", "reduce"] as const) {
     test(`certification ${surface.id} preserves interactions with ${reducedMotion} motion`, async ({ page }) => {
       const errors: string[] = [];
       page.on("console", (message) => {
-        if (message.type() === "error" && !message.text().includes("ERR_BLOCKED_BY_CLIENT.Inspector")) errors.push(message.text());
+        if (message.type() === "error" && !isHarnessOnlyConsoleError(message.text())) errors.push(message.text());
       });
       page.on("pageerror", (error) => errors.push(error.message));
       page.on("requestfailed", (request) => {

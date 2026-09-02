@@ -1,0 +1,40 @@
+name: platform
+
+on:
+  push:
+    branches: [main, dev, akshat/next-fastapi-overnight]
+    paths: ["apps/**", "site/**", "scripts/**", "package.json", "vercel.json", ".github/workflows/platform.yml"]
+  pull_request:
+    branches: [main, dev]
+    paths: ["apps/**", "site/**", "scripts/**", "package.json", "vercel.json", ".github/workflows/platform.yml"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: platform-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  migration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "24"
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+      - name: Install pinned application dependencies
+        run: |
+          npm --prefix apps/web install --package-lock=false
+          python3 -m pip install ./apps/api
+      - name: Validate contracts, tests, types, and production build
+        run: npm run ci:migration
+      - name: Install browser engines
+        run: npm --prefix apps/web exec -- playwright install --with-deps chromium webkit
+      - name: Run browser migration journeys
+        run: npm run test:web:e2e

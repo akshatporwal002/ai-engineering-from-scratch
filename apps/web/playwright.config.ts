@@ -18,7 +18,7 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: "python3 -m uvicorn app.main:app --app-dir ../api --host 127.0.0.1 --port 8000",
+      command: "node ../../scripts/run-python.mjs -m uvicorn app.main:app --app-dir ../api --host 127.0.0.1 --port 8000",
       url: "http://127.0.0.1:8000/api/v1/health",
       reuseExistingServer: true,
       timeout: 30_000,
@@ -30,7 +30,7 @@ export default defineConfig({
       timeout: 30_000,
     },
     {
-      command: "CODEOLOGY_ENABLE_FIXTURES=1 npm run build && npm run start -- --hostname 127.0.0.1 --port 4174",
+      command: "node ../../scripts/build-auth.mjs && node ../../site/build.js && cross-env CODEOLOGY_ENABLE_FIXTURES=1 npm run build && npm run start -- --hostname 127.0.0.1 --port 4174",
       url: "http://127.0.0.1:4174/components",
       reuseExistingServer: true,
       timeout: 90_000,

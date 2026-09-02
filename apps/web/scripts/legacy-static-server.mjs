@@ -27,6 +27,11 @@ const server = createServer(async (request, response) => {
     return;
   }
 
+  if (new URL(request.url, `http://${host}`).pathname === "/favicon.ico") {
+    response.writeHead(204, { "cache-control": "no-store" }).end();
+    return;
+  }
+
   const target = fileFor(request.url);
   if (!target) {
     response.writeHead(403).end();

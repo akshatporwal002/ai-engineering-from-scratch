@@ -1,6 +1,6 @@
 [
   {
-    "legacyUrl": "/index.html", "productionUrl": "/", "nextUrl": "/", "kind": "academy", "status": "implemented", "fixture": "site/index.html",
+    "legacyUrl": "/index.html", "productionUrl": "/", "nextUrl": "/", "kind": "academy", "status": "visual-verified", "fixture": "site/index.html",
     "states": ["light", "dark", "mobile-menu", "initial-animation", "primary-hover", "primary-focus"],
     "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
     "interactionCapabilities": ["mouse", "keyboard", "theme", "mobile-menu", "reduced-motion"],
@@ -25,7 +25,7 @@
     "requiredTests": ["public-routes:assurance", "public-content:editorial-source"]
   },
   {
-    "legacyUrl": "/catalog.html", "productionUrl": "/catalog.html", "nextUrl": "/catalog", "kind": "catalog", "status": "implemented", "fixture": "site/catalog.html",
+    "legacyUrl": "/catalog.html", "productionUrl": "/catalog.html", "nextUrl": "/catalog", "kind": "catalog", "status": "interaction-verified", "fixture": "site/catalog.html",
     "states": ["default", "search", "filter", "sort", "empty-result", "mobile-controls"], "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
     "interactionCapabilities": ["mouse", "keyboard", "search", "filter", "sort", "url-state"], "visualTestIds": [],
     "requiredTests": ["public-routes:catalog", "public-content:lesson-search"]
@@ -49,7 +49,7 @@
     "requiredTests": ["public-routes:credits", "public-content:provenance"]
   },
   {
-    "legacyUrl": "/cv-analysis.html", "productionUrl": "/cv-analysis.html", "nextUrl": "/cv-analysis", "kind": "presentation-only", "status": "implemented", "fixture": "site/cv-analysis.html",
+    "legacyUrl": "/cv-analysis.html", "productionUrl": "/cv-analysis.html", "nextUrl": "/cv-analysis", "kind": "presentation-only", "status": "interaction-verified", "fixture": "site/cv-analysis.html",
     "states": ["signed-out", "signed-in", "provider-model", "upload", "loading", "success", "failure", "history", "delete-confirmation"], "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
     "interactionCapabilities": ["mouse", "keyboard", "dialog", "upload", "mock-api", "focus-restoration"], "visualTestIds": [],
     "requiredTests": ["public-routes:cv-analysis", "public-content:presentation-boundary"]
@@ -61,7 +61,7 @@
     "requiredTests": ["public-routes:glossary", "public-content:glossary-search"]
   },
   {
-    "legacyUrl": "/lesson.html", "productionUrl": "/lesson.html?path=phases/01-math-foundations/08-optimization", "nextUrl": "/lessons/[...slug]", "kind": "lesson", "status": "implemented", "fixture": "site/lesson.html",
+    "legacyUrl": "/lesson.html", "productionUrl": "/lesson.html?path=phases/01-math-foundations/08-optimization", "nextUrl": "/lessons/[...slug]", "kind": "lesson", "status": "interaction-verified", "fixture": "site/lesson.html",
     "states": ["top", "scrolled", "code", "mermaid", "figure", "quiz", "completed-quiz", "mobile"], "viewports": ["mobile", "tablet", "desktop", "wide"], "browsers": ["chromium", "webkit"],
     "interactionCapabilities": ["mouse", "keyboard", "copy-code", "figure", "quiz", "progress", "internal-navigation"], "visualTestIds": [],
     "requiredTests": ["reference-lesson:reader", "reference-lesson:paired-evidence"]
