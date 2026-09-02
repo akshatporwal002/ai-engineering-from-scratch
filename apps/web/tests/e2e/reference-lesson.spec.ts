@@ -105,6 +105,8 @@ test("toc, figure, copy, and quiz are keyboard-operable", async ({ page, browser
     const option = questions.nth(index).locator(".quiz-option").nth(answer);
     await option.focus();
     await page.keyboard.press("Enter");
+    await expect(option).toBeDisabled();
+    await expect(option).toHaveAttribute("aria-pressed", "true");
   }
   await expect(page.locator(".quiz-score-result").first()).toContainText("2/2 correct");
   await expect(page.locator(".quiz-score-result").nth(1)).toContainText("3/3 correct");
@@ -173,7 +175,14 @@ test("interactive figure and completed quiz states remain functional", async ({ 
   await figure.locator('input[type="range"]').first().fill("1.2");
   await expect(figure).toBeVisible();
   const questions = page.locator(".quiz-section .quiz-question");
-  for (const [index, answer] of [0, 1, 3, 1, 1].entries()) await questions.nth(index).locator(".quiz-option").nth(answer).click();
+  for (const [index, answer] of [0, 1, 3, 1, 1].entries()) {
+    const option = questions.nth(index).locator(".quiz-option").nth(answer);
+    // Confirm the answer before scrolling to the next question: feedback changes layout.
+    await option.scrollIntoViewIfNeeded();
+    await option.click();
+    await expect(option).toBeDisabled();
+    await expect(option).toHaveAttribute("aria-pressed", "true");
+  }
   await expect(page.locator(".quiz-score-result").first()).toContainText("2/2 correct");
   await expect(page.locator(".quiz-score-result").nth(1)).toContainText("3/3 correct");
 });

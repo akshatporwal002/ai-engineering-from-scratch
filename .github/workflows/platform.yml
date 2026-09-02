@@ -39,3 +39,11 @@ jobs:
         run: npm --prefix apps/web exec -- playwright install --with-deps chromium webkit
       - name: Run browser migration journeys
         run: npm run test:web:e2e
+      - name: Preserve browser failure evidence
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: migration-browser-failures
+          path: apps/web/test-results/
+          if-no-files-found: ignore
+          retention-days: 7

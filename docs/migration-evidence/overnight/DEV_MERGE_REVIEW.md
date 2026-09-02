@@ -15,6 +15,7 @@ This change prepares the existing Next.js/FastAPI migration for `dev`. It does n
 - Install root build dependencies as well as web and API dependencies in the migration workflow; the shared authentication bundle requires the root `esbuild` package.
 - Preserve repository-root Vercel builds: expose the same pinned Next.js version in the root build package and install both dependency sets. Guard framework detection and nested output configuration with regression tests, without changing shared project settings.
 - Exclude temporary Next.js locks/caches, environment files, Git metadata, and development evidence from runtime file traces. A post-build trace audit checks that all packaged references exist and rejects development-only files before deployment.
+- Confirm each quiz answer's disabled and pressed state before advancing browser journeys, including explicit scrolling for pointer interactions. Preserve failure traces in CI; keep retries and timeouts unchanged. This follows a WebKit-only incomplete-score failure in the PR run while the branch run passed all 142 browser checks.
 
 ## Validation and merge gates
 
