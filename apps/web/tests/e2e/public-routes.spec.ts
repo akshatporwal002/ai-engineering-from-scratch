@@ -340,6 +340,20 @@ test("academy phase dialog is keyboard-operable and restores focus", async ({ pa
   await expect(firstPhase).toBeFocused();
 });
 
+test("academy lesson links use canonical routes and legacy malformed links recover", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: /Open Phase 00:/ }).click();
+
+  const lessonLink = page.getByRole("link", { name: "Open lesson: Dev Environment" });
+  await expect(lessonLink).toHaveAttribute("href", "/lessons/00-setup-and-tooling/01-dev-environment");
+  await lessonLink.click();
+  await expect(page).toHaveURL(/\/lessons\/00-setup-and-tooling\/01-dev-environment$/);
+
+  await page.goto("/lessons/phases/11-llm-engineering/04-embeddings");
+  await expect(page).toHaveURL(/\/lessons\/11-llm-engineering\/04-embeddings$/);
+  await expect(page.getByRole("heading", { name: "Embeddings & Vector Representations", level: 1 })).toBeVisible();
+});
+
 test("academy local progress updates without creating external state", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: /Open Phase 00:/ }).click();

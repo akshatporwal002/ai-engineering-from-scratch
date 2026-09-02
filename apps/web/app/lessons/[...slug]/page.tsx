@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { LegacyLessonRuntime } from "../../../components/lesson/legacy-lesson-runtime";
 import { loadCurriculumLesson, loadCurriculumLessons } from "../../../lib/content/lesson-content";
@@ -13,7 +13,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return { title: `${lesson.title} · Codeology`, description: lesson.hook, alternates: { canonical: `/lessons/${lesson.routeSlug.join("/")}` } };
 }
 export default async function LessonPage({ params }: { params: Promise<{ slug: string[] }> }) {
-  const lesson = loadCurriculumLesson((await params).slug);
+  const slug = (await params).slug;
+  if (slug.length === 3 && slug[0] === "phases") redirect(`/lessons/${slug.slice(1).join("/")}`);
+  const lesson = loadCurriculumLesson(slug);
   if (!lesson) notFound();
   const legacy = loadLessonLegacyPage();
   return <>

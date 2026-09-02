@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import type { PhaseSummary } from "../../lib/content/public-content";
+import { internalLessonUrl } from "../../lib/content/query";
 
 const STORAGE_KEY = "aifs:progress:v1";
 const volumes = [
@@ -153,7 +154,7 @@ export function AcademyExperience({ html, phases, glossaryCount }: { html: strin
         const row = element("div", `modal-lesson${userComplete ? " user-done" : ""}`);
         const open = element(canOpen ? "a" : "span", `modal-lesson-open${canOpen ? "" : " is-unavailable"}`);
         if (open instanceof HTMLAnchorElement) {
-          open.href = `/lessons/${path}`;
+          open.href = internalLessonUrl(lesson.url);
           open.setAttribute("aria-label", `Open lesson: ${lesson.name}`);
         } else open.setAttribute("aria-disabled", "true");
         const lessonCopy = element("span", "modal-lesson-copy");
